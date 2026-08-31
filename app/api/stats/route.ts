@@ -1,6 +1,4 @@
-import type { NextRequest } from 'next/server'
-
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // 返回已弃用的消息
     return Response.json(
@@ -20,7 +18,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // 返回已弃用的消息
     return Response.json(

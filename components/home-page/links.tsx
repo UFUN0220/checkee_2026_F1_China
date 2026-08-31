@@ -17,12 +17,6 @@ const LINKS = [
     event: 'home-link-blog',
   },
   {
-    title: `Snippets collection`,
-    href: `/snippets`,
-    emoji: 'dna',
-    event: 'home-link-snippets',
-  },
-  {
     title: `About me & this blog`,
     href: `/about`,
     emoji: 'smiling-face-with-sunglasses',

@@ -9,7 +9,7 @@ import type { CoreContent } from '~/types/data'
 import { formatDate } from '~/utils/misc'
 
 export function PostCardGridView({ post }: { post: CoreContent<Blog> }) {
-  const { path, date, title, summary, images, readingTime } = post
+  const { path, date, title, images, readingTime } = post
   return (
     <article>
       <div className="flex flex-col items-start justify-between gap-4 md:gap-6">

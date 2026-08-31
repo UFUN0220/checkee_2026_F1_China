@@ -6,15 +6,11 @@ import '~/css/homefont.css'
 
 const Bentotest: React.FC = () => {
   const Klayimg = '/static/images/mainPage/Klay_home2.png'
-  const cutegif = '/static/images/mainPage/cute.gif'
   const jsu = '/static/images/mainPage/jsu.jpg'
   const washu = '/static/images/mainPage/washu_home.jpg'
-  const stl = '/static/images/mainPage/stl_home.png'
-  const test = '/static/images/mainPage/ujs_home.jpg'
   const qingdao = '/static/images/mainPage/qingdao_home2.jpg'
   const starsky = '/static/images/mainPage/washu_sky.jpg'
   const logo = '/static/images/const/logo.jpg'
-  const cutejpg = '/static/images/mainPage/cute2.JPG'
 
   const chineseFont = '"heishenhua", cursive, sans-serif'
 

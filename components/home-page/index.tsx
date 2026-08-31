@@ -6,17 +6,15 @@ import {
   FileText,
   GitBranch,
   Mail,
-  Music2,
   Network,
   NotebookText,
   PencilLine,
-  Play,
   Sparkles,
-  Star,
 } from 'lucide-react'
 import { Link } from '~/components/ui/link'
 import { SITE_METADATA } from '~/data/site-metadata'
 import type { CoreContent } from '~/types/data'
+import { LocationTimeWeather } from './LocationTimeWeather'
 
 type HomePost = CoreContent<Blog>
 
@@ -28,26 +26,7 @@ const HERO_IMAGES = [
   '/static/images/mainPage/stl_home.png',
 ]
 
-const TECH_STACK = [
-  'Java',
-  'Spring Boot',
-  'Redis',
-  'RabbitMQ',
-  'MySQL',
-  'Docker',
-  'Linux',
-  'Python',
-  'PyTorch',
-  'Next.js',
-  'TypeScript',
-  'Tailwind CSS',
-]
 
-function getPostImage(post?: HomePost) {
-  if (!post?.images) return '/static/images/mainPage/washu_sky.jpg'
-  if (typeof post.images === 'string') return post.images
-  return post.images[0] || '/static/images/mainPage/washu_sky.jpg'
-}
 
 function formatDate(date?: string) {
   if (!date) return '2026/7/6'
@@ -56,15 +35,6 @@ function formatDate(date?: string) {
     month: 'numeric',
     day: 'numeric',
   }).format(new Date(date))
-}
-
-function currentTime() {
-  return new Intl.DateTimeFormat('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: 'Asia/Shanghai',
-  }).format(new Date())
 }
 
 function GlassCard({
@@ -183,16 +153,6 @@ function GreetingCard() {
   )
 }
 
-function DigitalClock() {
-  return (
-    <GlassCard className="grid h-20 place-items-center rounded-[2rem] bg-white/50 p-3 xl:h-24">
-      <p className="font-mono text-4xl font-black tracking-[0.08em] text-[#473b50] xl:text-5xl">
-        {currentTime()}
-      </p>
-    </GlassCard>
-  )
-}
-
 function CalendarCard() {
   const today = new Date()
   const days = Array.from({ length: 31 }, (_, index) => index + 1)
@@ -273,26 +233,6 @@ function SocialButtons() {
   )
 }
 
-function StackCard() {
-  return (
-    <GlassCard className="p-4 xl:p-5">
-      <p className="mb-3 text-sm font-black text-[#8b7d90]">兴趣</p>
-      <div className="flex flex-wrap gap-2">
-        {['科技', '运动', '音乐', '影视', 'Backend', 'AI', 'Open Source', 'Algorithms'].map(
-          (item) => (
-            <span
-              key={item}
-              className="rounded-full border border-white/70 bg-white/45 px-3 py-1.5 text-xs font-black text-[#5d5266] shadow-sm"
-            >
-              {item}
-            </span>
-          )
-        )}
-      </div>
-    </GlassCard>
-  )
-}
-
 function RecommendationCard() {
   return (
     <GlassCard className="p-4 xl:p-5">
@@ -310,47 +250,18 @@ function RecommendationCard() {
   )
 }
 
-function MusicCard() {
-  return (
-    <GlassCard className="p-4">
-      <div className="flex items-center gap-3">
-        <Music2 className="text-[#ff2d55]" size={26} />
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-black text-[#817484]">科技 / 运动 / 音乐 / 影视</p>
-          <div className="mt-2 h-2.5 rounded-full bg-white/80">
-            <div className="h-full w-3/4 rounded-full bg-[#ffd6e7]" />
-          </div>
-        </div>
-        <button
-          type="button"
-          aria-label="Play music"
-          className="grid h-10 w-10 place-items-center rounded-full bg-white text-[#ff2d55] shadow-md transition hover:scale-105"
-        >
-          <Play size={18} fill="currentColor" />
-        </button>
-      </div>
-    </GlassCard>
-  )
-}
-
 export function Home({ posts }: { posts: HomePost[] }) {
   const latestPost = posts[0]
 
   return (
     <div
       data-homepage-fullscreen
-      className="relative min-h-screen w-full overflow-hidden bg-[#f7edf5] text-[#3d3444] lg:h-[calc(100vh-52px)] lg:max-h-[calc(100vh-52px)] lg:min-h-0"
+      className="relative min-h-screen w-full overflow-hidden bg-[#f7edf5] pt-20 text-[#3d3444] lg:h-screen lg:max-h-screen lg:min-h-0 lg:pt-16"
     >
       <style>{`
         body:has([data-homepage-fullscreen]) {
           background-color: #f7edf5;
           background-image: radial-gradient(circle at 16% 84%, rgba(255, 45, 85, 0.3), transparent 34%), radial-gradient(circle at 78% 82%, rgba(255, 204, 0, 0.34), transparent 31%), radial-gradient(circle at 56% 24%, rgba(175, 82, 222, 0.24), transparent 35%), radial-gradient(circle at 26% 18%, rgba(90, 200, 250, 0.22), transparent 32%);
-        }
-        body:has([data-homepage-fullscreen]) header {
-          background: rgba(255, 255, 255, 0.34) !important;
-          box-shadow: 0 12px 40px rgba(125, 82, 112, 0.1);
-          backdrop-filter: blur(24px) saturate(1.25);
-          -webkit-backdrop-filter: blur(24px) saturate(1.25);
         }
         body:has([data-homepage-fullscreen]) footer {
           display: none !important;
@@ -364,7 +275,7 @@ export function Home({ posts }: { posts: HomePost[] }) {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_84%,rgba(255,45,85,0.3),transparent_34%),radial-gradient(circle_at_78%_82%,rgba(255,204,0,0.34),transparent_31%),radial-gradient(circle_at_56%_24%,rgba(175,82,222,0.24),transparent_35%),radial-gradient(circle_at_26%_18%,rgba(90,200,250,0.22),transparent_32%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.34),rgba(255,255,255,0)_45%)]" />
 
-      <div className="relative mx-auto grid min-h-screen w-full max-w-[80rem] grid-cols-1 gap-4 px-4 py-5 sm:px-6 lg:h-full lg:min-h-0 lg:grid-cols-[17.5rem_minmax(27rem,1fr)_22rem] lg:grid-rows-[7.25rem_13.75rem_5.75rem_4.75rem] lg:items-start lg:gap-3 lg:px-5 lg:pt-14 lg:pb-0 xl:max-w-[86rem] xl:grid-cols-[18.5rem_minmax(29rem,1fr)_24rem] xl:grid-rows-[7.75rem_14.5rem_6rem_5rem] xl:gap-3.5 xl:px-7 xl:pt-16">
+      <div className="relative mx-auto grid min-h-screen w-full max-w-[80rem] grid-cols-1 gap-4 px-4 py-5 sm:px-6 lg:h-full lg:min-h-0 lg:grid-cols-[17.5rem_minmax(27rem,1fr)_22rem] lg:grid-rows-[7.25rem_13.75rem_5.75rem_4.75rem] lg:items-start lg:gap-3 lg:px-5 lg:pt-0 lg:pb-0 xl:max-w-[86rem] xl:grid-cols-[18.5rem_minmax(29rem,1fr)_24rem] xl:grid-rows-[7.75rem_14.5rem_6rem_5rem] xl:gap-3.5 xl:px-7 xl:pt-0">
         <div className="lg:row-span-2">
           <SideInfoCards />
         </div>
@@ -379,15 +290,13 @@ export function Home({ posts }: { posts: HomePost[] }) {
             <PencilLine size={22} />
             写文章
           </Link>
-          <DigitalClock />
+          <LocationTimeWeather />
         </div>
 
         <GreetingCard />
         <CalendarCard />
         <LatestArticle post={latestPost} />
         <SocialButtons />
-        <StackCard />
-
         <div className="grid gap-4 lg:col-start-2 lg:grid-cols-[1fr_1.2fr]">
           <RecommendationCard />
           <GlassCard className="p-4 xl:p-5">
@@ -399,7 +308,6 @@ export function Home({ posts }: { posts: HomePost[] }) {
         </div>
 
         <div className="grid gap-4 lg:col-start-3">
-          <MusicCard />
           <Link
             id="projects"
             href="/blog"

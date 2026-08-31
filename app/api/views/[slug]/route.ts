@@ -7,7 +7,7 @@ export const runtime = 'edge'
 type Params = Promise<{ slug: string }>
 
 export async function POST(
-  req: Request,
+  _req: Request,
   props: { params: Params } // 注意这里：params 是一个 Promise
 ) {
   // 关键修改：必须先 await params
@@ -28,7 +28,7 @@ export async function POST(
 }
 
 export async function GET(
-  req: Request,
+  _req: Request,
   props: { params: Params } // GET 方法同样需要修改类型
 ) {
   // 关键修改：必须先 await params
@@ -39,7 +39,7 @@ export async function GET(
     // 获取计数
     const views = (await redis.get<number>(`pageviews:${slug}`)) ?? 0
     return NextResponse.json({ views })
-  } catch (error) {
+  } catch {
     return NextResponse.json({ views: 0 }, { status: 200 }) // 出错时降级返回 0
   }
 }

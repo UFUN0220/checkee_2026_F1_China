@@ -6,7 +6,6 @@ import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic'
 import path from 'path'
 import readingTime from 'reading-time'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
-import rehypeCitation from 'rehype-citation'
 import rehypePresetMinify from 'rehype-preset-minify'
 import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeSlug from 'rehype-slug'
@@ -20,6 +19,7 @@ import { sortPosts } from './utils/misc'
 import { remarkCodeTitles } from './utils/remark-code-titles'
 import { remarkExtractFrontmatter } from './utils/remark-extract-frontmatter'
 import { remarkImgToJsx } from './utils/remark-img-to-jsx'
+import rehypeCitation from './utils/rehype-citation'
 import { extractTocHeadings } from './utils/remark-toc-headings'
 
 let root = process.cwd()
@@ -131,44 +131,6 @@ export let Blog = defineDocumentType(() => ({
   },
 }))
 
-export let Snippet = defineDocumentType(() => ({
-  name: 'Snippet',
-  filePathPattern: 'snippets/**/*.mdx',
-  contentType: 'mdx',
-  fields: {
-    heading: { type: 'string', required: true },
-    title: { type: 'string', required: true },
-    icon: { type: 'string', required: true },
-    date: { type: 'date', required: true },
-    tags: { type: 'list', of: { type: 'string' }, default: [] },
-    lastmod: { type: 'date' },
-    draft: { type: 'boolean' },
-    summary: { type: 'string' },
-    images: { type: 'json' },
-    authors: { type: 'list', of: { type: 'string' } },
-    layout: { type: 'string' },
-    bibliography: { type: 'string' },
-    canonicalUrl: { type: 'string' },
-  },
-  computedFields: {
-    ...computedFields,
-    structuredData: {
-      type: 'json',
-      resolve: (doc) => ({
-        '@context': 'https://schema.org',
-        '@type': 'CodeSnippet',
-        headline: doc.title,
-        datePublished: doc.date,
-        dateModified: doc.lastmod || doc.date,
-        description: doc.summary,
-        //image: doc.images ? doc.images[0] : SITE_METADATA.socialBanner,
-        image: doc.images && doc.images.length > 0 ? doc.images[0] : null,
-        url: `${SITE_METADATA.siteUrl}/${doc._raw.flattenedPath}`,
-      }),
-    },
-  },
-}))
-
 export let Author = defineDocumentType(() => ({
   name: 'Author',
   filePathPattern: 'authors/**/*.mdx',
@@ -190,7 +152,7 @@ export let Author = defineDocumentType(() => ({
 export default makeSource({
   contentDirPath: 'data',
   disableImportAliasWarning: true,
-  documentTypes: [Blog, Snippet, Author],
+  documentTypes: [Blog, Author],
   mdx: {
     cwd: process.cwd(),
     remarkPlugins: [
@@ -229,10 +191,9 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
-    let { allBlogs, allSnippets } = await importData()
-    let allPosts = [...allBlogs, ...allSnippets]
-    createTagCount(allPosts)
-    createSearchIndex(allPosts)
+    let { allBlogs } = await importData()
+    createTagCount(allBlogs)
+    createSearchIndex(allBlogs)
     console.log('✨ Content source generated successfully!')
   },
 })

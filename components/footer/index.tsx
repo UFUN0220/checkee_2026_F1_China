@@ -1,9 +1,5 @@
 import { clsx } from 'clsx'
 import { Container } from '~/components/ui/container'
-import { SITE_METADATA } from '~/data/site-metadata'
-import { FooterMeta } from './footer-meta'
-import { FooterNav } from './footer-nav'
-import { LogoAndRepo } from './logo-and-repo'
 import { FooterYvon } from './footer-yvon'
 
 export function Footer() {

@@ -8,17 +8,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import clsx from 'clsx'
 import type { Metadata } from 'next'
 
-import { Inter, Calistoga } from 'next/font/google'
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
-})
-const calistoga = Calistoga({
-  subsets: ['latin'],
-  variable: '--font-serif',
-  weight: ['400'],
-})
-
 import { JetBrains_Mono, Nunito, Playpen_Sans } from 'next/font/google'
 import { UmamiAnalytics } from '~/components/analytics/umami'
 import { Footer } from '~/components/footer'
@@ -135,8 +124,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
       <body
         className={clsx([
-          'inter.variable',
-          'calistoga.variable',
           'antialiased, font-sans',
           'relative min-h-screen pl-[calc(100vw-100%)]',
           'flex flex-col',

@@ -67,7 +67,7 @@ export function Reactions({
       data.bullseyes = data.bullseyes || 0
       setInitialReactions(data)
       setReactions(data)
-    } catch (e) {}
+    } catch {}
   }, [type, slug])
 
   function handleChange(key: keyof SelectStats) {

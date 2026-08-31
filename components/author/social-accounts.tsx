@@ -1,7 +1,6 @@
 import { clsx } from 'clsx'
-import { FileVideo, GitBranch, Mail, Network, Users } from 'lucide-react'
+import { GitBranch, Mail, Network } from 'lucide-react'
 import { SITE_METADATA } from '~/data/site-metadata'
-import X from '~/icons/x.svg'
 
 export function SocialAccounts({ className }: { className?: string }) {
   return (

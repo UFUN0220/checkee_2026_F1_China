@@ -1,5 +1,3 @@
-import type { Author } from 'contentlayer/generated'
-import type { ReactNode } from 'react'
 import { SocialAccounts } from '~/components/author/social-accounts'
 import { ProfileCard } from '~/components/cards/profile'
 import { Container } from '~/components/ui/container'
@@ -7,12 +5,7 @@ import { PageHeader } from '~/components/ui/page-header'
 import { Twemoji } from '~/components/ui/twemoji'
 import { SITE_METADATA } from '~/data/site-metadata'
 
-interface Props {
-  children?: ReactNode
-  content: Omit<Author, '_id' | '_raw' | 'body'>
-}
-
-export function AuthorLayout({ children }: Props) {
+export function AuthorLayout() {
   return (
     <Container className="pt-4 lg:pt-12">
       <PageHeader
@@ -94,8 +87,7 @@ export function AuthorLayout({ children }: Props) {
                 <li>
                   <Twemoji emoji="man-technologist" /> Making a lot of changes to the UI, new
                   homepage design, adding <code>ProfileCard</code>, <code>CareerTimeline</code>{' '}
-                  components, adding <code>/snippets</code>, <code>/books</code>,{' '}
-                  <code>/movies</code> page, etc.
+                  components and refining the reading experience.
                 </li>
               </ul>
               <p>

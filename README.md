@@ -66,7 +66,6 @@
 
 - `GITHUB_API_TOKEN`：用于查询仓库信息。
 - `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` / `SPOTIFY_REFRESH_TOKEN`：用于展示“正在播放”。
-- `OMDB_API_KEY`：拉取电影数据使用。
 
 ## 常用脚本
 
@@ -75,7 +74,6 @@
 | `pnpm dev`   | 本地开发，端口 3434                                 |
 | `pnpm build` | 构建 Next.js 产物（含 Contentlayer 编译、RSS 生成） |
 | `pnpm start` | 运行构建后的生产环境代码                            |
-| `pnpm seed`  | 运行脚本同步 Goodreads/IMDB 数据到 JSON 文件        |
 
 ## 内容管理
 

@@ -7,13 +7,7 @@ import { ScrollButtons } from '~/components/blog/scroll-buttons'
 import { TagsList } from '~/components/blog/tags'
 import { TableOfContents } from '~/components/blog/toc'
 import { Container } from '~/components/ui/container'
-import { GradientDivider } from '~/components/ui/gradient-divider'
-import { SITE_METADATA } from '~/data/site-metadata'
 import type { CoreContent } from '~/types/data'
-
-const editUrl = (path: string) => `${SITE_METADATA.siteRepo}/blob/main/data/${path}`
-const discussUrl = (path: string) =>
-  `https://mobile.twitter.com/search?q=${encodeURIComponent(`${SITE_METADATA.siteUrl}/${path}`)}`
 
 interface LayoutProps {
   content: CoreContent<Blog>
@@ -23,8 +17,7 @@ interface LayoutProps {
   children: ReactNode
 }
 export function PostLayout({ content, next, prev, children }: LayoutProps) {
-  const { slug, images, lastmod, readingTime, date, filePath, title, tags, toc, type } = content
-  const postUrl = `${SITE_METADATA.siteUrl}/${type.toLowerCase()}/${slug}`
+  const { slug, lastmod, readingTime, date, title, tags, toc, type } = content
 
   return (
     <Container className="pt-4 lg:pt-8">

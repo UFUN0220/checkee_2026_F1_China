@@ -4,10 +4,8 @@ import CSS from '~/icons/css.svg'
 import Exercism from '~/icons/exercism.svg'
 import Git from '~/icons/git.svg'
 import GitHub from '~/icons/github.svg'
-import Goodreads from '~/icons/goodreads.svg'
 import HeadlessUI from '~/icons/headlessui.svg'
 import Hydrogen from '~/icons/hydrogen.svg'
-import IMBb from '~/icons/imdb.svg'
 import Java from '~/icons/java.svg'
 import Javascript from '~/icons/javascript.svg'
 import JWT from '~/icons/jsonwebtokens.svg'
@@ -74,10 +72,6 @@ export const BrandsMap: Record<
   Drizzle: {
     Icon: Drizzle,
     url: 'https://orm.drizzle.team/',
-  },
-  Goodreads: {
-    Icon: Goodreads,
-    url: 'https://www.goodreads.com/',
   },
   Remix: {
     Icon: Remix,
@@ -234,10 +228,6 @@ export const BrandsMap: Record<
   RottenTomatoes: {
     Icon: RottenTomatoes,
     url: 'https://www.rottentomatoes.com/',
-  },
-  IMBb: {
-    Icon: IMBb,
-    url: 'https://www.imdb.com/',
   },
   VSCode: {
     Icon: VSCode,

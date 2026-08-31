@@ -1,8 +1,6 @@
 import { SITE_METADATA } from '~/data/site-metadata'
 import { BriefcaseBusiness, GitBranch, Mail, MapPin } from 'lucide-react'
 import { Fragment } from 'react'
-import XIcon from '~/icons/x.svg'
-import { Twemoji } from '~/components/ui/twemoji'
 
 function getAccountHandle(url = '') {
   const lastPart = url.split('/').pop()

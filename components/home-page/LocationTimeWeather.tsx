@@ -1,6 +1,6 @@
 'use client'
 
-import { Cloud, Loader2, Moon, Sun } from 'lucide-react'
+import { Cloud, Loader2, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export function LocationTimeWeather() {

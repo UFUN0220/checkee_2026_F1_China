@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 
 export function ViewsCounter({
-  type, // 暂时保留此参数以兼容父组件调用，但在 Redis 简单实现中我们暂时只用了 slug
   slug,
   className,
   trackView = true, // 默认开启计数。如果在博客列表页只展示不计数，可传 false

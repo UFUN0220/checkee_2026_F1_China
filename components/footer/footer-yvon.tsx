@@ -1,6 +1,4 @@
 export function FooterYvon() {
-  const beian = '/static/images/const/beian.png'
-
   return (
     <div className="flex w-full flex-row items-center justify-between gap-3 lg:-ml-[4%] lg:w-[108%]">
       {/* 版权信息 - 始终左对齐 */}

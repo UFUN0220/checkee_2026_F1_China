@@ -1,28 +1,23 @@
-import type { Blog, Snippet } from 'contentlayer/generated'
+import type { Blog } from 'contentlayer/generated'
 import type { ReactNode } from 'react'
 import { BlogMeta } from '~/components/blog/blog-meta'
 import { Comments } from '~/components/blog/comments'
-import { DiscussOnX } from '~/components/blog/discuss-on-x'
-import { EditOnGithub } from '~/components/blog/edit-on-github'
 import { PostTitle } from '~/components/blog/post-title'
 import { ScrollButtons } from '~/components/blog/scroll-buttons'
-import { SocialShare } from '~/components/blog/social-share'
 import { TagsList } from '~/components/blog/tags'
 import { Container } from '~/components/ui/container'
 import { GradientDivider } from '~/components/ui/gradient-divider'
-import { SITE_METADATA } from '~/data/site-metadata'
 import type { CoreContent } from '~/types/data'
 
 interface PostSimpleProps {
-  content: CoreContent<Blog | Snippet>
+  content: CoreContent<Blog>
   children: ReactNode
   next?: { path: string; title: string }
   prev?: { path: string; title: string }
 }
 
 export function PostSimple({ content, children }: PostSimpleProps) {
-  const { slug, date, lastmod, title, type, tags, readingTime, filePath } = content
-  const postUrl = `${SITE_METADATA.siteUrl}/${type.toLowerCase()}/${slug}`
+  const { slug, date, lastmod, title, type, tags, readingTime } = content
 
   return (
     <Container className="pt-4 lg:pt-12">

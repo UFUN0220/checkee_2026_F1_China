@@ -1,7 +1,5 @@
 'use client'
 
-import { clsx } from 'clsx'
-import { useState } from 'react'
 import type { Blog } from '~/.contentlayer/generated'
 import { PostCardListView } from '~/components/blog/post-card-list-view'
 import { GrowingUnderline } from '~/components/ui/growing-underline'
@@ -9,7 +7,7 @@ import { Link } from '~/components/ui/link'
 import type { CoreContent } from '~/types/data'
 
 export function LatestPosts({ posts }: { posts: CoreContent<Blog>[] }) {
-  const [view, setView] = useState<'posts'>('posts')
+  const view = 'posts'
 
   return (
     <div className="space-y-4 divide-y divide-gray-200 md:mt-8 md:space-y-8 dark:divide-gray-700">

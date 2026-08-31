@@ -1,18 +1,17 @@
-import type { Blog, Snippet } from 'contentlayer/generated'
+import type { Blog } from 'contentlayer/generated'
 import { mkdirSync, writeFileSync } from 'fs'
 import { slug } from 'github-slugger'
 import path from 'path'
-import { allBlogs, allSnippets } from '~/.contentlayer/generated/index.mjs'
+import { allBlogs } from '~/.contentlayer/generated/index.mjs'
 import { SITE_METADATA } from '~/data/site-metadata'
 import tagData from '~/json/tag-data.json' with { type: 'json' }
 import { escape } from '~/utils/html-escaper'
 import { sortPosts } from '~/utils/misc'
 
 const blogs = allBlogs as unknown as Blog[]
-const snippets = allSnippets as unknown as Snippet[]
 const RSS_PAGE = 'feed.xml'
 
-function generateRssItem(item: Blog | Snippet) {
+function generateRssItem(item: Blog) {
   const { siteUrl, email, author } = SITE_METADATA
   return `
 		<item>
@@ -27,7 +26,7 @@ function generateRssItem(item: Blog | Snippet) {
 	`
 }
 
-function generateRss(items: (Blog | Snippet)[], page = RSS_PAGE) {
+function generateRss(items: Blog[], page = RSS_PAGE) {
   const { title, siteUrl, description, language, email, author } = SITE_METADATA
   return `
 		<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -48,19 +47,16 @@ function generateRss(items: (Blog | Snippet)[], page = RSS_PAGE) {
 
 export async function generateRssFeed() {
   const publishPosts = blogs.filter((post) => post.draft !== true)
-  const publishSnippets = snippets.filter((post) => post.draft !== true)
-  // RSS for blog post & snippet
-  if (publishPosts.length > 0 || publishSnippets.length > 0) {
-    const rss = generateRss(sortPosts([...publishPosts, ...publishSnippets]))
+  if (publishPosts.length > 0) {
+    const rss = generateRss(sortPosts(publishPosts))
     writeFileSync(`./public/${RSS_PAGE}`, rss)
   }
 
-  if (publishPosts.length > 0 || publishSnippets.length > 0) {
+  if (publishPosts.length > 0) {
     // RSS for tags
     for (const tag of Object.keys(tagData)) {
       const filteredPosts = blogs.filter((p) => p.tags.map((t) => slug(t)).includes(tag))
-      const filteredSnippets = snippets.filter((s) => s.tags.map((t) => slug(t)).includes(tag))
-      const rss = generateRss([...filteredPosts, ...filteredSnippets], `tags/${tag}/feed.xml`)
+      const rss = generateRss(filteredPosts, `tags/${tag}/feed.xml`)
       const rssPath = path.join('public', 'tags', tag)
       mkdirSync(rssPath, { recursive: true })
       writeFileSync(path.join(rssPath, RSS_PAGE), rss)

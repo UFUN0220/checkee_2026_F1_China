@@ -12,9 +12,6 @@ const Curve = () => {
     '#D0D3D4', // 浅灰色
   ]
 
-  // 生成渐变字符串
-  const gradient = `linear-gradient(90deg, ${gradientColors.join(', ')})`
-
   return (
     <div className="hidden md:block mt-6 w-full overflow-hidden">
       {/* SVG曲线容器，占满整个屏幕宽度 */}

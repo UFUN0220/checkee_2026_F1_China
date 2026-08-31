@@ -1,13 +1,10 @@
 import React from 'react'
 import '~/css/ufunReadme.css'
 import Curve from './curve'
-import Arrow from './arrow'
 import '~/css/homefont.css'
 import IconGroup from './icon_fun'
 
 export default function UfunReadme() {
-  const hearthStone = '/static/images/hearthstone.svg'
-  const steam = '/static/images/steam.svg'
   //const hello = '/static/images/hello.png'
   const chineseFont = '"heishenhua", cursive, sans-serif'
 
