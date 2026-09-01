@@ -67,32 +67,20 @@ export function CheckmateExperience({
 
   return (
     <section className={styles.feature} aria-label="Checkmate F-1 公开样本">
-      <nav className={styles.tabs} aria-label="Checkmate 页面">
-        <button
-          type="button"
-          className={activeView === 'cities' ? styles.tabActive : styles.tab}
-          aria-current={activeView === 'cities' ? 'page' : undefined}
-          onClick={() => updateSearchParams({ view: 'cities' })}
-        >
-          白宫严选
-        </button>
-        <button
-          type="button"
-          className={activeView === 'peers' ? styles.tabActive : styles.tab}
-          aria-current={activeView === 'peers' ? 'page' : undefined}
-          onClick={() => updateSearchParams({ view: 'peers' })}
-        >
-          名人堂
-        </button>
-      </nav>
       {activeView === 'cities' ? (
         <WhiteHouseSelection
           snapshot={checkeeSnapshot}
           selectedCity={selectedCity}
           onCityChange={(city) => updateSearchParams({ view: 'cities', city })}
+          activeView={activeView}
+          onViewChange={(view) => updateSearchParams({ view })}
         />
       ) : (
-        <HallOfFame snapshot={hallSnapshot} />
+        <HallOfFame
+          snapshot={hallSnapshot}
+          activeView={activeView}
+          onViewChange={(view) => updateSearchParams({ view })}
+        />
       )}
       <p className={styles.disclaimer}>
         数据截至 2026-09-01 · 公开样本统计仅供参考，不代表官方处理时间或个人结果。
@@ -110,14 +98,47 @@ function FeatureTitle({ children, meta }: { children: string; meta: string }) {
   )
 }
 
+function FeatureSwitcher({
+  activeView,
+  onViewChange,
+}: {
+  activeView: View
+  onViewChange: (view: View) => void
+}) {
+  return (
+    <nav className={styles.tabs} aria-label="Checkmate 页面">
+      <button
+        type="button"
+        className={activeView === 'cities' ? styles.tabActive : styles.tab}
+        aria-current={activeView === 'cities' ? 'page' : undefined}
+        onClick={() => onViewChange('cities')}
+      >
+        白宫严选
+      </button>
+      <button
+        type="button"
+        className={activeView === 'peers' ? styles.tabActive : styles.tab}
+        aria-current={activeView === 'peers' ? 'page' : undefined}
+        onClick={() => onViewChange('peers')}
+      >
+        名人堂
+      </button>
+    </nav>
+  )
+}
+
 function WhiteHouseSelection({
   snapshot,
   selectedCity,
   onCityChange,
+  activeView,
+  onViewChange,
 }: {
   snapshot: CheckmateSnapshot
   selectedCity: CheckmateLocation | null
   onCityChange: (city: CheckmateLocation | null) => void
+  activeView: View
+  onViewChange: (view: View) => void
 }) {
   const [page, setPage] = useState(1)
   const selectedCases = useMemo(
@@ -137,6 +158,7 @@ function WhiteHouseSelection({
       <FeatureTitle meta={`截至 ${snapshot.manifest.snapshotDate}`}>
         2026年度白宫严选中国F1硕博
       </FeatureTitle>
+      <FeatureSwitcher activeView={activeView} onViewChange={onViewChange} />
       <div className={styles.cityGrid} aria-label="五个城市的等待时长统计">
         {CHECKMATE_LOCATIONS.map((city) => {
           const metrics = snapshot.locations[city]
@@ -304,7 +326,15 @@ function CityDetail({
   )
 }
 
-function HallOfFame({ snapshot }: { snapshot: HallSnapshot }) {
+function HallOfFame({
+  snapshot,
+  activeView,
+  onViewChange,
+}: {
+  snapshot: HallSnapshot
+  activeView: View
+  onViewChange: (view: View) => void
+}) {
   const [expanded, setExpanded] = useState(false)
   const [page, setPage] = useState(1)
   const cases = useMemo(
@@ -322,6 +352,7 @@ function HallOfFame({ snapshot }: { snapshot: HallSnapshot }) {
       <FeatureTitle meta={`${snapshot.metrics.totalCases} 个案例 · 截至 ${snapshot.snapshotDate}`}>
         名人堂
       </FeatureTitle>
+      <FeatureSwitcher activeView={activeView} onViewChange={onViewChange} />
       <section className={styles.hallSurface} aria-label="名人堂核心统计">
         <div className={styles.countStats}>
           <div>
