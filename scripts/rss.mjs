@@ -78,10 +78,12 @@ export async function generateRssFeed() {
   writeFileSync(path.join(projectRoot, 'public', RSS_PAGE), generateRss(sortPosts(publishPosts)))
 
   for (const tag of Object.keys(tagData)) {
-    const filteredPosts = blogs.filter((post) => post.tags.map((value) => slug(value)).includes(tag))
+    const filteredPosts = publishPosts.filter((post) => post.tags.map((value) => slug(value)).includes(tag))
+    if (filteredPosts.length === 0) continue
+
     const rssPath = path.join(projectRoot, 'public', 'tags', tag)
     mkdirSync(rssPath, { recursive: true })
-    writeFileSync(path.join(rssPath, RSS_PAGE), generateRss(filteredPosts, `tags/${tag}/feed.xml`))
+    writeFileSync(path.join(rssPath, RSS_PAGE), generateRss(sortPosts(filteredPosts), `tags/${tag}/feed.xml`))
   }
 
   console.log('🗒️. RSS feed generated.')

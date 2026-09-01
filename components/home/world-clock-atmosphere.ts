@@ -20,6 +20,7 @@ export type WorldClockAtmosphere = {
 
 // Temporary development-only override for visual review. Keep null for real Beijing time.
 export const DEBUG_TIME_PERIOD: BeijingTimePeriod | null = null
+export const DEBUG_BEIJING_TIME: string | null = null
 
 export const WORLD_CLOCK_ATMOSPHERES: Record<BeijingTimePeriod, WorldClockAtmosphere> = {
   midnight: {
@@ -75,6 +76,13 @@ export const WORLD_CLOCK_ATMOSPHERES: Record<BeijingTimePeriod, WorldClockAtmosp
 }
 
 export function getBeijingTimeParts(date: Date = new Date()): BeijingTimeParts {
+  if (process.env.NODE_ENV !== 'production' && DEBUG_BEIJING_TIME) {
+    const [hour, minute] = DEBUG_BEIJING_TIME.split(':').map(Number)
+    if (Number.isInteger(hour) && Number.isInteger(minute) && hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
+      return { hour, minute }
+    }
+  }
+
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: BEIJING_TIME_ZONE,
     hour: '2-digit',
@@ -87,6 +95,11 @@ export function getBeijingTimeParts(date: Date = new Date()): BeijingTimeParts {
     hour: Number(parts.find((part) => part.type === 'hour')?.value),
     minute: Number(parts.find((part) => part.type === 'minute')?.value),
   }
+}
+
+export function formatBeijingTime(date: Date = new Date()) {
+  const { hour, minute } = getBeijingTimeParts(date)
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
 }
 
 export function getBeijingTimePeriod(hour: number): BeijingTimePeriod {

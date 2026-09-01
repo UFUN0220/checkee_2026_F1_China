@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { allBlogs } from 'contentlayer/generated'
 import { allCoreContent } from '~/utils/contentlayer'
 import { getHomepageContentSettings, type HomepagePost } from '~/utils/homepage'
@@ -58,6 +59,8 @@ export async function POST(request: Request) {
   if (!saved) {
     return NextResponse.json({ error: 'Homepage settings storage is not configured' }, { status: 503 })
   }
+
+  revalidatePath('/')
 
   return NextResponse.json({ pinnedArticleSlug, saved: true })
 }
