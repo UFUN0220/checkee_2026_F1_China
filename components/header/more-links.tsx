@@ -25,14 +25,14 @@ export function MoreLinks() {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <MenuItems className="absolute right-0 z-50 mt-2 w-36 origin-top-right translate-x-[calc(50%-42px)] rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-black">
+          <MenuItems className="absolute right-0 z-50 mt-2 w-36 origin-top-right translate-x-[calc(50%-42px)] rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-[#1c1c1e] dark:ring-white/10">
             <div className="space-y-1 p-1">
               {MORE_NAV_LINKS.map(({ href, title, emoji }) => (
                 <MenuItem key={href} as="div">
                   {({ close }) => (
                     <Link
                       href={href}
-                      className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 hover:bg-gray-200 dark:hover:bg-gray-800"
+                      className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-gray-200 dark:hover:bg-white/8"
                       onClick={close}
                     >
                       <Twemoji emoji={emoji} />

@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import { KbarSearchTrigger } from '~/components/search/kbar-trigger'
 import { Container } from '~/components/ui/container'
-import { PinkHover } from '~/components/ui/PinkHover'
 import { Link } from '~/components/ui/link'
 import { HEADER_NAV_LINKS } from '~/data/navigation'
+import { SITE_METADATA } from '~/data/site-metadata'
 import { MoreLinks } from './more-links'
 import { Logo } from './logo'
 import { MobileNav } from './mobile-nav'
@@ -31,8 +31,8 @@ export function Header() {
       className={clsx(
         'bg-white/50 px-1 py-1 backdrop-blur dark:bg-dark/50',
         'shadow-sm saturate-100 md:rounded-full',
-        'mx-auto max-w-lg',
-        'sticky top-2 z-50 lg:top-8'
+        'mx-auto max-w-lg md:max-w-md',
+        SITE_METADATA.stickyNav && 'sticky top-2 z-50 lg:top-8'
       )}
     >
       <div className="flex items-center justify-center gap-3">
@@ -43,12 +43,13 @@ export function Header() {
               const isActive = pathname.startsWith(href)
               return (
                 <Link key={title} href={href} className="px-1 py-1 font-medium">
-                  <PinkHover
-                    className={clsx(isActive && 'bg-[length:100%_50%]')}
+                  <span
+                    className="nav-interactive"
+                    data-active={isActive}
                     data-umami-event={`nav-${href.replace('/', '')}`}
                   >
                     {title}
-                  </PinkHover>
+                  </span>
                 </Link>
               )
             })}

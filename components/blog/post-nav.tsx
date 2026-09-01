@@ -1,4 +1,3 @@
-import { GrowingUnderline } from '~/components/ui/growing-underline'
 import { Link } from '~/components/ui/link'
 
 export function PostNav({
@@ -19,7 +18,9 @@ export function PostNav({
           <div className="flex flex-col gap-1">
             <NavLabel label={`←  ${prevLabel}`} />
             <Link href={`/${prev.path}`}>
-              <GrowingUnderline data-umami-event="post-nav-prev">{prev.title}</GrowingUnderline>
+              <span className="nav-interactive" data-umami-event="post-nav-prev">
+                {prev.title}
+              </span>
             </Link>
           </div>
         ) : (
@@ -29,7 +30,9 @@ export function PostNav({
           <div className="flex flex-col items-end gap-1 text-right">
             <NavLabel label={`${nextLabel}  →`} />
             <Link href={`/${next.path}`}>
-              <GrowingUnderline data-umami-event="post-nav-next">{next.title}</GrowingUnderline>
+              <span className="nav-interactive" data-umami-event="post-nav-next">
+                {next.title}
+              </span>
             </Link>
           </div>
         )}

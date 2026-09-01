@@ -9,11 +9,11 @@ const IMAGE_CARDS = {
   },
 } as const
 
-export function ImageWidgetCard({ side }: { side: keyof typeof IMAGE_CARDS }) {
+export function ImageWidgetCard({ side, layout = 'desktop' }: { side: keyof typeof IMAGE_CARDS; layout?: 'desktop' | 'flow' }) {
   const image = IMAGE_CARDS[side]
 
   return (
-    <WidgetShell widget={image.widget} label={image.label}>
+    <WidgetShell widget={image.widget} label={image.label} layout={layout}>
       <div className="home-image-card">
         <img src={image.src} alt={image.alt} draggable={false} />
       </div>

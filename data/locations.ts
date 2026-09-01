@@ -1,10 +1,10 @@
-import type { WeatherLocationConfig, WorldClockCity } from '~/types/home-widgets'
+import type { LocationRecord, WeatherLocationConfig, WorldClockCity } from '~/types/home-widgets'
 
 // Keep location facts in one registry so future admin data only needs to store IDs.
 export const locations = {
   'st-louis': {
     id: 'st-louis',
-    name: 'St. Louis',
+    city: '圣路易斯',
     displayName: 'St. Louis',
     latitude: 38.627,
     longitude: -90.1994,
@@ -13,7 +13,7 @@ export const locations = {
   },
   'qingdao-shinan': {
     id: 'qingdao-shinan',
-    name: 'Qingdao Shinan District',
+    city: '青岛市市南区',
     displayName: '青岛市市南区',
     // Shinan District center: 36°04′N, 120°19′E.
     latitude: 36.0667,
@@ -23,14 +23,14 @@ export const locations = {
   },
   beijing: {
     id: 'beijing',
-    name: 'Beijing',
+    city: '北京',
     displayName: 'Beijing',
     latitude: 39.9042,
     longitude: 116.4074,
     timezone: 'Asia/Shanghai',
     country: 'CN',
   },
-} satisfies Record<string, WeatherLocationConfig>
+} satisfies Record<string, LocationRecord>
 
 export type LocationId = keyof typeof locations
 
@@ -41,7 +41,7 @@ export function getLocationById(locationId: string): WeatherLocationConfig | und
 export function toWorldClockCity(location: WeatherLocationConfig): WorldClockCity {
   return {
     id: location.id,
-    city: location.displayName,
+    city: location.city,
     timezone: location.timezone,
     country: location.country,
   }

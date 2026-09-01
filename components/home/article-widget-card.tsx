@@ -7,6 +7,7 @@ type ArticleWidgetCardProps = {
   widget: 'latestArticle' | 'pinnedArticle'
   label: string
   article?: HomepagePost
+  layout?: 'desktop' | 'flow'
 }
 
 function formatArticleDate(date: string) {
@@ -17,11 +18,11 @@ function formatArticleDate(date: string) {
   }).format(new Date(date))
 }
 
-export function ArticleWidgetCard({ widget, label, article }: ArticleWidgetCardProps) {
+export function ArticleWidgetCard({ widget, label, article, layout = 'desktop' }: ArticleWidgetCardProps) {
   const href = article ? `/blog/${article.slug}` : '/blog'
 
   return (
-    <WidgetShell widget={widget} label={label}>
+    <WidgetShell widget={widget} label={label} layout={layout}>
       <Link className="home-article-card" href={href} aria-label={`${label}: ${article?.title || 'Article archive'}`}>
         <div className="home-widget-kicker">{label}</div>
         <div className="home-article-content">

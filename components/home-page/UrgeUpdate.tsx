@@ -1,138 +1,183 @@
 'use client'
 
-// 1. 引入新的图标：Rocket(火箭), Flame(火焰)
 import { Bell, Flame, Heart, Rocket, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
+type UrgeStatus = 'loading' | 'idle' | 'press' | 'success' | 'rate-limited' | 'error'
+
+type UrgeResponse = {
+  count?: number
+  available?: boolean
+  accepted?: boolean
+  code?: string
+  retryAfter?: number
+}
+
+function getCopy(userClickCount: number, status: UrgeStatus) {
+  if (status === 'loading') return '准备中'
+  if (status === 'rate-limited') return '先歇会儿再点吧～'
+  if (status === 'error') return '稍后再试'
+
+  switch (userClickCount) {
+    case 0:
+      return '催更'
+    case 1:
+      return '在写了(づ｡◕‿‿◕｡)づ'
+    case 2:
+      return '好啦别点了૮꒰ ˶• ༝ •˶꒱ა'
+    case 3:
+      return '点也没用૮₍˃⤙˂₎ა'
+    default:
+      return '那你点吧^⦁⩊⦁^ ੭'
+  }
+}
+
+function getButtonState(userClickCount: number, status: UrgeStatus) {
+  const text = getCopy(userClickCount, status)
+  if (status === 'rate-limited' || status === 'error') {
+    return {
+      text,
+      colorClass: 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-300',
+      icon: <Bell className="h-8 w-8" aria-hidden="true" />,
+      ping: false,
+    }
+  }
+
+  switch (userClickCount) {
+    case 0:
+      return {
+        text,
+        colorClass:
+          'bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40',
+        icon: <Bell className="h-8 w-8 group-hover:animate-wiggle" aria-hidden="true" />,
+        ping: status === 'idle',
+      }
+    case 1:
+      return {
+        text,
+        colorClass: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400',
+        icon: <Sparkles className="h-8 w-8" aria-hidden="true" />,
+        ping: false,
+      }
+    case 2:
+      return {
+        text,
+        colorClass: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
+        icon: <Rocket className="h-8 w-8" aria-hidden="true" />,
+        ping: false,
+      }
+    case 3:
+      return {
+        text,
+        colorClass: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400',
+        icon: <Flame className="h-8 w-8 animate-bounce" aria-hidden="true" />,
+        ping: false,
+      }
+    default:
+      return {
+        text,
+        colorClass:
+          'bg-pink-100 text-pink-500 hover:bg-pink-200 dark:bg-pink-900/30 dark:text-pink-400 dark:hover:bg-pink-900/50',
+        icon: <Heart className="h-8 w-8 animate-pulse fill-current" aria-hidden="true" />,
+        ping: false,
+      }
+  }
+}
+
 export function UrgeUpdate({ variant = 'default' }: { variant?: 'default' | 'home' }) {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState<number | null>(null)
   const [userClickCount, setUserClickCount] = useState(0)
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [status, setStatus] = useState<UrgeStatus>('loading')
+  const [retryAfter, setRetryAfter] = useState(0)
 
   useEffect(() => {
-    const hasUrged = localStorage.getItem('hasUrged')
-    // 如果以前点过，这里为了演示多状态，我们还是让它从 0 或者 1 开始
-    // 如果你想保留用户的精确点击数，需要存 localStorage 具体数字，这里简化处理设为 1
-    if (hasUrged) {
-      setUserClickCount(0)
-    }
+    const controller = new AbortController()
 
     async function fetchCount() {
       try {
-        const res = await fetch('/api/urge')
-        if (!res.ok) return
-        const data = await res.json()
-        setCount(data.count || 0)
-      } catch (error) {
-        console.error('获取催更数据失败', error)
-      } finally {
-        setIsLoading(false)
+        const response = await fetch('/api/urge', { signal: controller.signal })
+        const payload = (await response.json()) as UrgeResponse
+        if (!response.ok || payload.available === false) throw new Error('Urge count unavailable')
+        setCount(typeof payload.count === 'number' ? payload.count : 0)
+        setStatus('idle')
+      } catch {
+        if (!controller.signal.aborted) {
+          setCount(null)
+          setStatus('error')
+        }
       }
     }
 
     fetchCount()
+    return () => controller.abort()
   }, [])
 
-  const handleUrge = async () => {
-    if (isLoading) return
+  useEffect(() => {
+    if (retryAfter <= 0) return
+    const timer = window.setInterval(() => {
+      setRetryAfter((value) => Math.max(0, value - 1))
+    }, 1000)
+    return () => window.clearInterval(timer)
+  }, [retryAfter])
 
-    setIsAnimating(true)
-    setCount((prev) => prev + 1)
-    setUserClickCount((prev) => prev + 1)
+  useEffect(() => {
+    if (retryAfter === 0 && status === 'rate-limited') setStatus('idle')
+  }, [retryAfter, status])
 
-    if (userClickCount === 0) {
-      localStorage.setItem('hasUrged', 'true')
-    }
+  async function handleUrge() {
+    if (status === 'loading' || status === 'press' || status === 'rate-limited' || count === null) return
 
-    setTimeout(() => setIsAnimating(false), 300)
-
+    setStatus('press')
     try {
-      await fetch('/api/urge', { method: 'POST' })
-    } catch (error) {
-      console.error('催更失败', error)
+      const response = await fetch('/api/urge', { method: 'POST' })
+      const payload = (await response.json()) as UrgeResponse
+
+      if (payload.code === 'RATE_LIMITED') {
+        setRetryAfter(payload.retryAfter || 60)
+        setStatus('rate-limited')
+        if (typeof payload.count === 'number') setCount(payload.count)
+        return
+      }
+
+      if (!response.ok || payload.accepted !== true || typeof payload.count !== 'number') {
+        throw new Error('Urge was not accepted')
+      }
+
+      setCount(payload.count)
+      setUserClickCount((value) => value + 1)
+      setStatus('success')
+      window.setTimeout(() => setStatus('idle'), 900)
+    } catch {
+      setStatus('error')
     }
   }
 
-  // 2. 定义不同阶段的状态配置
-  const getButtonState = () => {
-    switch (userClickCount) {
-      case 0:
-        return {
-          text: '催更',
-          // 红色：紧急
-          colorClass:
-            'bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40',
-          icon: <Bell className="h-8 w-8 group-hover:animate-wiggle" />,
-          ping: true,
-        }
-      case 1:
-        return {
-          text: '在写了(づ｡◕‿‿◕｡)づ',
-          // 绿色：安抚
-          colorClass: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400',
-          icon: <Sparkles className="h-8 w-8" />,
-          ping: false,
-        }
-      case 2:
-        return {
-          text: '好啦别点了૮꒰ ˶• ༝ •˶꒱ა',
-          // 紫色：神秘/科技感
-          colorClass: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
-          icon: <Rocket className="h-8 w-8 group-hover:animate-pulse" />,
-          ping: false,
-        }
-      case 3:
-        return {
-          text: '点也没用૮₍˃⤙˂₎ა',
-          // 橙色：警告/焦虑
-          colorClass: 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400',
-          icon: <Flame className="h-8 w-8 animate-bounce" />, // 火焰跳动
-          ping: false,
-        }
-      default:
-        return {
-          text: '那你点吧^⦁⩊⦁^ ੭',
-          // 粉色：摆烂/爱心
-          colorClass:
-            'bg-pink-100 text-pink-500 hover:bg-pink-200 dark:bg-pink-900/30 dark:text-pink-400 dark:hover:bg-pink-900/50',
-          icon: <Heart className="h-8 w-8 animate-pulse fill-current" />,
-          ping: false,
-        }
-    }
-  }
-
-  const currentState = getButtonState()
+  const buttonState = getButtonState(userClickCount, status)
+  const isDisabled = status === 'loading' || status === 'press' || status === 'rate-limited' || count === null
 
   return (
     <div
       className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-[1.25rem] border p-4 shadow transition-all hover:shadow-md dark:border-gray-600 ${variant === 'home' ? 'home-urge-content' : ''}`}
     >
-      {/* <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-        催更
-      </h3> */}
-
       <button
+        type="button"
         onClick={handleUrge}
-        className={`group relative flex h-16 w-16 cursor-pointer items-center justify-center rounded-full transition-all duration-500 ${currentState.colorClass} ${isAnimating ? 'scale-90' : 'hover:scale-110'} ${variant === 'home' ? 'home-urge-button' : ''}`}
+        disabled={isDisabled}
+        aria-label="催更作者"
+        className={`group relative flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-500 disabled:cursor-not-allowed disabled:opacity-70 ${buttonState.colorClass} ${status === 'press' || status === 'success' ? 'scale-90' : 'hover:scale-110'} ${variant === 'home' ? 'home-urge-button' : ''}`}
       >
-        {currentState.icon}
-
-        {currentState.ping && (
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-20 duration-1000"></span>
-        )}
+        {buttonState.icon}
+        {buttonState.ping ? (
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-20 duration-1000" />
+        ) : null}
       </button>
 
-      <div className="home-urge-copy mt-3 flex flex-col items-center">
-        {/* 这里加了一个 key，当 text 变化时会触发微小的淡入动画 */}
-        <span
-          key={currentState.text}
-          className="animate-scale-up text-sm font-bold text-gray-800 transition-colors duration-300 dark:text-gray-200"
-        >
-          {currentState.text}
+      <div className="home-urge-copy mt-3 flex flex-col items-center" aria-live="polite">
+        <span className="animate-scale-up text-center text-sm font-bold text-gray-800 transition-colors duration-300 dark:text-gray-200">
+          {buttonState.text}
         </span>
         <span className="home-urge-count mt-2 text-xs text-gray-400 dark:text-gray-500">
-          {isLoading ? '加载中...' : `已有 ${count} 次催更`}
+          {status === 'loading' ? '—' : count === null ? '暂时无法读取' : `已有 ${count} 次催更`}
         </span>
       </div>
     </div>

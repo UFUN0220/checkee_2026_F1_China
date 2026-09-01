@@ -7,9 +7,10 @@ type WidgetShellProps = {
   children: ReactNode
   className?: string
   label: string
+  layout?: 'desktop' | 'flow'
 }
 
-export function WidgetShell({ widget, children, className, label }: WidgetShellProps) {
+export function WidgetShell({ widget, children, className, label, layout = 'desktop' }: WidgetShellProps) {
   const geometry = desktopWidgets[widget]
   const style = {
     '--widget-width': `${geometry.width}px`,
@@ -18,6 +19,14 @@ export function WidgetShell({ widget, children, className, label }: WidgetShellP
     '--widget-y': `${geometry.y}px`,
     '--widget-delay': `${geometry.delay}ms`,
   } as CSSProperties
+
+  if (layout === 'flow') {
+    return (
+      <section className={clsx('mobile-widget', className)} aria-label={label}>
+        {children}
+      </section>
+    )
+  }
 
   return (
     <div className={clsx('home-widget-positioner', className)} style={style}>

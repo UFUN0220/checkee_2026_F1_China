@@ -1,93 +1,47 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import type { WorldClockCity } from '~/types/home-widgets'
+import {
+  getBeijingTimeAtmosphere,
+  WORLD_CLOCK_ATMOSPHERES,
+  type BeijingTimePeriod,
+} from './world-clock-atmosphere'
+import { formatCityTime, formatTimeZoneName, getNextMinuteDelay, getRelativeDayLabel } from '~/utils/world-clock'
 
 type WorldClockWidgetProps = {
   cities: WorldClockCity[]
 }
 
-type DateParts = {
-  year: number
-  month: number
-  day: number
-}
-
-function getDateParts(date: Date, timeZone: string): DateParts {
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone,
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  }).formatToParts(date)
-
-  return {
-    year: Number(parts.find((part) => part.type === 'year')?.value),
-    month: Number(parts.find((part) => part.type === 'month')?.value),
-    day: Number(parts.find((part) => part.type === 'day')?.value),
-  }
-}
-
-function getReferenceDateParts(date: Date): DateParts {
-  return {
-    year: date.getFullYear(),
-    month: date.getMonth() + 1,
-    day: date.getDate(),
-  }
-}
-
-function dateNumber(parts: DateParts) {
-  return Date.UTC(parts.year, parts.month - 1, parts.day)
-}
-
-function getRelativeDayLabel(date: Date, timeZone: string) {
-  const difference = Math.round(
-    (dateNumber(getDateParts(date, timeZone)) - dateNumber(getReferenceDateParts(date))) /
-      86_400_000
-  )
-
-  if (difference === 0) return '今天'
-  if (difference === 1) return '明天'
-  if (difference === -1) return '昨天'
-
-  return new Intl.DateTimeFormat('zh-CN', {
-    timeZone,
-    month: 'numeric',
-    day: 'numeric',
-  }).format(date)
-}
-
-function formatCityTime(date: Date, timeZone: string) {
-  return new Intl.DateTimeFormat('en-US', {
-    timeZone,
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    hourCycle: 'h23',
-  }).format(date)
-}
-
-function formatTimeZoneName(date: Date, timeZone: string) {
-  return new Intl.DateTimeFormat('en-US', {
-    timeZone,
-    timeZoneName: 'short',
-  })
-    .formatToParts(date)
-    .find((part) => part.type === 'timeZoneName')?.value
-}
-
-function getNextMinuteDelay() {
-  return 60_000 - (Date.now() % 60_000)
-}
-
 export function WorldClockWidget({ cities }: WorldClockWidgetProps) {
   const [now, setNow] = useState<Date | null>(null)
+  const [timePeriod, setTimePeriod] = useState<BeijingTimePeriod>('day')
+  const atmosphere = WORLD_CLOCK_ATMOSPHERES[timePeriod]
+  const atmosphereStyle = {
+    '--wc-ambient-primary': atmosphere.ambientPrimary,
+    '--wc-ambient-secondary': atmosphere.ambientSecondary,
+    '--wc-ambient-position': atmosphere.ambientPosition,
+    '--wc-ambient-secondary-position': atmosphere.ambientSecondaryPosition,
+    '--wc-ambient-opacity': atmosphere.ambientOpacity,
+    '--wc-ambient-spread': atmosphere.ambientSpread,
+    '--wc-ambient-secondary-spread': atmosphere.ambientSecondarySpread,
+  } as CSSProperties
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined
+    const updateClock = () => {
+      const nextNow = new Date()
+      setNow(nextNow)
+      setTimePeriod((currentPeriod) => {
+        const nextPeriod = getBeijingTimeAtmosphere(nextNow)
+        return currentPeriod === nextPeriod ? currentPeriod : nextPeriod
+      })
+    }
+
+    updateClock()
     const timeout = setTimeout(() => {
-      setNow(new Date())
-      interval = setInterval(() => setNow(new Date()), 60_000)
+      updateClock()
+      interval = setInterval(updateClock, 60_000)
     }, getNextMinuteDelay())
 
     return () => {
@@ -97,11 +51,11 @@ export function WorldClockWidget({ cities }: WorldClockWidgetProps) {
   }, [])
 
   return (
-    <div className="home-world-clock-card">
-      <div className="home-world-clock-heading">
-        <span className="home-widget-kicker">世界时钟</span>
-        <span className="home-world-clock-count">{cities.length} 个城市</span>
-      </div>
+    <div className="home-world-clock-card" data-time-period={timePeriod} style={atmosphereStyle}>
+      <div className="home-world-clock-atmosphere" aria-hidden="true" />
+      <span className="sr-only">
+        北京时间氛围：{WORLD_CLOCK_ATMOSPHERES[timePeriod].label}
+      </span>
       <div className="home-world-clock-rows">
         {cities.map((city) => (
           <div className="home-world-clock-row" key={city.id}>

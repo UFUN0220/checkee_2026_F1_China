@@ -10,11 +10,11 @@ import { ProfileCard } from './profile-card'
 import { WeatherWidget } from './weather-widget'
 import { WorldClockWidget } from './world-clock-widget'
 import { UrgeUpdate } from '~/components/home-page/UrgeUpdate'
-import { getHomepageWeatherLocation, getHomepageWorldClockCities } from '~/utils/homepage-live-widgets'
+import { getHomepageWorldClockCities } from '~/utils/homepage-live-widgets'
 
-function CalendarCard() {
+function CalendarCard({ layout = 'desktop' }: { layout?: 'desktop' | 'flow' }) {
   return (
-    <WidgetShell widget="calendar" label="Calendar">
+    <WidgetShell widget="calendar" label="Calendar" layout={layout}>
       <div className="home-calendar-card">
         <div className="home-calendar-heading">
           <CalendarDays size={16} strokeWidth={1.8} />
@@ -28,7 +28,15 @@ function CalendarCard() {
   )
 }
 
-export function DesktopHomeCanvas({ latestPost, pinnedPost }: { latestPost?: HomepagePost; pinnedPost?: HomepagePost }) {
+export function DesktopHomeCanvas({
+  latestPost,
+  pinnedPost,
+  weatherLocation,
+}: {
+  latestPost?: HomepagePost
+  pinnedPost?: HomepagePost
+  weatherLocation: Parameters<typeof WeatherWidget>[0]['location']
+}) {
   return (
     <div className="desktop-home-page">
       <div className="home-ambient" aria-hidden="true" />
@@ -38,7 +46,7 @@ export function DesktopHomeCanvas({ latestPost, pinnedPost }: { latestPost?: Hom
           <ProfileCard />
           <ContactCluster />
           <WidgetShell widget="weather" label="天气">
-            <WeatherWidget location={getHomepageWeatherLocation()} />
+            <WeatherWidget location={weatherLocation} />
           </WidgetShell>
           <WidgetShell widget="worldClock" label="世界时钟">
             <WorldClockWidget cities={getHomepageWorldClockCities()} />

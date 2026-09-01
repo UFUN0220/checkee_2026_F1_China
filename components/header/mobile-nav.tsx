@@ -36,11 +36,16 @@ export function MobileNav() {
     <>
       <div
         className={clsx([
-          'text-ink dark:text-cream flex items-center justify-center rounded p-1.5 hover:bg-black/5 dark:hover:bg-white/5',
+          'rounded p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700',
+          'flex items-center justify-center hidden sm:hidden',
         ])}
         data-umami-event="mobile-nav-toggle"
       >
-        <button aria-label="Toggle Menu" onClick={onToggleNav}>
+        <button
+          aria-label="Toggle Menu"
+          onClick={onToggleNav}
+          className="flex h-11 w-11 items-center justify-center"
+        >
           <Menu size={22} />
         </button>
       </div>

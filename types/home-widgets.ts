@@ -1,12 +1,24 @@
-export type WeatherLocationConfig = {
+export type WeatherCondition =
+  | 'thunderstorm'
+  | 'drizzle'
+  | 'rain'
+  | 'snow'
+  | 'atmosphere'
+  | 'clear'
+  | 'clouds'
+  | 'unknown'
+
+export type LocationRecord = {
   id: string
-  name: string
+  city: string
   displayName: string
   latitude: number
   longitude: number
   timezone: string
   country?: string
 }
+
+export type WeatherLocationConfig = LocationRecord
 
 export type WorldClockCity = {
   id: string
@@ -23,10 +35,8 @@ export type HomepageLiveWidgetsConfig = {
 export type WeatherSnapshot = {
   temperature: number
   feelsLike?: number
-  condition: string
+  condition: WeatherCondition
   conditionCode?: string
-  high?: number
-  low?: number
   humidity?: number
   windSpeed?: number
   precipitationProbability?: number

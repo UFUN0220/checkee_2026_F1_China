@@ -4,7 +4,6 @@ import type { Blog } from 'contentlayer/generated'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { Container } from '~/components/ui/container'
-import { GrowingUnderline } from '~/components/ui/growing-underline'
 import { Link } from '~/components/ui/link'
 import type { CoreContent } from '~/types/data'
 import '~/css/ufunReadme.css'
@@ -33,39 +32,31 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
       <nav className="flex justify-between">
         {prevPage ? (
           <Link
-            className="cursor-pointer"
+            className="nav-interactive cursor-pointer gap-2"
             href={currentPage - 1 === 1 ? `/${basePath}/` : `/${basePath}/page/${currentPage - 1}`}
             rel="prev"
           >
-            <GrowingUnderline className="inline-flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Previous</span>
-            </GrowingUnderline>
+            <ArrowLeft className="h-4 w-4" />
+            <span>Previous</span>
           </Link>
         ) : (
-          <button className="cursor-auto disabled:opacity-50" disabled={!prevPage}>
-            <GrowingUnderline className="inline-flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Previous</span>
-            </GrowingUnderline>
+          <button className="nav-interactive cursor-auto" disabled={!prevPage}>
+            <ArrowLeft className="h-4 w-4" />
+            <span>Previous</span>
           </button>
         )}
         <span>
           {currentPage} / {totalPages}
         </span>
         {nextPage ? (
-          <Link className="cursor-pointer" href={`/${basePath}/page/${currentPage + 1}`} rel="next">
-            <GrowingUnderline className="inline-flex items-center gap-2">
-              <span>Next</span>
-              <ArrowRight className="h-4 w-4" />
-            </GrowingUnderline>
+          <Link className="nav-interactive cursor-pointer gap-2" href={`/${basePath}/page/${currentPage + 1}`} rel="next">
+            <span>Next</span>
+            <ArrowRight className="h-4 w-4" />
           </Link>
         ) : (
-          <button className="cursor-auto disabled:opacity-50" disabled={!nextPage}>
-            <GrowingUnderline className="inline-flex items-center gap-2">
-              <span>Next</span>
-              <ArrowRight className="h-4 w-4" />
-            </GrowingUnderline>
+          <button className="nav-interactive cursor-auto" disabled={!nextPage}>
+            <span>Next</span>
+            <ArrowRight className="h-4 w-4" />
           </button>
         )}
       </nav>

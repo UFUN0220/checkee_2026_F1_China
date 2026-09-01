@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { SITE_METADATA } from '~/data/site-metadata'
 import { WidgetShell } from './widget-shell'
 
-export function ProfileCard() {
+export function ProfileCard({ layout = 'desktop' }: { layout?: 'desktop' | 'flow' }) {
   const [clickCount, setClickCount] = useState(0)
 
   const handleCopyClick = () => {
@@ -17,7 +17,7 @@ export function ProfileCard() {
   }
 
   return (
-    <WidgetShell widget="profile" label="uFun profile">
+    <WidgetShell widget="profile" label="uFun profile" layout={layout}>
       <div className="home-profile-card home-ufun-profile-card">
         <div className="home-ufun-heading">
           <span className="home-ufun-pre">uFun Pre</span>
