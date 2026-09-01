@@ -1,25 +1,21 @@
 import { genPageMetadata } from '~/app/seo'
-import UfunReadme from './ufunReadme'
-export const metadata = genPageMetadata({ title: 'README' })
+import { CheckmateExperience } from '~/components/checkmate/checkmate-experience'
+import type { CheckmateSnapshot, HallSnapshot } from '~/data/checkmate/types'
+import checkeeSnapshotJson from '~/json/checkmate/checkee-static-snapshot.json'
+import hallSnapshotJson from '~/json/checkmate/page2-static-snapshot.json'
+import { Suspense } from 'react'
+
+export const metadata = genPageMetadata({ title: 'Check' })
+
+const checkeeSnapshot = checkeeSnapshotJson as CheckmateSnapshot
+const hallSnapshot = hallSnapshotJson as HallSnapshot
 
 export default function AboutPage() {
-  // import type { Author } from 'contentlayer/generated'
-  // import { allAuthors } from 'contentlayer/generated'
-  // import { AuthorLayout } from '~/layouts/author-layout'
-  // import { coreContent } from '~/utils/contentlayer'
-  // let author = allAuthors.find((p) => p.slug === 'default') as Author
-  // let mainContent = coreContent(author)
-
-  // return (
-  //   <AuthorLayout content={mainContent}>
-  //     {/* TODO: MDX seems to be broken on this page, so I'm back to JSX for now */}
-  //     {/* <MDXLayoutRenderer code={author.body.code} /> */}
-  //   </AuthorLayout>
-  // )
-
   return (
-    <div className="pt-12">
-      <UfunReadme />
+    <div className="site-container">
+      <Suspense fallback={null}>
+        <CheckmateExperience checkeeSnapshot={checkeeSnapshot} hallSnapshot={hallSnapshot} />
+      </Suspense>
     </div>
   )
 }

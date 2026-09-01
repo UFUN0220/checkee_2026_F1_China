@@ -80,7 +80,7 @@ export function CheckmateExperience({
           type="button"
           className={activeView === 'peers' ? styles.tabActive : styles.tab}
           aria-current={activeView === 'peers' ? 'page' : undefined}
-          onClick={() => updateSearchParams({ view: 'peers', city: null })}
+          onClick={() => updateSearchParams({ view: 'peers' })}
         >
           名人堂
         </button>
