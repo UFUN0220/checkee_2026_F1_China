@@ -10,6 +10,7 @@ import { Twemoji } from '~/components/ui/twemoji'
 import { HEADER_NAV_LINKS, MORE_NAV_LINKS } from '~/data/navigation'
 import { SITE_METADATA } from '~/data/site-metadata'
 import { Logo } from './logo'
+import { ThemeSwitcher } from './theme-switcher'
 
 export function MobileNav() {
   const [navShow, setNavShow] = useState(false)
@@ -35,8 +36,7 @@ export function MobileNav() {
     <>
       <div
         className={clsx([
-          'rounded p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700',
-          'flex items-center justify-center hidden sm:hidden',
+          'text-ink dark:text-cream flex items-center justify-center rounded p-1.5 hover:bg-black/5 dark:hover:bg-white/5',
         ])}
         data-umami-event="mobile-nav-toggle"
       >
@@ -68,29 +68,34 @@ export function MobileNav() {
             leaveTo="translate-x-full opacity-0"
             unmount={false}
           >
-            <DialogPanel className="fixed left-0 top-0 z-70 h-full w-full bg-white opacity-95 duration-300 dark:bg-gray-950 dark:opacity-[0.98]">
-              <div className="flex items-center gap-3 pl-10 pt-8">
+            <DialogPanel className="bg-paper dark:bg-paper-dark fixed inset-0 z-70 h-full w-full px-6 duration-300 sm:px-10">
+              <div className="flex items-center gap-3 pt-7">
                 <Logo />
-                <span className="font-medium">{SITE_METADATA.headerTitle}</span>
+                <span className="text-muted dark:text-muted-dark text-sm font-semibold">
+                  {SITE_METADATA.headerTitle}
+                </span>
               </div>
               <nav
                 ref={navRef}
-                className="mt-4 flex h-full basis-0 flex-col items-start gap-4 overflow-y-auto pl-10 pt-2"
+                className="mt-16 flex h-full basis-0 flex-col items-start gap-6 overflow-y-auto pt-2"
               >
                 {[...HEADER_NAV_LINKS, ...MORE_NAV_LINKS].map((link) => (
                   <Link
                     key={link.title}
                     href={link.href}
-                    className="py-1 text-xl font-bold tracking-widest text-gray-900 outline outline-0 hover:text-primary-500 dark:text-gray-100 dark:hover:text-primary-400"
+                    className="font-display text-ink hover:text-accent dark:text-cream dark:hover:text-accent-soft py-1 text-4xl tracking-[-0.04em] outline outline-0"
                     onClick={onToggleNav}
                   >
                     <Twemoji emoji={link.emoji} />
                     <span className="ml-2">{link.title}</span>
                   </Link>
                 ))}
+                <div className="mt-5">
+                  <ThemeSwitcher />
+                </div>
               </nav>
               <button
-                className="fixed right-4 top-5 z-80 h-16 w-16 p-4 text-gray-900 hover:text-primary-500 dark:text-gray-100 dark:hover:text-primary-400"
+                className="text-ink hover:text-accent dark:text-cream dark:hover:text-accent-soft fixed top-5 right-4 z-80 h-12 w-12 p-3"
                 aria-label="Toggle Menu"
                 onClick={onToggleNav}
               >

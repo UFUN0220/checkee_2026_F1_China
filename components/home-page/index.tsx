@@ -1,328 +1,307 @@
 import type { Blog } from 'contentlayer/generated'
-import {
-  Boxes,
-  BriefcaseBusiness,
-  Code2,
-  FileText,
-  GitBranch,
-  Mail,
-  Network,
-  NotebookText,
-  PencilLine,
-  Sparkles,
-} from 'lucide-react'
+import { ArrowUpRight, GitBranch, Mail, MoveUpRight, Network } from 'lucide-react'
 import { Link } from '~/components/ui/link'
 import { SITE_METADATA } from '~/data/site-metadata'
 import type { CoreContent } from '~/types/data'
-import { LocationTimeWeather } from './LocationTimeWeather'
+import { DynamicGreeting } from './dynamic-greeting'
+import { SectionReveal } from './section-reveal'
 
 type HomePost = CoreContent<Blog>
 
-const HERO_IMAGES = [
-  '/static/images/mainPage/washu_home.jpg',
-  '/static/images/mainPage/washu_sky.jpg',
-  '/static/images/mainPage/jsu.jpg',
-  '/static/images/mainPage/qingdao_home2.jpg',
-  '/static/images/mainPage/stl_home.png',
+const SELECTED_PROJECTS = [
+  {
+    title: 'Kaggle · Multimodal Valuation',
+    year: '2026',
+    category: 'Machine learning / Competition',
+    description:
+      'A small-data experiment in feature engineering, model stability, and knowing when to prune.',
+    image: '/static/images/mainPage/washu_sky.jpg',
+    href: '/blog/kaggleLog',
+    stack: 'LightGBM · CatBoost · DeBERTa',
+  },
+  {
+    title: 'UFUN Knowledge Base',
+    year: 'ongoing',
+    category: 'Personal system / Writing',
+    description:
+      'A calm corner for notes, field logs, technical detours, and things worth remembering.',
+    image: '/static/images/mainPage/ujs_lib.jpg',
+    href: '/blog',
+    stack: 'Next.js · Contentlayer · TypeScript',
+  },
+  {
+    title: 'Backend & AI Notes',
+    year: '2025—26',
+    category: 'Engineering / Study',
+    description:
+      'Working notes from APIs, databases, distributed systems, and the long road through AI.',
+    image: '/static/images/mainPage/stl_home.png',
+    href: '/tags',
+    stack: 'Java · Spring · Redis · Python',
+  },
+  {
+    title: 'Jiangsu University Archive',
+    year: '2020—24',
+    category: 'Archive / Personal history',
+    description: 'A small visual record of where the first chapters of this work began.',
+    image: '/static/images/mainPage/jsu.jpg',
+    href: '/about',
+    stack: 'Computer science · Curiosity',
+  },
 ]
 
-
-
-function formatDate(date?: string) {
-  if (!date) return '2026/7/6'
-  return new Intl.DateTimeFormat('zh-CN', {
+function formatDate(date: string) {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: '2-digit',
     year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
   }).format(new Date(date))
 }
 
-function GlassCard({
-  children,
-  className = '',
+function SectionHeading({
+  eyebrow,
+  title,
+  href,
+  linkLabel,
 }: {
-  children: React.ReactNode
-  className?: string
+  eyebrow: string
+  title: string
+  href?: string
+  linkLabel?: string
 }) {
   return (
-    <section
-      className={`rounded-[2rem] border border-white/65 bg-white/42 shadow-[0_18px_60px_rgba(125,82,112,0.14)] ring-1 ring-white/35 backdrop-blur-3xl ${className}`}
-    >
-      {children}
+    <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p className="eyebrow">{eyebrow}</p>
+        <h2 className="font-display text-ink dark:text-cream mt-2 text-3xl tracking-[-0.04em] sm:text-4xl">
+          {title}
+        </h2>
+      </div>
+      {href && linkLabel ? (
+        <Link
+          href={href}
+          className="text-muted hover:text-accent dark:text-muted-dark dark:hover:text-accent-soft inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+        >
+          {linkLabel}
+          <ArrowUpRight size={16} strokeWidth={1.8} />
+        </Link>
+      ) : null}
+    </div>
+  )
+}
+
+function Hero() {
+  return (
+    <section className="grid gap-12 pt-16 pb-20 sm:pt-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)] lg:items-end lg:gap-16 lg:pt-28 lg:pb-28">
+      <div>
+        <div className="text-muted dark:text-muted-dark flex items-center gap-3 text-sm font-semibold">
+          <span className="bg-accent h-2 w-2 rounded-full shadow-[0_0_0_5px_rgb(194_74_45_/_0.12)]" />
+          <DynamicGreeting />
+        </div>
+        <h1 className="font-display text-ink dark:text-cream mt-7 max-w-4xl text-[clamp(3.2rem,8vw,6.7rem)] leading-[0.94] tracking-[-0.075em]">
+          I build useful things,
+          <span className="text-accent block">and keep notes.</span>
+        </h1>
+        <p className="text-muted dark:text-muted-dark mt-8 max-w-2xl text-lg leading-8 sm:text-xl sm:leading-9">
+          I&apos;m Fang — a backend engineer and AI &amp; data enthusiast based in St. Louis. This
+          is my corner of the internet for building, learning, and paying attention.
+        </p>
+        <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-semibold">
+          <Link href={SITE_METADATA.github} className="link-with-arrow">
+            <GitBranch size={17} strokeWidth={1.7} />
+            GitHub
+            <MoveUpRight size={14} strokeWidth={1.8} />
+          </Link>
+          <Link href={SITE_METADATA.linkedin} className="link-with-arrow">
+            <Network size={17} strokeWidth={1.7} />
+            LinkedIn
+            <MoveUpRight size={14} strokeWidth={1.8} />
+          </Link>
+          <Link href={`mailto:${SITE_METADATA.email}`} className="link-with-arrow">
+            <Mail size={17} strokeWidth={1.7} />
+            Email
+            <MoveUpRight size={14} strokeWidth={1.8} />
+          </Link>
+        </div>
+      </div>
+      <div className="relative lg:pb-3">
+        <div className="border-accent/30 dark:border-accent-soft/35 absolute -top-5 -left-5 h-16 w-16 rounded-full border" />
+        <div className="relative overflow-hidden rounded-[1.35rem] bg-[#e8e0d3] dark:bg-[#2a2924]">
+          <img
+            src="/static/images/mainPage/washu_formal.png"
+            alt="A quiet snapshot from Fang's archive"
+            className="aspect-[4/3] w-full object-cover object-center mix-blend-multiply transition duration-700 hover:scale-[1.015] dark:mix-blend-luminosity"
+          />
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#1d1b18]/65 to-transparent p-5 pt-16 text-sm font-medium text-white">
+            currently between systems &amp; stories
+          </div>
+        </div>
+        <p className="text-muted dark:text-muted-dark mt-3 text-xs">
+          St. Louis, Missouri · 38°37′N 90°12′W
+        </p>
+      </div>
     </section>
   )
 }
 
-function ProfileMiniCard() {
+function NowSection() {
   return (
-    <GlassCard className="p-4">
-      <div className="flex items-center gap-3">
-        <div className="grid h-12 w-12 place-items-center rounded-full bg-[#ffe5f0] shadow-[0_0_34px_rgba(255,45,85,0.22)]">
-          <img
-            src="/static/images/const/logo.jpg"
-            alt="Fang avatar"
-            className="h-9 w-9 rounded-full object-cover"
-          />
+    <SectionReveal>
+      <section className="border-line dark:border-line-dark border-y py-8">
+        <div className="grid gap-6 md:grid-cols-[10rem_1fr] md:items-start">
+          <p className="eyebrow pt-1">Now / 08.26</p>
+          <div className="text-ink-soft dark:text-cream-soft grid gap-5 text-base leading-7 sm:grid-cols-3 sm:gap-8">
+            <p>
+              <span className="now-label">Building</span> reliable backend services and a more
+              useful personal knowledge base.
+            </p>
+            <p>
+              <span className="now-label">Exploring</span> multimodal learning, data systems, and
+              the shape of good tools.
+            </p>
+            <p>
+              <span className="now-label">Reading</span> old notebooks, new papers, and whatever
+              catches my attention.
+            </p>
+          </div>
         </div>
-        <div className="min-w-0">
-          <h1 className="font-mono text-lg font-black tracking-normal text-[#3d3444]">UFUN:)</h1>
-          <p className="mt-0.5 text-xs font-bold text-[#a05fb3]">由心以暇 / 放鹿青崖</p>
-        </div>
-      </div>
-      <p className="mt-3 text-xs leading-5 font-bold text-[#7e7283]">
-        Fang / MISM @ WashU / Backend Engineer / AI & Data Enthusiast
-      </p>
-    </GlassCard>
+      </section>
+    </SectionReveal>
   )
 }
 
-function SideInfoCards() {
+function DiscoverySection({ post }: { post?: HomePost }) {
   return (
-    <div className="grid gap-3 lg:w-full">
-      <ProfileMiniCard />
-      <div className="grid grid-cols-2 gap-3">
-        <GlassCard className="p-4">
-          <BriefcaseBusiness className="text-[#ff2d55]" size={22} />
-          <p className="mt-3 text-xs font-black text-[#8b7d90]">星座</p>
-          <p className="mt-1 text-sm font-black text-[#44384d]">白羊座</p>
-        </GlassCard>
-        <GlassCard className="p-4">
-          <NotebookText className="text-[#5ac8fa]" size={22} />
-          <p className="mt-3 text-xs font-black text-[#8b7d90]">故乡</p>
-          <p className="mt-1 text-sm font-black text-[#44384d]">中国青岛</p>
-        </GlassCard>
-      </div>
-      <GlassCard className="p-4">
-        <p className="text-xs font-black text-[#8b7d90]">现居</p>
-        <p className="mt-2 font-mono text-2xl font-black text-[#44384d]">Missouri</p>
-        <p className="mt-1 font-mono text-xl font-black text-[#af52de]">St. Louis</p>
-      </GlassCard>
-    </div>
-  )
-}
-
-function ImageStack() {
-  return (
-    <GlassCard className="relative h-36 overflow-hidden p-3 sm:h-40 xl:h-44">
-      <div className="relative mx-auto h-full max-w-[24rem]">
-        {HERO_IMAGES.map((src, index) => (
-          <img
-            key={src}
-            src={src}
-            alt=""
-            className={`absolute h-28 w-24 rounded-2xl border-[3px] border-white object-cover shadow-xl transition duration-500 hover:z-20 hover:-translate-y-2 sm:h-32 sm:w-28 xl:h-36 xl:w-32 ${
-              [
-                'top-4 left-[4%] -rotate-6',
-                'top-1 left-[27%] rotate-3',
-                'top-5 left-[50%] -rotate-3',
-                'top-2 left-[68%] rotate-6',
-              ][index]
-            }`}
-          />
-        ))}
-        <div className="absolute top-1/2 left-1/2 z-10 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-2xl bg-white/80 text-[#af52de] shadow-xl">
-          <Boxes size={24} />
-        </div>
-      </div>
-    </GlassCard>
-  )
-}
-
-function GreetingCard() {
-  return (
-    <GlassCard className="grid min-h-[15rem] place-items-center p-5 text-center xl:min-h-[16rem]">
-      <div>
-        <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-[#ffe5f0] shadow-[0_0_70px_rgba(255,45,85,0.2)] xl:h-24 xl:w-24">
-          <img
-            src="/static/images/const/logo.jpg"
-            alt="Fang"
-            className="h-16 w-16 rounded-full object-cover xl:h-20 xl:w-20"
-          />
-        </div>
-        <p className="mt-4 font-mono text-2xl font-black tracking-normal text-[#3d3444] xl:text-3xl">
-          由心以暇
-        </p>
-        <p className="mx-auto mt-2 max-w-sm font-mono text-xl leading-[1.3] font-black tracking-normal text-[#3d3444] xl:text-2xl">
-          放鹿<span className="text-[#ff2d55]">青崖</span>
-        </p>
-        <p className="mt-3 text-xs font-bold text-[#817484]">
-          UFUN:) / Fang / Personal Knowledge Base
-        </p>
-      </div>
-    </GlassCard>
-  )
-}
-
-function CalendarCard() {
-  const today = new Date()
-  const days = Array.from({ length: 31 }, (_, index) => index + 1)
-
-  return (
-    <GlassCard className="p-4 xl:p-5">
-      <p className="text-sm font-black text-[#817484]">{formatDate(today.toISOString())} 周一</p>
-      <div className="mt-3 grid grid-cols-7 gap-1 text-center text-sm font-black text-[#817484] xl:gap-1.5">
-        {['一', '二', '三', '四', '五', '六', '日'].map((item) => (
-          <span key={item} className={item === '一' ? 'text-[#ff2d55]' : ''}>
-            {item}
-          </span>
-        ))}
-        {days.map((day) => (
-          <span
-            key={day}
-            className={`grid h-6 place-items-center rounded-lg xl:h-7 ${
-              day === today.getDate() ? 'bg-[#ff2d55] text-white shadow-md' : ''
-            }`}
+    <SectionReveal>
+      <section className="py-20 sm:py-24">
+        <div className="bg-surface dark:bg-surface-dark grid gap-8 rounded-[1.35rem] px-6 py-7 sm:grid-cols-[1fr_auto] sm:items-center sm:px-9 sm:py-9">
+          <div>
+            <p className="eyebrow text-accent">A small detour</p>
+            <h2 className="font-display text-ink dark:text-cream mt-3 max-w-2xl text-3xl tracking-[-0.04em] sm:text-4xl">
+              Explore something I&apos;ve been thinking about.
+            </h2>
+            <p className="text-muted dark:text-muted-dark mt-3 max-w-xl text-base leading-7">
+              {post?.summary ||
+                'A rotating doorway into the notes, experiments, and unfinished thoughts gathered here.'}
+            </p>
+          </div>
+          <Link
+            href={post ? `/blog/${post.slug}` : '/blog'}
+            className="bg-accent hover:bg-accent-dark focus-visible:outline-accent inline-flex w-fit items-center gap-2 rounded-full px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5"
           >
-            {day}
-          </span>
-        ))}
-      </div>
-    </GlassCard>
+            Open the notebook
+            <ArrowUpRight size={16} />
+          </Link>
+        </div>
+      </section>
+    </SectionReveal>
   )
 }
 
-function LatestArticle({ post }: { post?: HomePost }) {
+function WritingSection({ posts }: { posts: HomePost[] }) {
   return (
-    <GlassCard className="p-4 xl:p-5">
-      <p className="text-sm font-black text-[#817484]">本科就读</p>
-      <Link href={post ? `/blog/${post.slug}` : '/blog'} className="mt-3 flex items-center gap-4">
-        <img
-          src="/static/images/mainPage/jsu.jpg"
-          alt="Jiangsu University"
-          className="h-12 w-12 rounded-2xl border-2 border-white object-cover shadow-md"
+    <SectionReveal>
+      <section id="writing" className="pb-20 sm:pb-28">
+        <SectionHeading
+          eyebrow="Field notes"
+          title="Latest writing"
+          href="/blog"
+          linkLabel="View all writing"
         />
-        <div className="min-w-0">
-          <h2 className="line-clamp-1 text-base font-black tracking-normal text-[#44384d]">
-            江苏大学
-          </h2>
-          <p className="mt-1 line-clamp-1 text-xs font-bold text-[#817484]">
-            计算机科学与通信工程学院
-          </p>
-          <p className="mt-2 text-xs font-bold text-[#817484]">Jiangsu University</p>
+        <div className="divide-line border-line dark:divide-line-dark dark:border-line-dark divide-y border-y">
+          {posts.slice(0, 5).map((post) => (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              className="writing-row group grid gap-2 py-5 sm:grid-cols-[minmax(0,1fr)_9rem] sm:gap-8 sm:py-6"
+            >
+              <div className="min-w-0">
+                <div className="flex items-center gap-3">
+                  <h3 className="text-ink dark:text-cream truncate text-lg font-bold tracking-[-0.02em] transition-transform duration-200 group-hover:translate-x-1 sm:text-xl">
+                    {post.title}
+                  </h3>
+                  <ArrowUpRight
+                    className="text-accent shrink-0 opacity-0 transition duration-200 group-hover:translate-x-0.5 group-hover:opacity-100"
+                    size={17}
+                  />
+                </div>
+                <p className="text-muted dark:text-muted-dark mt-1 line-clamp-1 text-sm leading-6">
+                  {post.summary || 'A note from the archive.'}
+                </p>
+              </div>
+              <div className="text-muted dark:text-muted-dark flex items-center justify-between gap-3 text-xs font-semibold tracking-[0.12em] uppercase sm:flex-col sm:items-end sm:justify-center sm:gap-1">
+                <time dateTime={post.date}>{formatDate(post.date)}</time>
+                <span>{post.tags?.filter(Boolean)[0] || 'note'}</span>
+              </div>
+            </Link>
+          ))}
         </div>
-      </Link>
-    </GlassCard>
+      </section>
+    </SectionReveal>
   )
 }
 
-function SocialButtons() {
+function ProjectsSection() {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3">
-      <Link
-        href={SITE_METADATA.github}
-        className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#1d1d1f] px-5 py-2.5 text-base font-black text-white shadow-[0_14px_36px_rgba(125,82,112,0.16)] transition duration-300 hover:-translate-y-1"
-      >
-        <GitBranch size={22} />
-        Github
-      </Link>
-      <Link
-        href={SITE_METADATA.linkedin}
-        className="inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-white/75 bg-white/45 px-5 py-2.5 text-base font-black text-[#44384d] shadow-[0_14px_36px_rgba(125,82,112,0.12)] backdrop-blur-2xl transition duration-300 hover:-translate-y-1"
-      >
-        <Network size={21} className="text-[#af52de]" />
-        LinkedIn
-      </Link>
-      <Link
-        href={`mailto:${SITE_METADATA.email}`}
-        aria-label="Email Fang"
-        className="grid h-11 w-11 place-items-center rounded-2xl border border-white/75 bg-white/45 p-2.5 text-[#ff2d55] shadow-[0_14px_36px_rgba(125,82,112,0.12)] backdrop-blur-2xl transition duration-300 hover:-translate-y-1"
-      >
-        <Mail size={22} />
-      </Link>
-    </div>
-  )
-}
-
-function RecommendationCard() {
-  return (
-    <GlassCard className="p-4 xl:p-5">
-      <p className="text-sm font-black text-[#8b7d90]">硕士在读</p>
-      <div className="mt-3 flex items-center gap-3">
-        <div className="grid h-10 w-16 place-items-center rounded-sm bg-white shadow-sm">
-          <Code2 className="text-[#af52de]" size={24} />
+    <SectionReveal>
+      <section id="projects" className="pb-20 sm:pb-28">
+        <SectionHeading
+          eyebrow="Selected work"
+          title="Things I've built"
+          href={SITE_METADATA.github}
+          linkLabel="More on GitHub"
+        />
+        <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 sm:gap-y-14">
+          {SELECTED_PROJECTS.map((project) => (
+            <article key={project.title} className="group">
+              <Link
+                href={project.href}
+                className="bg-surface dark:bg-surface-dark block overflow-hidden rounded-[1.1rem]"
+              >
+                <img
+                  src={project.image}
+                  alt=""
+                  className="aspect-[16/10] w-full object-cover grayscale-[0.12] transition duration-700 group-hover:scale-[1.015] group-hover:grayscale-0"
+                />
+              </Link>
+              <div className="mt-4 flex items-start justify-between gap-4">
+                <div>
+                  <p className="eyebrow">{project.category}</p>
+                  <h3 className="text-ink dark:text-cream mt-2 text-xl font-bold tracking-[-0.025em]">
+                    {project.title}
+                  </h3>
+                </div>
+                <Link
+                  href={project.href}
+                  aria-label={`Open ${project.title}`}
+                  className="border-line text-muted group-hover:border-accent group-hover:text-accent dark:border-line-dark dark:text-muted-dark mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full border transition"
+                >
+                  <ArrowUpRight size={16} />
+                </Link>
+              </div>
+              <p className="text-muted dark:text-muted-dark mt-2 max-w-lg text-sm leading-6">
+                {project.description}
+              </p>
+              <p className="text-muted/80 dark:text-muted-dark/80 mt-3 font-mono text-[0.68rem] tracking-[0.12em] uppercase">
+                {project.stack} · {project.year}
+              </p>
+            </article>
+          ))}
         </div>
-        <div>
-          <h2 className="text-base font-black text-[#44384d]">WashU</h2>
-          <p className="mt-1 text-xs font-bold text-[#817484]">McKelvey School of Engineering</p>
-        </div>
-      </div>
-    </GlassCard>
+      </section>
+    </SectionReveal>
   )
 }
 
 export function Home({ posts }: { posts: HomePost[] }) {
-  const latestPost = posts[0]
-
   return (
-    <div
-      data-homepage-fullscreen
-      className="relative min-h-screen w-full overflow-hidden bg-[#f7edf5] pt-20 text-[#3d3444] lg:h-screen lg:max-h-screen lg:min-h-0 lg:pt-16"
-    >
-      <style>{`
-        body:has([data-homepage-fullscreen]) {
-          background-color: #f7edf5;
-          background-image: radial-gradient(circle at 16% 84%, rgba(255, 45, 85, 0.3), transparent 34%), radial-gradient(circle at 78% 82%, rgba(255, 204, 0, 0.34), transparent 31%), radial-gradient(circle at 56% 24%, rgba(175, 82, 222, 0.24), transparent 35%), radial-gradient(circle at 26% 18%, rgba(90, 200, 250, 0.22), transparent 32%);
-        }
-        body:has([data-homepage-fullscreen]) footer {
-          display: none !important;
-        }
-        @media (min-width: 1024px) {
-          body:has([data-homepage-fullscreen]) {
-            overflow: hidden;
-          }
-        }
-      `}</style>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_84%,rgba(255,45,85,0.3),transparent_34%),radial-gradient(circle_at_78%_82%,rgba(255,204,0,0.34),transparent_31%),radial-gradient(circle_at_56%_24%,rgba(175,82,222,0.24),transparent_35%),radial-gradient(circle_at_26%_18%,rgba(90,200,250,0.22),transparent_32%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.34),rgba(255,255,255,0)_45%)]" />
-
-      <div className="relative mx-auto grid min-h-screen w-full max-w-[80rem] grid-cols-1 gap-4 px-4 py-5 sm:px-6 lg:h-full lg:min-h-0 lg:grid-cols-[17.5rem_minmax(27rem,1fr)_22rem] lg:grid-rows-[7.25rem_13.75rem_5.75rem_4.75rem] lg:items-start lg:gap-3 lg:px-5 lg:pt-0 lg:pb-0 xl:max-w-[86rem] xl:grid-cols-[18.5rem_minmax(29rem,1fr)_24rem] xl:grid-rows-[7.75rem_14.5rem_6rem_5rem] xl:gap-3.5 xl:px-7 xl:pt-0">
-        <div className="lg:row-span-2">
-          <SideInfoCards />
-        </div>
-
-        <ImageStack />
-
-        <div className="grid gap-4 lg:grid-cols-[8.5rem_1fr] lg:items-start xl:grid-cols-[9rem_1fr]">
-          <Link
-            href="/blog"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#ff2d55] px-4 text-base font-black text-white shadow-[0_14px_40px_rgba(255,45,85,0.24)] transition duration-300 hover:-translate-y-1 hover:bg-[#e8294d] xl:h-[3.25rem] xl:text-base"
-          >
-            <PencilLine size={22} />
-            写文章
-          </Link>
-          <LocationTimeWeather />
-        </div>
-
-        <GreetingCard />
-        <CalendarCard />
-        <LatestArticle post={latestPost} />
-        <SocialButtons />
-        <div className="grid gap-4 lg:col-start-2 lg:grid-cols-[1fr_1.2fr]">
-          <RecommendationCard />
-          <GlassCard className="p-4 xl:p-5">
-            <p className="text-sm font-black text-[#8b7d90]">技术方向</p>
-            <p className="mt-2 text-sm leading-6 font-black text-[#44384d] xl:text-base">
-              Backend / AI / Database / Cloud / LeetCode
-            </p>
-          </GlassCard>
-        </div>
-
-        <div className="grid gap-4 lg:col-start-3">
-          <Link
-            id="projects"
-            href="/blog"
-            className="group inline-flex items-center gap-3 rounded-[2rem] border border-white/70 bg-white/42 p-4 text-sm font-black text-[#44384d] shadow-[0_18px_50px_rgba(125,82,112,0.12)] backdrop-blur-2xl transition hover:-translate-y-1 hover:bg-white/58"
-          >
-            <FileText className="text-[#af52de]" size={22} />
-            Technical Blogs / Projects / LeetCode
-            <span className="ml-auto transition group-hover:translate-x-1">→</span>
-          </Link>
-        </div>
-
-        <div className="pointer-events-none fixed top-1/2 right-6 hidden h-12 w-12 place-items-center rounded-full bg-[#ef8eb3] text-xl font-black text-white shadow-lg lg:grid">
-          A
-        </div>
-        <Sparkles className="pointer-events-none fixed top-[19%] right-[18%] hidden text-white/70 lg:block" />
+    <div className="homepage-shell">
+      <div className="site-container">
+        <Hero />
+        <NowSection />
+        <DiscoverySection post={posts[0]} />
+        <WritingSection posts={posts} />
+        <ProjectsSection />
       </div>
     </div>
   )

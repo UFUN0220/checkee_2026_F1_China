@@ -7,7 +7,7 @@ export const HEADER_NAV_LINKS = [
   { href: '/about', title: 'README', emoji: '👤' },
 ]
 
-export const MORE_NAV_LINKS = [{ href: '/tags', title: 'Tags', emoji: '🏷️' }]
+export const MORE_NAV_LINKS: typeof HEADER_NAV_LINKS = []
 
 export const FOOTER_NAV_LINKS = [
   { href: '/blog', title: 'Article' },

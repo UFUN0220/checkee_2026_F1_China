@@ -1,7 +1,7 @@
-import { createRequire, registerHooks } from 'node:module'
+import * as nodeModule from 'node:module'
 import { pathToFileURL } from 'node:url'
 
-const require = createRequire(import.meta.url)
+const require = nodeModule.createRequire(import.meta.url)
 const userlandPunycodeUrl = pathToFileURL(require.resolve('punycode/punycode.js')).href
 
 let hasRegisteredPunycodeRedirect = false
@@ -10,7 +10,15 @@ let rehypeCitationPromise: Promise<unknown> | undefined
 function registerUserlandPunycodeRedirect() {
   if (hasRegisteredPunycodeRedirect) return
 
-  registerHooks({
+  // `registerHooks` was added after Node 20. Rehype Citation can use Node's
+  // built-in punycode implementation on older runtimes, so the redirect is
+  // optional rather than a module-load requirement.
+  if (typeof nodeModule.registerHooks !== 'function') {
+    hasRegisteredPunycodeRedirect = true
+    return
+  }
+
+  nodeModule.registerHooks({
     resolve(specifier, context, nextResolve) {
       if (specifier === 'punycode') {
         return {

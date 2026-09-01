@@ -4,7 +4,7 @@
 import { Bell, Flame, Heart, Rocket, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-export function UrgeUpdate() {
+export function UrgeUpdate({ variant = 'default' }: { variant?: 'default' | 'home' }) {
   const [count, setCount] = useState(0)
   const [userClickCount, setUserClickCount] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -21,6 +21,7 @@ export function UrgeUpdate() {
     async function fetchCount() {
       try {
         const res = await fetch('/api/urge')
+        if (!res.ok) return
         const data = await res.json()
         setCount(data.count || 0)
       } catch (error) {
@@ -104,14 +105,16 @@ export function UrgeUpdate() {
   const currentState = getButtonState()
 
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-[1.25rem] border p-4 shadow transition-all hover:shadow-md dark:border-gray-600">
+    <div
+      className={`relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-[1.25rem] border p-4 shadow transition-all hover:shadow-md dark:border-gray-600 ${variant === 'home' ? 'home-urge-content' : ''}`}
+    >
       {/* <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
         催更
       </h3> */}
 
       <button
         onClick={handleUrge}
-        className={`group relative flex h-16 w-16 cursor-pointer items-center justify-center rounded-full transition-all duration-500 ${currentState.colorClass} ${isAnimating ? 'scale-90' : 'hover:scale-110'}`}
+        className={`group relative flex h-16 w-16 cursor-pointer items-center justify-center rounded-full transition-all duration-500 ${currentState.colorClass} ${isAnimating ? 'scale-90' : 'hover:scale-110'} ${variant === 'home' ? 'home-urge-button' : ''}`}
       >
         {currentState.icon}
 
@@ -120,7 +123,7 @@ export function UrgeUpdate() {
         )}
       </button>
 
-      <div className="mt-3 flex flex-col items-center">
+      <div className="home-urge-copy mt-3 flex flex-col items-center">
         {/* 这里加了一个 key，当 text 变化时会触发微小的淡入动画 */}
         <span
           key={currentState.text}
@@ -128,7 +131,7 @@ export function UrgeUpdate() {
         >
           {currentState.text}
         </span>
-        <span className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+        <span className="home-urge-count mt-2 text-xs text-gray-400 dark:text-gray-500">
           {isLoading ? '加载中...' : `已有 ${count} 次催更`}
         </span>
       </div>

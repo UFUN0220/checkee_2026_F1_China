@@ -90,7 +90,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang={SITE_METADATA.language}
       className={clsx(
-        'dark',
         'scroll-smooth',
         FONT_NUNITO.variable,
         FONT_JETBRAINS_MONO.variable,
@@ -119,16 +118,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       />
       <meta name="msapplication-TileColor" content="#000000" />
       <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
-      <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
+      <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171714" />
       <link rel="alternate" type="application/rss+xml" href={`${basePath}/feed.xml`} />
 
       <body
         className={clsx([
-          'antialiased, font-sans',
+          'font-sans antialiased',
           'relative min-h-screen pl-[calc(100vw-100%)]',
           'flex flex-col',
-          'bg-[#f7edf5] bg-[radial-gradient(circle_at_16%_84%,rgba(255,45,85,0.3),transparent_34%),radial-gradient(circle_at_78%_82%,rgba(255,204,0,0.34),transparent_31%),radial-gradient(circle_at_56%_24%,rgba(175,82,222,0.24),transparent_35%),radial-gradient(circle_at_26%_18%,rgba(90,200,250,0.22),transparent_32%)] text-neutral-900',
-          'bg-fixed dark:bg-[#f7edf5] dark:text-gray-100',
+          'bg-paper text-ink dark:bg-paper-dark dark:text-cream transition-colors',
         ])}
       >
         <ThemeProviders>

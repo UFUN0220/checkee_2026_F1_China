@@ -10,6 +10,7 @@ import {
   Transition,
 } from '@headlessui/react'
 import { Monitor, MoonStar, Sun, SunMoon } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { Fragment, useEffect, useState } from 'react'
 
@@ -34,6 +35,7 @@ const THEMES = [
 export function ThemeSwitcher() {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme, resolvedTheme } = useTheme()
+  const pathname = usePathname()
 
   // When mounted on client, now we can show the UI
   useEffect(() => setMounted(true), [])
@@ -45,7 +47,7 @@ export function ThemeSwitcher() {
           className="flex items-center justify-center rounded p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700"
           data-umami-event="nav-theme-switcher"
         >
-          <MenuButton aria-label="Theme switcher">
+          <MenuButton aria-label={pathname === '/' ? '主题切换' : 'Theme switcher'}>
             {mounted ? (
               resolvedTheme === 'dark' ? (
                 <MoonStar strokeWidth={1.5} size={22} />
@@ -81,7 +83,9 @@ export function ThemeSwitcher() {
                       className="flex w-full items-center gap-3 px-2 py-1.5 text-sm"
                     >
                       <Icon size={20} strokeWidth={1.5} />
-                      <span>{label}</span>
+                      <span>
+                        {pathname === '/' ? { Light: '浅色', Dark: '深色', System: '跟随系统' }[label] : label}
+                      </span>
                     </MenuItem>
                   </Radio>
                 ))}
