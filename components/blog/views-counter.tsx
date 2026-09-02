@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from 'react'
 
+const VIEW_DEDUPE_WINDOW_MS = 1_000
+const recentViewClaims = new Map<string, ReturnType<typeof setTimeout>>()
+
+function claimView(slug: string) {
+  if (recentViewClaims.has(slug)) return false
+
+  const timer = setTimeout(() => recentViewClaims.delete(slug), VIEW_DEDUPE_WINDOW_MS)
+  recentViewClaims.set(slug, timer)
+  return true
+}
+
 export function ViewsCounter({
   slug,
   className,
@@ -21,6 +32,7 @@ export function ViewsCounter({
         // trackView = true -> POST 请求 -> Redis incr (+1) 并返回新值
         // trackView = false -> GET 请求 -> Redis get (不增加) 只返回当前值
         const method = trackView ? 'POST' : 'GET'
+        if (trackView && !claimView(slug)) return
         
         const res = await fetch(`/api/views/${slug}`, { 
           method,

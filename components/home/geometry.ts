@@ -1,8 +1,8 @@
 // Desktop geometry baseline locked after Phase 6.
 const UTILITY_CLUSTER_GAP = 24
-const ORBITAL_WORLD_CLOCK_WIDTH = 280
-const ORBITAL_WORLD_CLOCK_HEIGHT = 230
-const ORBITAL_WORLD_CLOCK_Y = 44
+const WEATHER_CLOCK_WIDTH = 280
+const WEATHER_CLOCK_HEIGHT = 230
+const WEATHER_CLOCK_Y = 44
 
 export const desktopWidgets = {
   profile: { width: 420, height: 420, x: -210, y: -190, delay: 0 },
@@ -10,10 +10,10 @@ export const desktopWidgets = {
   imageLeft: { width: 144, height: 144, x: -566, y: -382, delay: 40 },
   weather: { width: 264, height: 210, x: 236, y: -170, delay: 240 },
   worldClock: {
-    width: ORBITAL_WORLD_CLOCK_WIDTH,
-    height: ORBITAL_WORLD_CLOCK_HEIGHT,
+    width: WEATHER_CLOCK_WIDTH,
+    height: WEATHER_CLOCK_HEIGHT,
     x: 300,
-    y: ORBITAL_WORLD_CLOCK_Y,
+    y: WEATHER_CLOCK_Y,
     delay: 280,
   },
   calendar: { width: 320, height: 300, x: -566, y: -70, delay: 160 },
@@ -22,7 +22,7 @@ export const desktopWidgets = {
     width: 192,
     height: 144,
     x: 300,
-    y: ORBITAL_WORLD_CLOCK_Y + ORBITAL_WORLD_CLOCK_HEIGHT + UTILITY_CLUSTER_GAP,
+    y: WEATHER_CLOCK_Y + WEATHER_CLOCK_HEIGHT + UTILITY_CLUSTER_GAP,
     delay: 320,
   },
   latestArticle: { width: 280, height: 150, x: -296, y: 260, delay: 400 },

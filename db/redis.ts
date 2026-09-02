@@ -1,8 +1,12 @@
 import { Redis } from '@upstash/redis'
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-})
+let redis: Redis | null | undefined
 
-export default redis
+export function getRedis() {
+  if (redis !== undefined) return redis
+
+  const url = process.env.UPSTASH_REDIS_REST_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+  redis = url && token ? new Redis({ url, token }) : null
+  return redis
+}

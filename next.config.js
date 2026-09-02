@@ -4,16 +4,32 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 
-// You might need to insert additional domains in script-src if you are using external services
+const UMAMI_DEFAULT_URL = 'https://cloud.umami.is/script.js'
+
+function getOrigin(value) {
+  try {
+    return new URL(value, UMAMI_DEFAULT_URL).origin
+  } catch {
+    return new URL(UMAMI_DEFAULT_URL).origin
+  }
+}
+
+const umamiOrigin = getOrigin(process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL || UMAMI_DEFAULT_URL)
+const developmentConnectSources = process.env.NODE_ENV === 'development' ? ' ws: wss:' : ''
+
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is *.eleavers.com;
+  script-src 'self' 'unsafe-inline' https://giscus.app ${umamiOrigin};
   style-src 'self' 'unsafe-inline';
-  img-src * blob: data:;
-  media-src *.s3.amazonaws.com;
-  connect-src *;
+  img-src 'self' blob: data: https://cdnjs.cloudflare.com;
+  media-src 'self';
+  connect-src 'self' https://giscus.app ${umamiOrigin}${developmentConnectSources};
   font-src 'self';
-  frame-src giscus.app *.github.io
+  frame-src https://giscus.app;
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
+  frame-ancestors 'none';
 `
 
 const securityHeaders = [

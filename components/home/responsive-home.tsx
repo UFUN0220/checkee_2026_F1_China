@@ -1,6 +1,3 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import type { WeatherLocationConfig, WorldClockCity } from '~/types/home-widgets'
 import type { HomepagePost } from '~/utils/homepage'
 import { DesktopHomeCanvas } from './desktop-home'
@@ -15,30 +12,19 @@ type ResponsiveHomeProps = {
 }
 
 export function ResponsiveHome({ latestPost, pinnedPost, weatherLocation, worldClockCities }: ResponsiveHomeProps) {
-  const [isDesktop, setIsDesktop] = useState<boolean | null>(null)
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 1024px)')
-    const updateMode = () => setIsDesktop(mediaQuery.matches)
-    updateMode()
-    mediaQuery.addEventListener('change', updateMode)
-    return () => mediaQuery.removeEventListener('change', updateMode)
-  }, [])
-
   return (
     <WeatherDataProvider location={weatherLocation}>
-      {isDesktop === null ? (
-        <div className="responsive-home-placeholder" aria-hidden="true" />
-      ) : isDesktop ? (
+      <div className="responsive-home-desktop">
         <DesktopHomeCanvas latestPost={latestPost} pinnedPost={pinnedPost} weatherLocation={weatherLocation} />
-      ) : (
+      </div>
+      <div className="responsive-home-mobile">
         <MobileHomeFlow
           latestPost={latestPost}
           pinnedPost={pinnedPost}
           weatherLocation={weatherLocation}
           worldClockCities={worldClockCities}
         />
-      )}
+      </div>
     </WeatherDataProvider>
   )
 }

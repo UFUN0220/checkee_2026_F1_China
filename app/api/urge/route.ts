@@ -1,10 +1,11 @@
-import { createHash } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { NextResponse } from 'next/server'
+import { getRedis } from '~/db/redis'
 import { getSupabaseClient } from '~/utils/supabase'
 
 const CLIENT_COOKIE = 'ufun_urge_client'
-const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000
-const recentClients = new Map<string, number>()
+const RATE_LIMIT_WINDOW_SECONDS = 5 * 60
+const URGE_RATE_LIMIT_PREFIX = 'urge:rate-limit:'
 
 type UrgeCountResponse = {
   count: number
@@ -18,7 +19,7 @@ function getClientCookie(request: Request) {
     .map((part) => part.trim())
     .find((part) => part.startsWith(`${CLIENT_COOKIE}=`))
 
-  return cookie?.slice(`${CLIENT_COOKIE}=`.length) || crypto.randomUUID()
+  return cookie?.slice(`${CLIENT_COOKIE}=`.length) || randomUUID()
 }
 
 function getClientKey(clientId: string) {
@@ -35,6 +36,14 @@ function responseWithCookie(body: UrgeCountResponse & Record<string, unknown>, c
     secure: process.env.NODE_ENV === 'production',
   })
   return response
+}
+
+function unavailableResponse(clientId: string) {
+  return responseWithCookie(
+    { count: 0, available: false, accepted: false, code: 'STORAGE_UNAVAILABLE' },
+    clientId,
+    503
+  )
 }
 
 async function readCount(): Promise<UrgeCountResponse> {
@@ -58,39 +67,45 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const clientId = getClientCookie(request)
   const clientKey = getClientKey(clientId)
-  const now = Date.now()
-  const lastAcceptedAt = recentClients.get(clientKey)
+  const redis = getRedis()
+  if (!redis) return unavailableResponse(clientId)
 
-  if (lastAcceptedAt && now - lastAcceptedAt < RATE_LIMIT_WINDOW_MS) {
-    const current = await readCount()
-    return responseWithCookie(
-      {
-        ...current,
-        accepted: false,
-        code: 'RATE_LIMITED',
-        retryAfter: Math.ceil((RATE_LIMIT_WINDOW_MS - (now - lastAcceptedAt)) / 1000),
-      },
-      clientId
-    )
+  const rateLimitKey = `${URGE_RATE_LIMIT_PREFIX}${clientKey}`
+  try {
+    const reserved = await redis.set(rateLimitKey, '1', {
+      nx: true,
+      ex: RATE_LIMIT_WINDOW_SECONDS,
+    })
+
+    if (reserved !== 'OK') {
+      const current = await readCount()
+      return responseWithCookie(
+        {
+          ...current,
+          accepted: false,
+          code: 'RATE_LIMITED',
+          retryAfter: RATE_LIMIT_WINDOW_SECONDS,
+        },
+        clientId,
+        429
+      )
+    }
+  } catch {
+    if (process.env.NODE_ENV !== 'production') console.warn('[Urge] Rate limit storage unavailable')
+    return unavailableResponse(clientId)
   }
 
   const supabase = getSupabaseClient()
   if (!supabase) {
-    return responseWithCookie(
-      { count: 0, available: false, accepted: false, code: 'STORAGE_UNAVAILABLE' },
-      clientId,
-      503
-    )
+    await redis.del(rateLimitKey).catch(() => undefined)
+    return unavailableResponse(clientId)
   }
 
   const { error } = await supabase.rpc('increment_urge')
   if (error) {
     if (process.env.NODE_ENV !== 'production') console.warn('[Urge] Counter update unavailable')
-    return responseWithCookie(
-      { count: 0, available: false, accepted: false, code: 'STORAGE_UNAVAILABLE' },
-      clientId,
-      503
-    )
+    await redis.del(rateLimitKey).catch(() => undefined)
+    return unavailableResponse(clientId)
   }
 
   const current = await readCount()
@@ -100,13 +115,6 @@ export async function POST(request: Request) {
       clientId,
       503
     )
-  }
-
-  recentClients.set(clientKey, now)
-  if (recentClients.size > 1000) {
-    for (const [key, timestamp] of recentClients) {
-      if (now - timestamp >= RATE_LIMIT_WINDOW_MS) recentClients.delete(key)
-    }
   }
 
   return responseWithCookie({ ...current, accepted: true }, clientId)

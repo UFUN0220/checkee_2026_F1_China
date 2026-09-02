@@ -1,28 +1,33 @@
-import redis from '../../../../db/redis'// 确保这里指向你正确的 redis.ts 路径
+import { getRedis } from '../../../../db/redis'
 import { NextResponse } from 'next/server'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 
 // 定义 params 的类型为 Promise
 type Params = Promise<{ slug: string }>
+const BOT_USER_AGENT = /bot|crawler|spider|slurp|bingpreview|prerender/i
 
 export async function POST(
-  _req: Request,
+  request: Request,
   props: { params: Params } // 注意这里：params 是一个 Promise
 ) {
-  // 关键修改：必须先 await params
   const params = await props.params
   const slug = params.slug
-  
-  // 记录日志方便调试（可选）
-  // console.log('Incrementing view for:', slug)
+
+  const userAgent = request.headers.get('user-agent') || ''
+  const isBot = userAgent.length > 0 && BOT_USER_AGENT.test(userAgent)
+  const redis = getRedis()
+  if (!redis) return NextResponse.json({ views: 0, counted: false }, { status: 503 })
 
   try {
-    // 增加计数
+    if (isBot) {
+      const views = (await redis.get<number>(`pageviews:${slug}`)) ?? 0
+      return NextResponse.json({ views, counted: false })
+    }
+
     const views = await redis.incr(`pageviews:${slug}`)
     return NextResponse.json({ views })
-  } catch (error) {
-    console.error('Redis Error:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to increment view' }, { status: 500 })
   }
 }
@@ -31,12 +36,12 @@ export async function GET(
   _req: Request,
   props: { params: Params } // GET 方法同样需要修改类型
 ) {
-  // 关键修改：必须先 await params
   const params = await props.params
   const slug = params.slug
+  const redis = getRedis()
+  if (!redis) return NextResponse.json({ views: 0 })
 
   try {
-    // 获取计数
     const views = (await redis.get<number>(`pageviews:${slug}`)) ?? 0
     return NextResponse.json({ views })
   } catch {

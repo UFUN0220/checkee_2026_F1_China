@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+/.pnpm-store/
+/.npm-cache/
+/.node_modules-partial/
 /.pnp
 .pnp.js
 /.yarn/*

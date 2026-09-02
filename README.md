@@ -4,7 +4,7 @@
 
 ## Tech Stack
 
-- Next.js 16、React 19、TypeScript
+- Node.js 24、Next.js 16、React 19、TypeScript
 - Tailwind CSS 4、Lucide React
 - Contentlayer2、MDX、Remark/Rehype
 - Supabase、Upstash Redis
