@@ -1,4 +1,6 @@
 allowBuilds:
+  contentlayer2: true
+  esbuild: true
   protobufjs: true
   sharp: true
   ttf2woff2: true

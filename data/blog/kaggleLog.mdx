@@ -1,0 +1,172 @@
+---
+title: 'Kaggle Log: Multimodal Valuation'
+date: '2026-01-08'
+lastmod: '2026-01-10'
+tags: []
+summary: ''
+images: []
+authors: ['default']
+---
+
+一场kaggle的记录。
+https://www.kaggle.com/competitions/app-of-gen-ai-deep-learning-wustl-fall-2025/leaderboard
+比赛截止两周前我就提交了，当时只有两队。截止三天时，发现排名掉到第12了。
+当时说排名前几能免课程报告。我朋友们找我组的队，不能坑他们hh，就开始改。
+挺困难的其实，没找到明显影响的特征，卡在一个分数段很久，后来穷举找到方法了。
+截止2小时时冲到公榜第4，前面看着差距不大，但我不信他们提交了个位数次数的模型有多稳健。
+一过零点私榜出结果，第2，和第一差了三位小数，有点遗憾。
+他们应该也是一人carry，不知道用的什么方法。
+用ai先总结了一些，之后再整理详细情况吧。
+
+Context: App of GenAI/Deep Learning (WUSTL, Fall 2025) | Kaggle Competition
+
+Final Result: Rank 2 (Top 1%) | RMSE: 3.06
+
+## 1. 🏁 Project Overview & Architecture
+
+### 1.1 The Challenge
+
+The objective was to predict residential property prices based on a heterogeneous dataset containing:
+
+- **Structured Data:** 79 tabular features (numerical/categorical).
+- **Unstructured Data:** Property listing titles (Text) and images (Vision).
+- **Constraint:** Small sample size (< 3,000 total), high risk of overfitting.
+
+### 1.2 System Architecture Evolution
+
+The project evolved from a linear script to a modular Object-Oriented pipeline to ensure reproducibility and scalability.
+
+- **v0.1 (Baseline):** Single script, global preprocessing (high leakage risk).
+- **v1.0 (Final):** Modular OOP design.
+  - `src/preprocessing.py`: Handles data cleaning and feature engineering.
+  - `src/models.py`: Encapsulates LightGBM, CatBoost, and Ridge classes.
+  - `src/trainer.py`: Manages K-Fold splitting, OOF prediction, and metric logging.
+  - `configs/`: YAML-based hyperparameter management.
+
+## 2. 🏗️ Phase I: Pipeline Refactoring (Engineering Hygiene)
+
+Status: Completed
+
+Impact: Solved "CV-LB Gap" (Consistency between Validation and Leaderboard).
+
+### 2.1 The "Strict Isolation" Protocol
+
+In early versions, encoders (LabelEncoder/StandardScaler) were applied to the entire dataset before splitting. This leaked distribution information from the test set into the train set.
+
+**The Fix:** Implemented a custom `Preprocessor` class with strict `fit` vs. `transform` logic.
+
+- **Training Phase:** `pipeline.fit(X_train)` learns means/variances/categories _only_ from the training fold.
+- **Inference Phase:** `pipeline.transform(X_val)` applies these learned parameters to unseen data.
+- **Outcome:** Cross-Validation (CV) scores dropped slightly but became highly correlated with Private Leaderboard scores.
+
+### 2.2 Reproducibility Guarantee
+
+Non-deterministic behavior is the enemy of optimization.
+
+- **Global Seeding:** Fixed random seeds for `numpy`, `torch`, `lightgbm`, and `catboost`.
+- **Configuration:** Moved all magic numbers (learning rates, tree depths) into `config.yaml` to track experiment changes systematically.
+
+## 3. 🧬 Phase II: Tabular Feature Engineering (The Signal)
+
+Status: High Impact
+
+Philosophy: Domain Knowledge > Brute Force.
+
+### 3.1 Domain-Driven Transformation
+
+Real estate pricing follows specific economic rules. I engineered features to reflect this:
+
+- **Space Interaction:**
+  - `TotalSF` = `TotalBsmtSF` + `1stFlrSF` + `2ndFlrSF` (Total usable area is more correlated than individual floors).
+  - `QualityArea` = `OverallQual` \* `TotalSF` (Interaction between size and condition).
+- **Temporal Decay (Depreciation):**
+  - `AgeAtSale` = `YrSold` - `YearBuilt`
+  - `YearsSinceRemodel` = `YrSold` - `YearRemodAdd`
+- **Log-Transformation:** Applied `log1p` to skewed numerical features (e.g., LotArea) to normalize distributions for linear models.
+
+### 3.2 The "Magic" Feature: Recursive KNN-ID Interpolation
+
+**Observation:** The `Id` column was not random. It exhibited high autocorrelation, suggesting spatial or temporal sequencing (e.g., houses sold in the same batch/neighborhood).
+
+Implementation:
+
+Instead of using Id directly (which generalizes poorly), I created a Recursive KNN feature:
+
+1. **Metric:** Distance based on integer `Id`.
+2. **Logic:** For each sample, find $K=5$ nearest neighbors by ID.
+3. **Calculation:** Compute the weighted average price of these neighbors.
+   1. _Formula:_ $\hat{y}_{id} = \frac{1}{k} \sum_{j \in Neighbors} y_j$
+4. **Leakage Prevention:** Calculated strictly **Out-of-Fold (OOF)**. When predicting for Fold 1, only neighbors from Folds 2-5 were used.
+
+**Result:** This single feature captured latent neighborhood/time-batch effects, improving RMSE by ~0.04.
+
+## 4. 🧠 Phase III: Multimodal Exploration (GenAI & Deep Learning)
+
+Status: Mixed Results -> Pruned for Stability.
+
+Hypothesis: Images and text descriptions contain "luxury" signals missed by tabular data.
+
+### 4.1 Vision Pipeline (Failed Attempt)
+
+- **Method:** Used pre-trained **ResNet50** and **ConvNeXt** to extract image embeddings (2048-dim).
+- **Result:** High dimensionality introduced massive noise. The model overfit quickly.
+- **Optimization:** Applied PCA (Principal Component Analysis) to reduce dimensions to 10 components.
+- **Decision:** **Discarded.** The marginal gain (&lt;0.001) did not justify the inference latency and complexity.
+
+### 4.2 Text Pipeline (Success via Pruning)
+
+- **Method:** Used **DeBERTa-v3-small** to embed property descriptions.
+- **Problem:** Raw embeddings (768-dim) were too sparse for the small dataset size (curse of dimensionality).
+- **Solution:**
+  - Performed **PCA** to reduce to 20 components.
+  - Calculated correlation with model residuals.
+  - Kept only the top 3 components that explained variance _not_ captured by tabular data.
+- **Outcome:** Retained a lightweight "Text Sentiment" signal without bloating the feature space.
+
+## 5. 🛡️ Phase IV: Modeling & Ensembling (Defensive Strategy)
+
+Status: Completed
+
+Strategy: Minimize Variance over Bias.
+
+### 5.1 Base Learners (Level-0)
+
+Diverse algorithms were chosen to ensure uncorrelated errors:
+
+1. **LightGBM:** High speed, leaf-wise growth. Tuned for depth to capture interactions.
+2. **CatBoost:** Symmetric trees. Handles categorical features natively (Ordered Boosting).
+3. **Ridge Regression:** Linear regularization. Acts as a "stabilizer" to prevent tree models from over-extrapolating on high-priced outliers.
+
+### 5.2 Stacking Strategy (Level-1)
+
+Instead of simple averaging, I implemented a 2-level Stacking framework.
+
+- **Meta-Learner:** `Ridge` (Linear Regression).
+- **Input:** Out-of-Fold (OOF) predictions from Level-0 models.
+- **Design Choice:** Stacking was performed on the **original price scale**, not the log scale, to minimize bias during the final transformation back to dollar values.
+
+### 5.3 Variance Reduction: 5-Seed Bagging
+
+To combat the small dataset volatility:
+
+- Each model configuration was trained 5 times with different random seeds.
+- Final prediction = Average(Seed 1...5).
+- **Benefit:** Smoothed out local minima and reduced the standard deviation of the error.
+
+## 6. 📉 "The Graveyard": Failed Experiments & Lessons
+
+_Documentation of what didn't work is as valuable as what did._
+
+| Experiment        | Description                                         | Outcome     | Reason for Failure                                                                                                    |
+| ----------------- | --------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------- |
+| Deep Stacking     | Using a Neural Network (MLP) as the Meta-Learner.   | Overfitting | The Meta-learner learned to exploit the biases of base models rather than correcting them. Simple Ridge was superior. |
+| Target Encoding   | Encoding categories by their mean target value.     | Leakage     | Even with smoothing, this leaked too much info on rare categories (e.g., neighborhoods with only 2 houses).           |
+| CLIP Embeddings   | Using OpenAI CLIP for image-text matching features. | Noise       | The domain shift between CLIP's training data and real estate photos was too large.                                   |
+| Feature Expansion | Creating 200+ polynomial features.                  | Degradation | Introduced multicollinearity which confused the linear models (Ridge).                                                |
+
+## 7. 🏆 Summary of Key Decisions
+
+1. **Engineering:** Prioritized a "leak-proof" pipeline over quick experimentation. This allowed for trusting the Local CV score.
+2. **Data Mining:** Identified the hidden signal in the `Id` column (KNN-ID), turning a useless column into a top-3 feature.
+3. **Pruning:** aggressively removed multimodal features that added complexity without significant gain. **Simplicity was a feature, not a bug.**
+4. **Stability:** Used Seed Bagging and Ridge Regularization to ensure the model performed well on the hidden Private Leaderboard.

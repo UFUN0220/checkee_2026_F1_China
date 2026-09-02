@@ -1,12 +1,14 @@
 # UFUN
 
-个人主页与 Checkmate 信息展示网站，使用 Next.js App Router 构建。
+个人博客与知识库，使用 Next.js App Router 构建。文章以 MDX 管理，首页包含天气、世界时钟、阅读量和 Urge 等功能。
 
 ## Tech Stack
 
 - Node.js 24、Next.js 16、React 19、TypeScript
 - Tailwind CSS 4、Lucide React
-- Checkmate 静态数据与交互式统计页面
+- Contentlayer2、MDX、Remark/Rehype
+- Supabase、Upstash Redis
+- QWeather（中国城市）与 OpenWeather（海外城市）
 
 ## Development
 
@@ -19,7 +21,7 @@ pnpm dev
 
 ## Environment Variables
 
-复制 `.env.example` 为 `.env.local`，按需填写 Umami 配置。不要将真实密钥提交到仓库。
+复制 `.env.example` 为 `.env.local`，再填写 Giscus、Supabase、Upstash Redis、天气服务和 Umami 配置。不要将真实密钥提交到仓库。
 
 ## Build
 
@@ -28,4 +30,8 @@ pnpm build
 pnpm start
 ```
 
-构建会生成 Next.js 生产构建。
+构建会生成 Contentlayer 内容、搜索索引和 RSS 文件。
+
+## Content
+
+博客文章位于 `data/blog/`，使用 MDX 编写；作者内容位于 `data/authors/`。

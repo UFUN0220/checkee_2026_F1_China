@@ -1,5 +1,7 @@
 import '../css/tailwind.css'
 import '../css/twemoji.css'
+import 'react-medium-image-zoom/dist/styles.css'
+import 'remark-github-blockquote-alert/alert.css'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -8,7 +10,10 @@ import type { Metadata } from 'next'
 
 import { JetBrains_Mono, Nunito, Playpen_Sans } from 'next/font/google'
 import { UmamiAnalytics } from '~/components/analytics/umami'
+import { Footer } from '~/components/footer'
 import { Header } from '~/components/header'
+import { KBarSearchProvider } from '~/components/search/kbar-provider'
+// import { TiltedGridBackground } from '~/components/ui/tilted-grid-background'
 
 import { SITE_METADATA } from '~/data/site-metadata'
 import { ThemeProviders } from './theme-providers'
@@ -50,11 +55,14 @@ export const metadata: Metadata = {
     siteName: SITE_METADATA.title,
     // images: [SITE_METADATA.socialBanner],
     images: [],
-    locale: SITE_METADATA.locale.replace('-', '_'),
+    locale: 'en_US',
     type: 'website',
   },
   alternates: {
     canonical: './',
+    types: {
+      'application/rss+xml': `${SITE_METADATA.siteUrl}/feed.xml`,
+    },
   },
   robots: {
     index: true,
@@ -111,6 +119,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <meta name="msapplication-TileColor" content="#000000" />
       <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
       <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171714" />
+      <link rel="alternate" type="application/rss+xml" href={`${basePath}/feed.xml`} />
+
       <body
         className={clsx([
           'font-sans antialiased',
@@ -121,8 +131,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       >
         <ThemeProviders>
           <UmamiAnalytics websiteId={SITE_METADATA.analytics.umamiAnalytics.websiteId} />
-          <Header />
-          <main className="mb-auto grow">{children}</main>
+          <KBarSearchProvider configs={SITE_METADATA.search.kbarConfigs}>
+            <Header />
+            <main className="mb-auto grow">{children}</main>
+          </KBarSearchProvider>
+          <Footer />
         </ThemeProviders>
         <Analytics />
         <SpeedInsights />

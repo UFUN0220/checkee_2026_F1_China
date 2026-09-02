@@ -1,0 +1,2924 @@
+---
+title: 'LC Hot 100题解与笔记'
+date: '2026-02-07'
+lastmod: '2026-03-25'
+tags: ['']
+summary: ''
+images: []
+authors: ['default']
+---
+
+3.25更新
+2月把hot100过了一遍。2月底-3月中旬根据hot100,codetop,面经，整理了一套自己的题单和笔记，刷了一遍。
+唉反复刷反复忘。更新的题解与代码在最新的文章，这篇内容暂不更新，之后有空会同步。
+
+2.7更新
+准备复习力扣hot100，刚开始写，只写了部分题目的核心函数，之后整理思路写完整题解。 我用c++写题，代码是我第一遍看了一些题解后，觉得简洁又较易理解的版本。 主要来自代码随想录，labuladong，睡不醒的鲤鱼（b站），力扣官方，灵茶山艾府。
+
+## [1. 两数之和](https://leetcode.cn/problems/two-sum/)
+
+> 给定一个整数数组 `nums` 和一个整数目标值 `target`，请你在该数组中找出 **和为目标值** _`target`_ 的那 **两个** 整数，并返回它们的数组下标。
+>
+> 你可以假设每种输入只会对应一个答案，并且你不能使用两次相同的元素。
+
+```C++
+vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int,int> mp;
+        for(int i=0;i<nums.size();i++){
+            auto it=mp.find(target-nums[i]);
+            if(it!=mp.end()) return {it->second,i};
+            mp.insert(pair(nums[i],i));
+        }
+        return {};
+    }
+```
+
+遍历数组的同时，利用哈希表存储已访问元素的下标，从而在 O(1)时间内找到与当前元素相加等于 `target` 的目标差值。
+
+## [2. 两数相加](https://leetcode.cn/problems/add-two-numbers/)
+
+> 给你两个 **非空** 的链表，表示两个非负的整数。它们每位数字都是按照 **逆序** 的方式存储的，并且每个节点只能存储 **一位** 数字。
+>
+> 请你将两个数相加，并以相同形式返回一个表示和的链表。
+>
+> 你可以假设除了数字 0 之外，这两个数都不会以 0 开头。
+
+```C++
+ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        int carry=0;
+        ListNode dummy(0);
+        ListNode* tail=&dummy;
+        while(l1||l2||carry){
+            int sum=(l1?l1->val:0)+(l2?l2->val:0)+carry;
+            tail->next=new ListNode(sum%10);
+            tail=tail->next;
+            carry=sum/10;
+            if(l1) l1=l1->next;
+            if(l2) l2=l2->next;
+        }
+        return dummy.next;
+    }
+```
+
+**模拟竖式加法**，同步遍历两个链表，利用**虚拟头节点 (Dummy Head)** 简化结果链表的构建，并将 `carry` 加入循环条件（`while(l1 || l2 || carry)`）以优雅处理链表长度不等及最高位进位的情况。
+
+## [3. 无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/)
+
+> 给定一个字符串 `s` ，请你找出其中不含有重复字符的 **最长** 子串 的长度。
+
+```C++
+int lengthOfLongestSubstring(string s) {
+        unordered_map<char,int> cnt;
+        int n=s.size(),ans=0,left=0;
+        for(int i=0;i<n;i++){
+            char c=s[i];
+            cnt[c]++;
+            while(cnt[c]>1){
+                cnt[s[left]]--;
+                left++;
+            }
+            ans=max(ans,i-left+1);
+        }
+        return ans;
+    }
+```
+
+使用**滑动窗口**结合**哈希表**记录字符频率，右指针向右扩张，一旦发现重复字符（词频 > 1），左指针收缩直至重复消除，以此动态维护一个无重复子串并实时更新最大长度。
+
+## [4. 寻找两个正序数组的中位数](https://leetcode.cn/problems/median-of-two-sorted-arrays/)❌
+
+> 给定两个大小分别为 `m` 和 `n` 的正序（从小到大）数组 `nums1` 和 `nums2`。请你找出并返回这两个正序数组的 **中位数** 。
+>
+> 算法的时间复杂度应该为 `O(log (m+n))` 。
+
+```SQL
+double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        if(nums1.size()>nums2.size()) return findMedianSortedArrays(nums2,nums1);
+        int m=nums1.size(),n=nums2.size();
+        int left=0,right=m;
+        while(left<=right){
+            int i=(left+right)/2;
+            int j=(m+n+1)/2-i;
+            int s1_left=(i==0)?INT_MIN:nums1[i-1];
+            int s1_right=(i==m)?INT_MAX:nums1[i];
+            int s2_left=(j==0)?INT_MIN:nums2[j-1];
+            int s2_right=(j==n)?INT_MAX:nums2[j];
+            if(s1_left<=s2_right&&s2_left<=s1_right){
+                if((m+n)%2==1) return max(s1_left,s2_left);
+                else return (max(s1_left,s2_left)+min(s1_right,s2_right))/2.0;
+            }else if(s1_left>s2_right) right=i-1;
+            else left=i+1;
+        }
+        return 0.0;
+    }
+```
+
+将两个数组分别划分为左右两部分，使得左半部分的所有元素都小于右半部分，且左右数量平衡。
+
+确保 `nums1` 是较短的数组，在短数组上进行二分查找，可以保证时间复杂度最小，同时确保在计算长数组切割位置 j 时，它永远不会是负数。
+
+`left` 和 `right` 是对短数组 `nums1` 进行二分查找的边界。
+
+**关键公式**：i + j = (m + n + 1) / 2。这保证了左半部分的总数等于右半部分（或多 1 个，针对总数为奇数的情况）。
+
+如果分割点在数组最左边（i=0），左侧没有元素，设为负无穷 `INT_MIN`。
+
+如果分割点在最右边（i=m），右侧没有元素，设为正无穷 `INT_MAX`。
+
+```C++
+if(s1_left<=s2_right && s2_left<=s1_right)
+```
+
+**条件成立**：说明左边两部分的最大值都小于右边两部分的最小值，即找到了完美的切分。
+
+**奇数情况**：`if((m+n)%2==1) return max(s1_left,s2_left);`
+
+- 左半部分多一个，中位数就是左侧四个数里最大的那个。
+
+**偶数情况**：`else return (max(s1_left,s2_left)+min(s1_right,s2_right))/2.0;`
+
+- 中位数是（左侧最大值 + 右侧最小值）的一半。注意这里除以 `2.0` 以保证返回浮点数。
+
+right=i-1; // nums1 左边太大了，分割点 i 需要向左移动
+
+left=i+1; // nums1 左边太小了，分割点 i 需要向右移动
+
+## [5. 最长回文子串](https://leetcode.cn/problems/longest-palindromic-substring/)
+
+> 给你一个字符串 `s`，找到 `s` 中最长的 回文 子串。
+
+```C++
+string longestPalindrome(string s) {
+        string ans="";
+        for(int i=0;i<s.size();i++){
+            int l=i-1,r=i+1;
+            while(l>=0&&r<s.size()&&s[l]==s[r]) l--,r++;
+            if(ans.size()<r-l-1) ans=s.substr(l+1,r-l-1);
+            l=i,r=i+1;
+            while(l>=0&&r<s.size()&&s[l]==s[r]) l--,r++;
+            if(ans.size()<r-l-1) ans=s.substr(l+1,r-l-1);
+        }
+        return ans;
+    }
+```
+
+采用**中心扩散法**，遍历字符串的每个位置，分别以“单字符”（处理奇数长度）和“当前与下一字符之间”（处理偶数长度）为中心向两边扩展，实时更新找到的最长回文子串。
+
+## [10. 正则表达式匹配](https://leetcode.cn/problems/regular-expression-matching/)❌
+
+> 给你一个字符串 `s` 和一个字符规律 `p`，请你来实现一个支持 `'.'` 和 `'*'` 的正则表达式匹配。
+>
+> - `'.'` 匹配任意单个字符
+> - `'*'` 匹配零个或多个前面的那一个元素
+>
+> 所谓匹配，是要涵盖 **整个** 字符串 `s` 的，而不是部分字符串。
+
+```C++
+bool isMatch(string s, string p) {
+        int m=s.size(),n=p.size();
+        vector<vector<bool>> dp(m+1,vector<bool>(n+1,false));
+        dp[0][0]=true;
+        for(int j=2;j<=n;j++){
+            if(p[j-1]=='*') dp[0][j]=dp[0][j-2];
+        }
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                if(p[j-1]=='.'||p[j-1]==s[i-1]){
+                    dp[i][j]=dp[i-1][j-1];
+                }else if(p[j-1]=='*'){
+                    dp[i][j]=dp[i][j-2];
+                    if(p[j-2]=='.'||p[j-2]==s[i-1])
+                        dp[i][j]=dp[i-1][j];
+                }
+            }
+        }
+        return dp[m][n];
+    }
+```
+
+正在研究
+
+## [11. 盛最多水的容器](https://leetcode.cn/problems/container-with-most-water/)
+
+> 给定一个长度为 `n` 的整数数组 `height` 。有 `n` 条垂线，第 `i` 条线的两个端点是 `(i, 0)` 和 `(i, height[i])` 。
+>
+> 找出其中的两条线，使得它们与 `x` 轴共同构成的容器可以容纳最多的水。
+>
+> 返回容器可以储存的最大水量。
+>
+> **说明：**你不能倾斜容器。
+
+```C++
+int maxArea(vector<int>& height) {
+        int n=height.size();
+        int right=n-1,left=0,ans=0;
+        while(left<right){
+            int l=right-left;
+            ans=max(ans,l*min(height[right],height[left]));
+            if(height[right]>=height[left]) left++;
+            else right--;
+        }
+        return ans;
+    }
+```
+
+利用**双指针**从数组两端向中间收缩，每次计算面积并更新最大值，同时依据**贪心策略**总是移动**高度较短**的那一侧指针（因为受限于短板，移动长板面积只会因宽度减小而变小），直到指针相遇。
+
+## [15. 三数之和](https://leetcode.cn/problems/3sum/)
+
+> 给你一个整数数组 `nums` ，判断是否存在三元组 `[nums[i], nums[j], nums[k]]` 满足 `i != j`、`i != k` 且 `j != k` ，同时还满足 `nums[i] + nums[j] + nums[k] == 0` 。请你返回所有和为 `0` 且不重复的三元组。
+>
+> **注意：**答案中不可以包含重复的三元组。
+
+```C++
+vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> res;
+        sort(nums.begin(),nums.end());
+        int n=nums.size();
+        for(int i=0;i<n;i++){
+            int l=i+1,r=n-1;
+            if(nums[i]>0) break;
+            if(i>0&&nums[i]==nums[i-1]) continue;
+            while(l<r){
+                int sum=nums[i]+nums[r]+nums[l];
+                if(sum==0){
+                    res.push_back({nums[i],nums[l],nums[r]});
+                    int left=nums[l],right=nums[r];
+                    while(l<r&&nums[l]==left) l++;
+                    while(l<r&&nums[l]==right) r--;
+                }else if(sum<0) l++;
+                else r--;
+            }
+        }
+        return res;
+    }
+```
+
+先将数组**排序**，遍历固定第一个数后，利用**双指针**在剩余区间寻找另外两数使和为零，同时利用排序特性跳过相邻重复元素以**去重**。
+
+## [17. 电话号码的字母组合](https://leetcode.cn/problems/letter-combinations-of-a-phone-number/)
+
+> 给定一个仅包含数字 `2-9` 的字符串，返回所有它能表示的字母组合。答案可以按 **任意顺序** 返回。
+>
+> 给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+
+```C++
+class Solution {
+public:
+    string strs[10]={
+        "","","abc","def",
+        "ghi","jkl","mno",
+        "pqrs","tuv","wxyz",
+    };
+    vector<string> ans;
+    string s="";
+    vector<string> letterCombinations(string digits) {
+        if(digits.empty()) return ans;
+        backtrack(digits,0);
+        return ans;
+    }
+    void backtrack(string digits,int index){
+        if(digits.size()==index){
+            ans.push_back(s);
+            return;
+        }
+        int digit=digits[index]-'0';
+        string letter=strs[digit];
+        for(int i=0;i<letter.size();i++){
+            s.push_back(letter[i]);
+            backtrack(digits,index+1);
+            s.pop_back();
+        }
+    }
+};
+```
+
+利用**回溯算法（DFS）构建一棵多叉树，树的每一层对应输入的一个数字，通过遍历该数字映射的所有字母分支，并在递归返回时撤销选择**（Pop Back），从而穷举所有可能的字符组合。
+
+## [19. 删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
+
+> 给你一个链表，删除链表的倒数第 `n` 个结点，并且返回链表的头结点。
+
+```C++
+ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* dummy=new ListNode(0);
+        dummy->next=head;
+        ListNode* fast=dummy;
+        ListNode* slow=dummy;
+        while(n){
+            fast=fast->next;
+            n--;
+        }
+        while(fast->next){
+            fast=fast->next;
+            slow=slow->next;
+        }
+        slow->next=slow->next->next;
+        return dummy->next;
+    }
+```
+
+利用**虚拟头节点**处理删除头节点等边界情况，使用**双指针**保持 $n$ 的**固定间距**（快指针先走 $n$ 步），之后同步移动直至快指针到达末尾，从而让慢指针精准定位到待删除节点的前驱进行操作。
+
+## [20. 有效的括号](https://leetcode.cn/problems/valid-parentheses/)
+
+> 给定一个只包括 `'('`，`')'`，`'{'`，`'}'`，`'['`，`']'` 的字符串 `s` ，判断字符串是否有效。
+>
+> 有效字符串需满足：
+>
+> 1. 左括号必须用相同类型的右括号闭合。
+> 2. 左括号必须以正确的顺序闭合。
+> 3. 每个右括号都有一个对应的相同类型的左括号。
+
+```C++
+bool isValid(string s) {
+        if(s.size()%2!=0) return false;
+        stack<char> st;
+        for(char ch:s){
+            if(ch=='(') st.push(')');
+            else if(ch=='{') st.push('}');
+            else if(ch=='[') st.push(']');
+            else{
+                if(st.empty()||st.top()!=ch) return false;
+                st.pop();
+            }
+        }
+        return st.empty();
+    }
+```
+
+利用**栈 (Stack)** 处理嵌套结构，遍历时遇到左括号便将**对应的右括号**压入栈中，遇到右括号时检查是否与栈顶一致并弹出，最终通过栈是否为空判断所有括号是否正确闭合。
+
+## [21. 合并两个有序链表](https://leetcode.cn/problems/merge-two-sorted-lists/)
+
+> 将两个升序链表合并为一个新的 **升序** 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。
+
+```C++
+ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        ListNode* dummy=new ListNode(0);
+        ListNode* cur=dummy;
+        while(list1&&list2){
+            if(list1->val<list2->val) {
+                cur->next=list1;
+                list1=list1->next;
+            }else{
+                cur->next=list2;
+                list2=list2->next;
+            }
+            cur=cur->next;
+        }
+        cur->next=list1?list1:list2;
+        return dummy->next;
+    }
+```
+
+利用**虚拟头节点 (Dummy Head)** 简化结果链表的构建，通过循环比较两个有序链表的当前节点值，将**较小者**依次拼接到新链表末尾，并在循环结束后直接挂接剩余的非空链表段。
+
+## [22. 括号生成](https://leetcode.cn/problems/generate-parentheses/)
+
+> 数字 `n` 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 **有效的** 括号组合。
+
+```C++
+class Solution {
+public:
+    string path="";
+    vector<string> res;
+    vector<string> generateParenthesis(int n) {
+        backtrack(n,n);
+        return res;
+    }
+    void backtrack(int left,int right){
+        if(right<left||left<0||right<0) return;
+        if(left==0&&right==0){
+            res.push_back(path);
+            return;
+        }
+        path.push_back('(');
+        backtrack(left-1,right);
+        path.pop_back();
+        path.push_back(')');
+        backtrack(left,right-1);
+        path.pop_back();
+    }
+};
+```
+
+利用**回溯算法**（DFS）逐位构建字符串，维护剩余左右括号的计数，并通过“剩余右括号数不能少于剩余左括号数”这一约束条件提前**剪枝**非法路径，从而生成所有有效的括号组合。
+
+## [23. 合并 K 个升序链表](https://leetcode.cn/problems/merge-k-sorted-lists/)
+
+> 给你一个链表数组，每个链表都已经按升序排列。
+>
+> 请你将所有链表合并到一个升序链表中，返回合并后的链表。
+
+```C++
+struct Cmp {
+    bool operator()(ListNode* a, ListNode* b) const {
+        return a->val > b->val;
+    }
+};
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        priority_queue<ListNode*, vector<ListNode*>, Cmp> pq;
+        for (ListNode* head : lists) {
+            if (head) pq.push(head);
+        }
+        ListNode dummy(0);
+        ListNode* tail = &dummy;
+        while (!pq.empty()) {
+            ListNode* cur = pq.top();
+            pq.pop();
+            tail->next = cur;
+            tail = tail->next;
+            if (cur->next) {
+                pq.push(cur->next);
+            }
+        }
+        return dummy.next;
+    }
+};
+```
+
+用一个小根堆维护 k 个链表的当前头结点，每次取出最小的节点接到结果链表中，再把该节点的 next 放回堆，时间复杂度是 O(N log k)。
+
+`Cmp` 是一个“比较器”，它告诉 priority_queue： **如果 a 的值比 b 大，那么 a 的优先级更低，应该排在后面**
+
+struct Cmp { }; 是一个**比较器类型**
+
+bool operator()(ListNode* a, ListNode* b) 是 **函数调用运算符重载**。
+
+STL 容器可能以 const 方式持有比较器，因此 operator() 需要是 const。
+
+**priority_queue 的规则**：Compare(a, b) == true ⇒ a 的优先级低于 b
+
+```C++
+priority_queue<ListNode*, vector<ListNode*>, Cmp> pq;
+```
+
+定义一个小根堆 `pq`，堆中存的是 `ListNode*`，底层用 `vector` 存储，比较规则由 `Cmp` 决定。
+
+小根堆：
+
+a->val > b->val
+
+→ a 排后面
+
+→ val 小的排前面
+
+→ 堆顶是最小值
+
+## [31. 下一个排列](https://leetcode.cn/problems/next-permutation/)
+
+> 整数数组的一个 **排列** 就是将其所有成员以序列或线性顺序排列。
+>
+> - 例如，`arr = [1,2,3]` ，以下这些都可以视作 `arr` 的排列：`[1,2,3]`、`[1,3,2]`、`[3,1,2]`、`[2,3,1]` 。
+>
+> 整数数组的 **下一个排列** 是指其整数的下一个字典序更大的排列。更正式地，如果数组的所有排列根据其字典顺序从小到大排列在一个容器中，那么数组的 **下一个排列** 就是在这个有序容器中排在它后面的那个排列。如果不存在下一个更大的排列，那么这个数组必须重排为字典序最小的排列（即，其元素按升序排列）。
+>
+> - 例如，`arr = [1,2,3]` 的下一个排列是 `[1,3,2]` 。
+> - 类似地，`arr = [2,3,1]` 的下一个排列是 `[3,1,2]` 。
+> - 而 `arr = [3,2,1]` 的下一个排列是 `[1,2,3]` ，因为 `[3,2,1]` 不存在一个字典序更大的排列。
+>
+> 给你一个整数数组 `nums` ，找出 `nums` 的下一个排列。
+>
+> 必须**[ 原地 ](https://baike.baidu.com/item/原地算法)**修改，只允许使用额外常数空间。
+
+```C++
+void nextPermutation(vector<int>& nums) {
+        int i=nums.size()-1;
+        while(i>0&&nums[i]<=nums[i-1]) i--;
+        if(i==0) reverse(nums.begin(),nums.end());
+        else{
+            int j=nums.size()-1;
+            while(nums[j]<=nums[i-1]) j--;
+            swap(nums[i-1],nums[j]);
+            reverse(nums.begin()+i,nums.end());
+        }
+    }
+```
+
+从后向前寻找第一个**相邻升序对**以锁定需变动的“小数”，将其与后缀中**略大于它**的数交换，最后**反转后缀**使其变为升序（最小化），从而构造出紧邻的下一个字典序排列。
+
+## [32. 最长有效括号](https://leetcode.cn/problems/longest-valid-parentheses/)
+
+> 给你一个只包含 `'('` 和 `')'` 的字符串，找出最长有效（格式正确且连续）括号 子串 的长度。
+>
+> 左右括号匹配，即每个左括号都有对应的右括号将其闭合的字符串是格式正确的，比如 `"(()())"`。
+
+```C++
+int longestValidParentheses(string s) {
+        stack<int> st;
+        st.push(-1);
+        int ans=0;
+        for(int i=0;i<s.size();i++){
+            if(s[i]=='(') st.push(i);
+            else{
+                st.pop();
+                if(st.empty()) st.push(i);
+                else ans=max(ans,i-st.top());
+            }
+        }
+        return ans;
+    }
+```
+
+利用**栈**存储**下标**并预置 `-1` 作为参照底座，遇到右括号弹出栈顶后，若栈非空则通过**下标差**更新最大长度，若栈空则将当前位置作为新的**分割点**重新入栈。
+
+## [33. 搜索旋转排序数组](https://leetcode.cn/problems/search-in-rotated-sorted-array/)
+
+> 整数数组 `nums` 按升序排列，数组中的值 **互不相同** 。
+>
+> 在传递给函数之前，`nums` 在预先未知的某个下标 `k`（`0 <= k < nums.length`）上进行了 **向左旋转**，使数组变为 `[nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]]`（下标 **从 0 开始** 计数）。例如， `[0,1,2,4,5,6,7]` 下标 `3` 上向左旋转后可能变为 `[4,5,6,7,0,1,2]` 。
+>
+> 给你 **旋转后** 的数组 `nums` 和一个整数 `target` ，如果 `nums` 中存在这个目标值 `target` ，则返回它的下标，否则返回 `-1` 。
+>
+> 你必须设计一个时间复杂度为 `O(log n)` 的算法解决此问题。
+
+```C++
+int search(vector<int>& nums, int target) {
+        int left=0,right=nums.size()-1;
+        while(left<=right){
+            int mid=left+(right-left)/2;
+            if(target==nums[mid]) return mid;
+            if(nums[mid]>=nums[left]){
+                if(target>=nums[left]&&target<nums[mid]) right=mid-1;
+                else left=mid+1;
+            }else{
+                if(target<=nums[right]&&target>nums[mid]) left=mid+1;
+                else right=mid-1;
+            }
+        }
+        return -1;
+    }
+```
+
+利用**二分查找**，在每轮迭代中判断哪一半区间是**有序**的（单调递增），通过检查 `target` 是否落在这个有序区间内来决定向左还是向右收缩，从而在 $O(\log N)$ 时间内定位目标值。
+
+## [34. 在排序数组中查找元素的第一个和最后一个位置](https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/)
+
+> 给你一个按照非递减顺序排列的整数数组 `nums`，和一个目标值 `target`。请你找出给定目标值在数组中的开始位置和结束位置。
+>
+> 如果数组中不存在目标值 `target`，返回 `[-1, -1]`。
+>
+> 你必须设计并实现时间复杂度为 `O(log n)` 的算法解决此问题。
+
+```C++
+vector<int> searchRange(vector<int>& nums, int target) {
+        int left=0,right=nums.size()-1;
+        int first=-1,last=-1;
+        while(left<=right){
+            int mid=left+(right-left)/2;
+            if(nums[mid]==target){
+                first=mid;
+                right=mid-1; //找最左
+            }else if(nums[mid]<target){
+                left=mid+1;
+            }else right=mid-1;
+        }
+        if (first == -1) return {-1, -1}; //剪枝
+        left=first;
+        right=nums.size()-1;
+        while(left<=right){
+            int mid=left+(right-left)/2;
+            if(nums[mid]==target){
+                last=mid;
+                left=mid+1; //找最右
+            }else if(nums[mid]<target){
+                left=mid+1;
+            }else right=mid-1;
+        }
+        return {first,last};
+    }
+};
+```
+
+执行两次二分查找：第一次找到目标时“不停并向左收缩”以锁定左边界，第二次找到目标时“不停并向右收缩”以锁定右边界。
+
+## [39. 组合总和](https://leetcode.cn/problems/combination-sum/)
+
+> 给你一个 **无重复元素** 的整数数组 `candidates` 和一个目标整数 `target` ，找出 `candidates` 中可以使数字和为目标数 `target` 的 所有 **不同组合** ，并以列表形式返回。你可以按 **任意顺序** 返回这些组合。
+>
+> `candidates` 中的 **同一个** 数字可以 **无限制重复被选取** 。如果至少一个数字的被选数量不同，则两种组合是不同的。
+>
+> 对于给定的输入，保证和为 `target` 的不同组合数少于 `150` 个。
+
+```C++
+class Solution {
+public:
+    vector<vector<int>> res;
+    vector<int> path;
+    void backtrack(vector<int>& candidates, int target, int sum, int start){
+        if(sum==target) {
+            res.push_back(path);
+            return;
+        }
+        for(int i=start;i<candidates.size()&&sum+candidates[i]<=target;i++){
+            sum+=candidates[i];
+            path.push_back(candidates[i]);
+            backtrack(candidates,target,sum,i);
+            sum-=candidates[i];
+            path.pop_back();
+        }
+    }
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        sort(candidates.begin(),candidates.end());
+        backtrack(candidates,target,0,0);
+        return res;
+    }
+};
+```
+
+先对数组**排序**以便提前终止循环（**剪枝**），利用**回溯算法**搜索组合，通过在递归时传入**当前下标** **`i`**（而非 `i+1`）来实现元素的**无限重复选取**。
+
+## [42. 接雨水](https://leetcode.cn/problems/trapping-rain-water/)
+
+> 给定 `n` 个非负整数表示每个宽度为 `1` 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+```C++
+int trap(vector<int>& height) {
+        int l=0,r=height.size()-1;
+        int lmax=0, rmax=0, ans=0;
+        while(l<r){
+            lmax=max(lmax,height[l]);
+            rmax=max(rmax,height[r]);
+            if(lmax<rmax){
+                ans+=lmax-height[l];
+                l++;
+            }else{
+                ans+=rmax-height[r];
+                r--;
+            }
+        }
+        return ans;
+    }
+```
+
+利用**双指针**从两端向中间收缩，实时维护左（`lmax`）右（`rmax`）两侧的最高挡板，依据**“短板效应”**（较矮的一侧决定水位）直接计算当前位置的积水量并移动较矮侧的指针。
+
+## [46. 全排列](https://leetcode.cn/problems/permutations/)
+
+> 给定一个不含重复数字的数组 `nums` ，返回其 _所有可能的全排列_ 。你可以 **按任意顺序** 返回答案。
+
+```C++
+class Solution {
+public:
+    vector<vector<int>> res;
+    vector<int> path;
+    void backtrack(vector<int>& nums,vector<bool>& used){
+        if(path.size()==used.size()){
+            res.push_back(path);
+            return;
+        }
+        for(int i=0;i<nums.size();i++){
+            if(used[i]) continue;
+            used[i]=true;
+            path.push_back(nums[i]);
+            backtrack(nums,used);
+            used[i]=false;
+            path.pop_back();
+        }
+    }
+    vector<vector<int>> permute(vector<int>& nums) {
+        vector<bool> used(nums.size(),false);
+        backtrack(nums,used);
+        return res;
+    }
+};
+```
+
+利用**回溯算法**按位填充，借助 **`used`** **数组**标记当前路径中已使用的元素以避免重复选择，通过“做出选择-递归进入-撤销选择”的流程穷举所有排列。
+
+## [48. 旋转图像](https://leetcode.cn/problems/rotate-image/)
+
+> 给定一个 _n_ × _n_ 的二维矩阵 `matrix` 表示一个图像。请你将图像顺时针旋转 90 度。
+>
+> 你必须在**[ 原地](https://baike.baidu.com/item/原地算法)** 旋转图像，这意味着你需要直接修改输入的二维矩阵。**请不要** 使用另一个矩阵来旋转图像。
+
+```C++
+void rotate(vector<vector<int>>& matrix) {
+        int n=matrix.size();
+        for(int i=0;i<n;i++){
+            for(int j=0;j<i;j++){
+                swap(matrix[i][j],matrix[j][i]);
+            }
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n/2;j++){
+                swap(matrix[i][j],matrix[i][n-j-1]);
+            }
+        }
+    }
+```
+
+将顺时针旋转 90 度操作分解为两步线性代数变换：先沿**主对角线转置**（行列互换），再对每一行进行**左右翻转**，从而在 $O(1)$ 额外空间下完成原地旋转。
+
+## [49. 字母异位词分组](https://leetcode.cn/problems/group-anagrams/)
+
+> 给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。
+
+```C++
+vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        unordered_map<string,vector<string>> record;
+        for(int i=0;i<strs.size();i++){
+            string key=strs[i];
+            sort(key.begin(),key.end());
+            record[key].push_back(strs[i]);
+        }
+        vector<vector<string>> ans;
+        for(auto it=record.begin();it!=record.end();it++){
+            ans.push_back(it->second);
+        }
+        return ans;
+    }
+```
+
+遍历字符串数组，将每个字符串**排序**后的结果作为**哈希表**的唯一键（归一化），从而将所有同源的变位词映射到同一个列表中进行分组。
+
+## [53. 最大子数组和](https://leetcode.cn/problems/maximum-subarray/)
+
+> 给你一个整数数组 `nums` ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+>
+> 子数组是数组中的一个连续部分。
+
+```C++
+int maxSubArray(vector<int>& nums) {
+        int ans=nums[0],pre=0;
+        for(int x:nums){
+            pre=max(x+pre,x);
+            ans=max(ans,pre);
+        }
+        return ans;
+    }
+```
+
+运用 **Kadane 算法**（也是动态规划的一种空间优化），遍历数组时计算以当前元素结尾的最大和，通过比较“当前元素”与“前缀和 + 当前元素”的大小来决定是**延续**之前的子数组还是**重新开始**，并实时更新全局最大值。
+
+## [55. 跳跃游戏](https://leetcode.cn/problems/jump-game/)
+
+> 给你一个非负整数数组 `nums` ，你最初位于数组的 **第一个下标** 。数组中的每个元素代表你在该位置可以跳跃的最大长度。
+>
+> 判断你是否能够到达最后一个下标，如果可以，返回 `true` ；否则，返回 `false` 。
+
+```C++
+bool canJump(vector<int>& nums) {
+        int rightmost=0,n=nums.size();
+        for(int i=0;i<n;i++){
+            if(i<=rightmost){
+                rightmost=max(rightmost,i+nums[i]);
+                if(rightmost>=n-1) return true;
+            }
+        }
+        return false;
+    }
+```
+
+利用**贪心算法**维护一个“当前能到达的**最远位置**”，遍历数组时若当前下标在可达范围内，则利用当前跳跃力更新最远边界，一旦该边界覆盖数组末尾即判定成功。
+
+## [56. 合并区间](https://leetcode.cn/problems/merge-intervals/)
+
+> 以数组 `intervals` 表示若干个区间的集合，其中单个区间为 `intervals[i] = [start(i), end(i)]` 。请你合并所有重叠的区间，并返回 _一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间_ 。
+
+```C++
+vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        vector<vector<int>> ans;
+        sort(intervals.begin(),intervals.end());
+        int start=intervals[0][0],end=intervals[0][1];
+        for(int i=1;i<intervals.size();i++){
+            if(intervals[i][0]>end){
+                ans.push_back({start,end});
+                start=intervals[i][0];
+                end=intervals[i][1];
+            }else{
+                end=max(end,intervals[i][1]);
+            }
+        }
+        ans.push_back({start,end});
+        return ans;
+    }
+```
+
+首先按**起始位置排序**，随后遍历数组，维护一个动态的合并区间，若当前区间与该区间**重叠**则通过取最大终点值**扩展右边界**，否则说明断开，将旧区间存入结果并开启新区间。
+
+## [62. 不同路径](https://leetcode.cn/problems/unique-paths/)
+
+> 一个机器人位于一个 `m x n` 网格的左上角 （起始点在下图中标记为 “Start” ）。
+>
+> 机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish” ）。
+>
+> 问总共有多少条不同的路径？
+
+```C++
+int uniquePaths(int m, int n) {
+        vector<int> dp(n,1);
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                dp[j]=dp[j]+dp[j-1];
+            }
+        }
+        return dp[n-1];
+    }
+```
+
+数学：从左上角到右下角总共需要走 $$(m-1) + (n-1$$ 步，其中必须有 $$m-1$$ 步向下，$$n-1$$ 步向右。 所以结果就是从总步数中选出向下步数的方法数。
+
+**状态转移**：每个格子的值等于其**上方**和**左方**格子数值之和。
+
+**最终结果**：网格右下角的值即为所有可能的路径总数。
+
+优化：
+
+二维版：dp[i][j] = dp[i-1][j] + dp[i][j-1];
+
+一维版：dp[j] = dp[j] + dp[j-1];
+
+等号右边的 `dp[j]`：还没有被覆盖，它存的是**上一行**同位置的值。
+
+等号右边的 `dp[j-1]`：刚刚被覆盖过，它存的是**当前行**左侧的值。
+
+滚动数组就像是**原地更新**。我们不再为每一行开辟新空间，而是用新算出来的一行数据，把旧的那行数据“覆盖”掉。因为计算下一行时，旧行中更早之前的数据（比如 i-2 行）已经完全没用了。
+
+## [64. 最小路径和](https://leetcode.cn/problems/minimum-path-sum/)
+
+> 给定一个包含非负整数的 _`m`_`x`_`n`_ 网格 `grid` ，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。
+>
+> **说明：**每次只能向下或者向右移动一步。
+
+```C++
+int minPathSum(vector<vector<int>>& grid) {
+        int m=grid.size();
+        int n=grid[0].size();
+        vector<vector<int>> dp(m,vector<int>(n,0));
+        dp[0][0]=grid[0][0];
+        for(int i=1;i<m;i++) dp[i][0]=grid[i][0]+dp[i-1][0];
+        for(int j=1;j<n;j++) dp[0][j]=grid[0][j]+dp[0][j-1];
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                dp[i][j]=min(dp[i-1][j],dp[i][j-1])+grid[i][j];
+            }
+        }
+        return dp[m-1][n-1];
+    }
+```
+
+利用**二维动态规划**，先累加初始化首行与首列，随后对于网格内部的每个位置，选取**上方或左方**已计算路径和的**较小值**加上当前元素值，从而逐步推导至终点的最小路径总和。
+
+## [70. 爬楼梯](https://leetcode.cn/problems/climbing-stairs/)
+
+> 假设你正在爬楼梯。需要 `n` 阶你才能到达楼顶。
+>
+> 每次你可以爬 `1` 或 `2` 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+
+```Java
+int climbStairs(int n) {
+        if(n<=2) return n;
+        int prev1=1,prev2=2,res=0;
+        for(int i=3;i<=n;i++){
+            res=prev1+prev2;
+            prev1=prev2;
+            prev2=res;
+        }
+        return res;
+    }
+```
+
+当前阶数的方案数等于前两阶方案数之和，通过不断更新两个变量（滚动数组思想）原地完成累加。
+
+## [72. 编辑距离](https://leetcode.cn/problems/edit-distance/)
+
+> 给你两个单词 `word1` 和 `word2`， _请返回将_ _`word1`_ _转换成_ _`word2`_ _所使用的最少操作数_ 。
+>
+> 你可以对一个单词进行如下三种操作：
+>
+> - 插入一个字符
+> - 删除一个字符
+> - 替换一个字符
+
+```C++
+int minDistance(string word1, string word2) {
+        int m=word1.size(),n=word2.size();
+        vector dp(m+1,vector<int>(n+1));
+        for(int i=0;i<=m;i++) dp[i][0]=i;
+        for(int j=0;j<=n;j++) dp[0][j]=j;
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                if(word1[i-1]==word2[j-1]) dp[i][j]=dp[i-1][j-1];
+                else dp[i][j]=min({dp[i-1][j],dp[i][j-1],dp[i-1][j-1]})+1;
+            }
+        }
+        return dp[m][n];
+    }
+```
+
+利用**二维动态规划**，定义 `dp[i][j]` 为两个字符串前缀间的最小编辑距离，根据当前字符是否相等，从**插入、删除、替换**（分别对应左、上、左上三个邻格状态）三种操作中择优递推，从而求得将 `word1` 转换为 `word2` 的最少操作数。
+
+## [75. 颜色分类](https://leetcode.cn/problems/sort-colors/)
+
+> 给定一个包含红色、白色和蓝色、共 `n` 个元素的数组 `nums` ，**[原地](https://baike.baidu.com/item/原地算法)** 对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。
+>
+> 我们使用整数 `0`、 `1` 和 `2` 分别表示红色、白色和蓝色。
+>
+> 必须在不使用库内置的 sort 函数的情况下解决这个问题。
+
+```C++
+void sortColors(vector<int>& nums) {
+        int p0=0,cur=0,p2=nums.size()-1;
+        while(cur<=p2){
+            if(nums[cur]==2) swap(nums[cur],nums[p2--]);
+            else if(nums[cur]==0) swap(nums[cur++],nums[p0++]);
+            else cur++;
+        }
+    }
+```
+
+利用**三指针**（荷兰国旗问题解法）动态维护三个区域，遍历时将 `0` 交换至左侧 `p0` 边界，`2` 交换至右侧 `p2` 边界（注意 `cur` 不进位以复查交换来的新数），`1` 则留在中间，从而实现一次遍历的原地排序。
+
+## [76. 最小覆盖子串](https://leetcode.cn/problems/minimum-window-substring/)
+
+> 给定两个字符串 `s` 和 `t`，长度分别是 `m` 和 `n`，返回 s 中的 **最短窗口** 子串，使得该子串包含 `t` 中的每一个字符（**包括重复字符**）。如果没有这样的子串，返回空字符串 `""`。
+>
+> 测试用例保证答案唯一。
+
+```C++
+string minWindow(string s, string t) {
+        int cnt[128]={0};
+        for(char c:t) cnt[c]++;
+        int need=t.length();
+        int left=0,right=0;
+        int minLen=INT_MAX,start=0;
+        while(right<s.length()){
+            if(cnt[s[right]]-- >0) need--;
+            while(need==0){
+                if(right-left+1<minLen){
+                    minLen=right-left+1;
+                    start=left;
+                }
+                if(cnt[s[left]]++ ==0) need++;
+                left++;
+            }
+            right++;
+        }
+        return minLen==INT_MAX?"":s.substr(start,minLen);
+    }
+```
+
+利用双指针维护一个动态窗口，通过右指针扩张寻找“可行解”、左指针收缩寻找“最优解”，并巧妙利用一个哈希计数器（或数组）配合 `need` 变量，在 O(N) 时间内实时监控窗口内字符是否覆盖目标集。
+
+一旦窗口内包含了 `t` 的所有字符（即 `need == 0`），就开始尝试移动 `left` 指针来缩小窗口，以去除冗余字符并更新最优解。
+
+`cnt[s[right]]-- > 0`：这一行同时完成了“判断是否为目标字符”和“更新窗口状态”两件事。正数代表该字符是 `t` 缺少的，减为负数则代表窗口内该字符已溢出。
+
+`cnt[s[left]]++ == 0`：这是收缩窗口的触发点。当一个字符的计数回到 1 时，说明它是“必须存在”且“恰好用完”的，此时 `need++` 打破循环，继续寻找下一个右边界。
+
+## [78. 子集](https://leetcode.cn/problems/subsets/)
+
+> 给你一个整数数组 `nums` ，数组中的元素 **互不相同** 。返回该数组所有可能的子集（幂集）。
+>
+> 解集 **不能** 包含重复的子集。你可以按 **任意顺序** 返回解集。
+
+```C++
+class Solution {
+public:
+    vector<vector<int>> res;
+    vector<int> path;
+    void backtrack(vector<int>& nums, int start){
+        res.push_back(path);
+        if(start>nums.size()) return;
+        for(int i=start;i<nums.size();i++){
+            path.push_back(nums[i]);
+            backtrack(nums,i+1);
+            path.pop_back();
+        }
+    }
+    vector<vector<int>> subsets(vector<int>& nums) {
+        backtrack(nums,0);
+        return res;
+    }
+};
+```
+
+利用**回溯算法**（DFS）遍历决策树，在进入递归函数的每一个节点时都直接记录当前路径（即收集**所有树节点**而非仅叶子节点），并通过传入 `start` 索引控制遍历顺序以避免生成重复子集。
+
+## [79. 单词搜索](https://leetcode.cn/problems/word-search/)
+
+> 给定一个 `m x n` 二维字符网格 `board` 和一个字符串单词 `word` 。如果 `word` 存在于网格中，返回 `true` ；否则，返回 `false` 。
+>
+> 单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母不允许被重复使用。
+
+```C++
+class Solution {
+public:
+    bool exist(vector<vector<char>>& board, string word) {
+        int m=board.size(),n=board[0].size();
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(dfs(board,word,i,j,0)) return true;
+            }
+        }
+        return false;
+    }
+    bool dfs(vector<vector<char>>& board, string word, int i, int j, int p){
+        if(p==word.size()) return true;
+        int m=board.size(),n=board[0].size();
+        if(i<0||j<0||i>=m||j>=n) return false;
+        if(board[i][j]!=word[p]) return false;
+        char ch=board[i][j];
+        board[i][j]='.';
+        bool ans=dfs(board,word,i+1,j,p+1)||
+                dfs(board,word,i-1,j,p+1)||
+                dfs(board,word,i,j+1,p+1)||
+                dfs(board,word,i,j-1,p+1);
+        board[i][j]=ch;
+        return ans;
+    }
+};
+```
+
+以网格中每个位置为起点发起**深度优先搜索 (DFS)**，递归地向四周邻居试探匹配字符，并通过临时修改当前格内容（如改为 `.`）来**标记已访问**以防止路径回头，最终在递归返回时**回溯**（还原字符）。
+
+## [84. 柱状图中最大的矩形](https://leetcode.cn/problems/largest-rectangle-in-histogram/)
+
+> 给定 _n_ 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+>
+> 求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+```Java
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        stack<int> stk;
+        int ans=0;
+        heights.push_back(-1);
+        for(int i=0;i<heights.size();i++){
+            while(!stk.empty()&&heights[i]<heights[stk.top()]){
+                int idx=stk.top();stk.pop();
+                int left=stk.empty()?-1:stk.top();
+                ans=max(ans,(i-left-1)*heights[idx]);
+            }
+            stk.push(i);
+        }
+        return ans;
+    }
+};
+```
+
+用单调递增栈存下标，遇到更小高度就弹栈，弹出柱子的左右边界由当前下标和弹出后栈顶确定，计算最大面积。
+
+只有被弹出的柱子才结算面积,`i = n` 是人为制造的“虚拟右边界”，保证所有柱子都有右边第一个更小元素
+
+`i` 永远是右边界,弹栈后 `stk.top()` 才是左边界
+
+## [85. 最大矩形](https://leetcode.cn/problems/maximal-rectangle/)
+
+> 给定一个仅包含 `0` 和 `1` 、大小为 `rows x cols` 的二维二进制矩阵，找出只包含 `1` 的最大矩形，并返回其面积。
+
+```C++
+class Solution {
+public:
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        int m=matrix.size(),n=matrix[0].size();
+        vector<int> heights(n);
+        int ans=0;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(matrix[i][j]=='1') heights[j]++;
+                else heights[j]=0;
+            }
+            ans=max(ans,maxArea(heights));
+        }
+        return ans;
+    }
+    int maxArea(vector<int>& heights) {
+        int res=0;
+        heights.push_back(-1);
+        stack<int> stk;
+        for(int i=0;i<heights.size();i++){
+            while(!stk.empty()&&heights[i]<heights[stk.top()]){
+                int idx=stk.top();stk.pop();
+                int left=stk.empty()?-1:stk.top();
+                res=max(res,(i-left-1)*heights[idx]);
+            }
+            stk.push(i);
+        }
+        return res;
+    }
+};
+```
+
+逐行把二维矩阵压成一维直方图 `heights`，对每一行用单调递增栈求最大矩形。
+
+`heights[j]` 表示：**第 j 列，以当前行 i 为底，向上连续 1 的高度**
+
+二维压缩 = 固定矩形的“底边”，把高度信息投影到一维数组。
+
+1️⃣ 固定一个维度（矩形一定有底边）
+
+2️⃣ 把另一个维度的信息“折叠”为高度数组
+
+3️⃣ 把二维问题转化为一维区间最值问题
+
+二维难的原因是有 **4 个自由度**：上边 `r1`，下边 `r2`，左边 `c1`，右边 `c2`。直接枚举就是 **O(n⁴)**
+
+我们选择 **固定下边** **`r2`\*\***。**因为矩形一定“落”在某一行上，总有一行是矩形的 **最底一行。\*\*
+
+行方向（高度）已经被压缩成一个数，剩下列方向的一维数组 `heights`
+
+此时问题变成：**在一维数组 heights 中，找一个连续区间 [l, r]，使 min(heights[l..r]) × (r - l + 1) 最大**
+
+## [94. 二叉树的中序遍历](https://leetcode.cn/problems/binary-tree-inorder-traversal/)
+
+> 给定一个二叉树的根节点 `root` ，返回 _它的_ **_中序_** _遍历_ 。
+
+```C++
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+        if(!root) return {};
+        vector<int> res;
+        traversal(root,res);
+        return res;
+    }
+
+    void traversal(TreeNode* root, vector<int> &res){
+        if(!root) return;
+        traversal(root->left,res);
+        res.push_back(root->val);
+        traversal(root->right,res);
+    }
+};
+```
+
+采用**递归**（DFS）方式，严格遵循“左子树 $\to$ 根节点 $\to$ 右子树”的访问顺序，优先深入左侧直至叶子节点，记录数值后再转向右侧，从而得到中序遍历序列。
+
+## [96. 不同的二叉搜索树](https://leetcode.cn/problems/unique-binary-search-trees/)
+
+> 给你一个整数 `n` ，求恰由 `n` 个节点组成且节点值从 `1` 到 `n` 互不相同的 **二叉搜索树** 有多少种？返回满足题意的二叉搜索树的种数。
+
+```C++
+int numTrees(int n) {
+        vector<int> dp(n+1);
+        dp[0]=1;
+        dp[1]=1;
+        for(int i=2;i<=n;i++){
+            for(int j=1;j<=i;j++){
+                dp[i]+=dp[j-1]*dp[i-j];
+            }
+        }
+        return dp[n];
+    }
+```
+
+利用**动态规划**（卡特兰数），遍历 $1$ 到 $n$ 的每个数字作为**根节点**，通过将左子树（节点数 $j-1$）与右子树（节点数 $i-j$）的结构数量**相乘并累加**，递推得出 $n$ 个节点构成的唯一二叉搜索树总数。
+
+## [98. 验证二叉搜索树](https://leetcode.cn/problems/validate-binary-search-tree/)
+
+> 给你一个二叉树的根节点 `root` ，判断其是否是一个有效的二叉搜索树。
+>
+> **有效** 二叉搜索树定义如下：
+>
+> - 节点的左子树只包含 **严格小于** 当前节点的数。
+> - 节点的右子树只包含 **严格大于** 当前节点的数。
+> - 所有左子树和右子树自身必须也是二叉搜索树。
+
+```C++
+class Solution {
+public:
+    TreeNode* pre=NULL;
+    bool isValidBST(TreeNode* root) {
+        if(!root) return true;
+        bool left=isValidBST(root->left);
+        if(pre&&root->val<=pre->val) return false;
+        pre=root;
+        bool right=isValidBST(root->right);
+        return left&&right;
+    }
+};
+```
+
+利用**中序遍历**（DFS）将二叉搜索树转化为**有序序列**的特性，通过维护一个全局指针 `pre` 记录**前一个访问节点**，在递归过程中实时校验当前节点值是否**严格大于**前驱节点值，一旦违背递增规律即判定非法。
+
+## [101. 对称二叉树](https://leetcode.cn/problems/symmetric-tree/)
+
+> 给你一个二叉树的根节点 `root` ， 检查它是否轴对称。
+
+```C++
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        if(!root) return true;
+        return compare(root->left,root->right);
+    }
+
+    bool compare(TreeNode* p, TreeNode* q){
+        if(!p&&!q) return true;
+        if(!p||!q) return false;
+        return p->val==q->val&&compare(p->left,q->right)&&compare(p->right,q->left);
+    }
+};
+```
+
+利用**递归**同时遍历左右子树，通过同步比较**对称位置**的节点——即“左子树的左孩子 vs 右子树的右孩子”（外侧）与“左子树的右孩子 vs 右子树的左孩子”（内侧）——是否相等，从而判断二叉树是否呈**镜像对称**。
+
+## [102. 二叉树的层序遍历](https://leetcode.cn/problems/binary-tree-level-order-traversal/)
+
+> 给你二叉树的根节点 `root` ，返回其节点值的 **层序遍历** 。 （即逐层地，从左到右访问所有节点）。
+
+```C++
+vector<vector<int>> levelOrder(TreeNode* root) {
+        queue<TreeNode*> que;
+        vector<vector<int>> res;
+        if(root) que.push(root);
+        while(!que.empty()){
+            int size=que.size();
+            vector<int> ans;
+            while(size--){
+                TreeNode* node=que.front();
+                que.pop();
+                ans.push_back(node->val);
+                if(node->left) que.push(node->left);
+                if(node->right) que.push(node->right);
+            }
+            res.push_back(ans);
+        }
+        return res;
+    }
+```
+
+利用**队列**实现**广度优先搜索 (BFS)**，在每轮迭代开始时记录当前队列长度以锁定**当前层级**的节点数量，从而批量处理该层所有节点并将下一层的子节点加入队列尾部。
+
+## [104. 二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree/)
+
+> 给定一个二叉树 `root` ，返回其最大深度。
+>
+> 二叉树的 **最大深度** 是指从根节点到最远叶子节点的最长路径上的节点数。
+
+```C++
+int maxDepth(TreeNode* root) {
+        if(!root){return 0;}
+        return max(maxDepth(root->left),maxDepth(root->right))+1;
+    }
+```
+
+采用**递归**（DFS）方式，通过**自底向上**的逻辑，分别计算左子树和右子树的深度，取两者的**最大值**加 1（当前节点贡献的高度），从而逐层汇总得到整棵树的最大深度。
+
+## [105. 从前序与中序遍历序列构造二叉树](https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+
+> 给定两个整数数组 `preorder` 和 `inorder` ，其中 `preorder` 是二叉树的**先序遍历**， `inorder` 是同一棵树的**中序遍历**，请构造二叉树并返回其根节点。
+
+```C++
+class Solution {
+public:
+    unordered_map<int, int> pos;
+    int preIndex = 0;
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        for (int i = 0; i < inorder.size(); i++) pos[inorder[i]] = i;
+        return build(preorder, 0, inorder.size() - 1);
+    }
+    TreeNode* build(vector<int>& preorder, int l, int r) {
+        if (l > r) return nullptr;
+        int rootVal = preorder[preIndex++];
+        TreeNode* root = new TreeNode(rootVal);
+        int mid = pos[rootVal];
+        root->left  = build(preorder, l, mid - 1);
+        root->right = build(preorder, mid + 1, r);
+        return root;
+    }
+};
+```
+
+利用前序遍历确定根节点，用哈希表在中序遍历中定位根的位置，递归构建左右子树，通过索引区间避免数组拷贝，整体时间复杂度 O(n)。
+
+建立 **中序遍历的索引表, 从 整个中序区间** **`[0, n-1]`** **开始构建整棵树。**
+
+**前序遍历的第一个元素一定是根，**
+
+取出当前根，
+
+`preIndex++`：指向下一个未使用的前序元素
+
+在中序中找到根的位置。
+
+`l` 和 `r` 表示当前子树在中序遍历中的区间，根节点在中序中的位置是 `mid`，因此左子树区间是 `[l, mid-1]`，右子树区间是 `[mid+1, r]`。
+
+## [114. 二叉树展开为链表](https://leetcode.cn/problems/flatten-binary-tree-to-linked-list/)
+
+> 给你二叉树的根结点 `root` ，请你将它展开为一个单链表：
+>
+> - 展开后的单链表应该同样使用 `TreeNode` ，其中 `right` 子指针指向链表中下一个结点，而左子指针始终为 `null` 。
+> - 展开后的单链表应该与二叉树 **[先序遍历](https://baike.baidu.com/item/先序遍历/6442839?fr=aladdin)** 顺序相同。
+
+```C++
+void flatten(TreeNode* root) {
+        TreeNode* cur=root;
+        while(cur){
+            if(cur->left){
+                TreeNode* p=cur->left;
+                while(p->right) p=p->right;
+                p->right=cur->right;
+                cur->right=cur->left;
+                cur->left=nullptr;
+            }
+            cur=cur->right;
+        }
+    }
+```
+
+利用**寻找前驱节点**（左子树的最右节点）的技巧，将当前节点的**原本右子树**挂接到左子树的最右端，随后将**左子树**整体移至右侧并置空左指针，从而在 $O(1)$ 空间内**原地**将二叉树按前序遍历顺序“拉直”为单链表。
+
+## [121. 买卖股票的最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/)
+
+> 给定一个数组 `prices` ，它的第 `i` 个元素 `prices[i]` 表示一支给定股票第 `i` 天的价格。
+>
+> 你只能选择 **某一天** 买入这只股票，并选择在 **未来的某一个不同的日子** 卖出该股票。设计一个算法来计算你所能获取的最大利润。
+>
+> 返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 `0` 。
+
+```C++
+int maxProfit(vector<int>& prices) {
+        int n=prices.size();
+        vector<vector<int>> dp(n,vector<int>(2));
+        dp[0][0]=-prices[0];
+        dp[0][1]=0;
+        for(int i=1;i<n;i++){
+            dp[i][0]=max(-prices[i],dp[i-1][0]);
+            dp[i][1]=max(dp[i-1][1],dp[i][0]+prices[i]);
+        }
+        return dp[n-1][1];
+    }
+```
+
+利用**动态规划**构建状态机，分别维护“持有股票”（`dp[i][0]`，本质上是在记录历史最低买入成本的负值）和“不持有股票”（`dp[i][1]`，即当前最大利润）两个状态，通过在每一天决策是**延续旧状态**还是**进行买卖操作**，求解**单次交易**的最大收益。
+
+## [124. 二叉树中的最大路径和](https://leetcode.cn/problems/binary-tree-maximum-path-sum/)
+
+> 二叉树中的 **路径** 被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中 **至多出现一次** 。该路径 **至少包含一个** 节点，且不一定经过根节点。
+>
+> **路径和** 是路径中各节点值的总和。
+>
+> 给你一个二叉树的根节点 `root` ，返回其 **最大路径和** 。
+
+```C++
+class Solution {
+public:
+    int ans=INT_MIN;
+    int maxPathSum(TreeNode* root) {
+        findSum(root);
+        return ans;
+    }
+    int findSum(TreeNode* cur){
+        if(!cur) return 0;
+        int left=max(findSum(cur->left),0);
+        int right=max(findSum(cur->right),0);
+        int val=cur->val+left+right;
+        ans=max(val,ans);
+        return cur->val+max(left,right);
+    }
+};
+```
+
+利用**后序遍历**（递归）自底向上计算每个节点的**最大单边贡献值**，若子树贡献为负则**舍弃**（视为0），在递归过程中利用“左子树+根+右子树”的组合（即视当前节点为路径拐点）尝试更新全局最大路径和，并向父节点返回“根节点+较大的一边”以保持路径的**单向延伸性**。
+
+## [128. 最长连续序列](https://leetcode.cn/problems/longest-consecutive-sequence/)
+
+> 给定一个未排序的整数数组 `nums` ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
+>
+> 请你设计并实现时间复杂度为 `O(n)` 的算法解决此问题。
+
+```C++
+int longestConsecutive(vector<int>& nums) {
+        unordered_set<int> st(nums.begin(),nums.end());
+        int res=0;
+        for(int n:st){
+            if(st.find(n-1)!=st.end()) continue;
+            int curNum=n;
+            int curLen=1;
+            while(st.find(curNum+1)!=st.end()){
+                curLen++;
+                curNum++;
+            }
+            res=max(res,curLen);
+        }
+        return res;
+    }
+```
+
+利用 **哈希集合 (HashSet)** 去重并实现 $O(1)$ 查找，遍历时仅对**没有前驱**（即 `n-1` 不存在）的数字发起连续序列长度统计，跳过非起点元素，从而确保每个数字仅被处理一次，实现 $O(N)$ 时间复杂度。
+
+## [136. 只出现一次的数字](https://leetcode.cn/problems/single-number/)
+
+> 给你一个 **非空** 整数数组 `nums` ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+>
+> 你必须设计并实现线性时间复杂度的算法来解决此问题，且该算法只使用常量额外空间。
+
+```C++
+int singleNumber(vector<int>& nums) {
+        int res=0;
+        for(int x:nums){
+            res^=x;
+        }
+        return res;
+    }
+```
+
+异或运算（符号为 `^`）有三个非常神奇的性质：
+
+1. **归零律**：任何数和自己异或，结果为 0：$a \oplus a = 0$
+2. **恒等律**：任何数和 0 异或，结果仍为本身：$a \oplus 0 = a$
+3. **交换律/结合律**：$a \oplus b \oplus a = a \oplus a \oplus b = 0 \oplus b = b$
+
+## [139. 单词拆分](https://leetcode.cn/problems/word-break/)
+
+> 给你一个字符串 `s` 和一个字符串列表 `wordDict` 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 `s` 则返回 `true`。
+>
+> **注意：**不要求字典中出现的单词全部都使用，并且字典中的单词可以重复使用。
+
+```C++
+bool wordBreak(string s, vector<string>& wordDict) {
+        unordered_set<string> st(wordDict.begin(),wordDict.end());
+        vector<bool> dp(s.size()+1,false);
+        dp[0]=true;
+        for(int i=1;i<=s.size();i++){
+            for(int j=0;j<i;j++){
+                if(dp[j]){
+                    string word=s.substr(j,i-j);
+                    if(st.count(word)){
+                        dp[i]=true;
+                        break;
+                    }
+                }
+            }
+        }
+        return dp[s.size()];
+    }
+```
+
+利用**动态规划**，定义 `dp[i]` 表示字符串的前 `i` 个字符能否被成功拆分，通过枚举**分割点** **`j`**，检查“前缀 `dp[j]` 是否合法”以及“剩余后缀子串是否在字典中”，一旦满足条件即标记当前长度为真并跳出内层循环。
+
+## [141. 环形链表](https://leetcode.cn/problems/linked-list-cycle/)
+
+> 给你一个链表的头节点 `head` ，判断链表中是否有环。
+>
+> 如果链表中有某个节点，可以通过连续跟踪 `next` 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 `pos` 来表示链表尾连接到链表中的位置（索引从 0 开始）。**注意：\*\***`pos`\*\* **不作为参数进行传递** 。仅仅是为了标识链表的实际情况。
+>
+> _如果链表中存在环_ ，则返回 `true` 。 否则，返回 `false` 。
+
+```Bash
+bool hasCycle(ListNode *head) {
+        if(!head||!head->next) return false;
+        ListNode* fast=head;
+        ListNode* slow=head;
+        while(fast&&fast->next){
+            fast=fast->next->next;
+            slow=slow->next;
+            if(fast==slow) return true;
+        }
+        return false;
+    }
+```
+
+如果链表**有环，**快指针一定会在环中 **追上慢指针。**
+
+如果**无环，**快指针会先到 `nullptr`。
+
+## [142. 环形链表 II](https://leetcode.cn/problems/linked-list-cycle-ii/)
+
+> 给定一个链表的头节点 `head` ，返回链表开始入环的第一个节点。 _如果链表无环，则返回_ _`null`\*\*。_
+>
+> 如果链表中有某个节点，可以通过连续跟踪 `next` 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 `pos` 来表示链表尾连接到链表中的位置（**索引从 0 开始**）。如果 `pos` 是 `-1`，则在该链表中没有环。**注意：\*\***`pos`\*\* **不作为参数进行传递**，仅仅是为了标识链表的实际情况。
+>
+> **不允许修改** 链表。
+
+```Bash
+ListNode *detectCycle(ListNode *head) {
+        ListNode* fast=head;
+        ListNode* slow=head;
+        while(fast&&fast->next){
+            fast=fast->next->next;
+            slow=slow->next;
+            if(fast==slow){
+                while(head!=slow){
+                    head=head->next;
+                    slow=slow->next;
+                }
+                return head;
+            }
+        }
+        return nullptr;
+    }
+```
+
+先用快慢指针在环内相遇，再将其中一个指针放回起点，两人以相同速度前进，再次相遇点即为环的入口。
+
+## [146. LRU 缓存](https://leetcode.cn/problems/lru-cache/)
+
+> 请你设计并实现一个满足 [LRU (最近最少使用) 缓存](https://baike.baidu.com/item/LRU) 约束的数据结构。
+>
+> 实现 `LRUCache` 类：
+>
+> - `LRUCache(int capacity)` 以 **正整数** 作为容量 `capacity` 初始化 LRU 缓存
+> - `int get(int key)` 如果关键字 `key` 存在于缓存中，则返回关键字的值，否则返回 `-1` 。
+> - `void put(int key, int value)` 如果关键字 `key` 已经存在，则变更其数据值 `value` ；如果不存在，则向缓存中插入该组 `key-value` 。如果插入操作导致关键字数量超过 `capacity` ，则应该 **逐出** 最久未使用的关键字。
+>
+> 函数 `get` 和 `put` 必须以 `O(1)` 的平均时间复杂度运行。
+
+```C++
+class LRUCache {
+    int cap;
+    list<int> l; // key 顺序：头旧，尾新
+    unordered_map<int, pair<int, list<int>::iterator>> mp;
+// cache: key -> (value, 指向链表中该 key 节点的迭代器)
+
+public:
+    LRUCache(int capacity) : cap(capacity) {}
+
+    int get(int key) {
+        if (!mp.count(key)) return -1;
+        touch(key);    // key 存在：把它标记为“最近使用”
+        return mp[key].first;
+    }
+
+    void put(int key, int value) {
+        if (mp.count(key)) {
+            l.erase(mp[key].second);  // 如果 key 已存在，先把旧节点从链表中删除（准备放到尾部）
+        } else if (l.size() == cap) {
+            mp.erase(l.front());  // 从哈希表中移除对应项
+            l.pop_front();  // 从链表中移除头结点
+        }
+        l.push_back(key);  // 在链表尾部插入（表示最近使用），并在哈希表中更新value与迭代器
+        mp[key] = {value, prev(l.end())};  //指向新插入的尾节点
+    }
+
+    void touch(int key) {
+        l.erase(mp[key].second);
+        l.push_back(key);
+        mp[key].second = prev(l.end());
+    }
+};
+```
+
+结合 **哈希表** (HashMap) 和 **双向链表** (Doubly Linked List)，利用哈希表存储 `key` 到 `{value, list_iterator}` 的映射以实现 $O(1)$ 的快速查找，同时利用链表维护**操作的时间顺序**。每次访问或更新数据时，将对应的 Key 移动到链表**尾部**（表示最近使用），而在容量不足时，直接移除链表**头部**（表示最近最少使用）的元素。
+
+`list<int> l` 只是存 key，不存 value；value 存在 `cache[key].first`。
+
+`unordered_map` 存的是 `{value, list<int>::iterator}`，这样可以 O(1) 找到 value，也能 O(1) 定位并删除链表节点。
+
+链表“头部”（`front()`）是最久未使用（LRU），“尾部”（`push_back` / `prev(l.end())`）是最近使用（MRU）。
+
+`prev(l.end())` 返回链表最后一个元素的迭代器（C++ 常用写法）。
+
+时间复杂度：`get` 与 `put` 都是 O(1)（平均情况），空间复杂度 O(capacity)。
+
+## [148. 排序链表](https://leetcode.cn/problems/sort-list/)
+
+> 给你链表的头结点 `head` ，请将其按 **升序** 排列并返回 **排序后的链表** 。
+
+```C++
+class Solution {
+public:
+    ListNode* sortList(ListNode* head) {
+        if(!head||!head->next) return head;
+        ListNode* fast=head->next;
+        ListNode* slow=head;
+        while(fast&&fast->next){
+            fast=fast->next->next;
+            slow=slow->next;
+        }
+        ListNode* mid=slow->next;
+        slow->next=nullptr;
+        ListNode* left=sortList(head);
+        ListNode* right=sortList(mid);
+        return merge(left,right);
+    }
+
+    ListNode* merge(ListNode* l1,ListNode* l2){
+        ListNode* dummy=new ListNode(0);
+        ListNode* cur=dummy;
+        while(l1&&l2){
+            if(l1->val<l2->val){
+                cur->next=l1;
+                l1=l1->next;
+            }else{
+                cur->next=l2;
+                l2=l2->next;
+            }
+            cur=cur->next;
+        }
+        cur->next=l1?l1:l2;
+        return dummy->next;
+    }
+};
+```
+
+利用**归并排序**（Merge Sort）的分治策略，首先通过**快慢指针**技巧定位链表中点并将其截断为两个子链表，随后递归地对两侧进行排序，最后通过标准的**合并两个有序链表**操作（使用 Dummy 节点）将结果重组。
+
+## [152. 乘积最大子数组](https://leetcode.cn/problems/maximum-product-subarray/)
+
+> 给你一个整数数组 `nums` ，请你找出数组中乘积最大的非空连续 子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+>
+> 测试用例的答案是一个 **32-位** 整数。
+>
+> **请注意**，一个只包含一个元素的数组的乘积是这个元素的值。
+
+```C++
+int maxProduct(vector<int>& nums) {
+        int maxv=1,minv=1,ans=nums[0];
+        for(int n:nums){
+            if(n<0) swap(maxv,minv);
+            maxv=max(n*maxv,n);
+            minv=min(n*minv,n);
+            ans=max(maxv,ans);
+        }
+        return ans;
+    }
+```
+
+利用**动态规划**，同时维护以当前元素结尾的**最大积**和**最小积**。核心逻辑在于：当遇到**负数**时，交换最大值与最小值（因为负负得正，原本的最小值乘以负数可能跃升为最大值），随后抉择是延续前缀积还是重新开始，从而捕捉到最大的子数组乘积。
+
+## [155. 最小栈](https://leetcode.cn/problems/min-stack/)
+
+> 设计一个支持 `push` ，`pop` ，`top` 操作，并能在常数时间内检索到最小元素的栈。
+>
+> 实现 `MinStack` 类:
+>
+> - `MinStack()` 初始化堆栈对象。
+> - `void push(int val)` 将元素val推入堆栈。
+> - `void pop()` 删除堆栈顶部的元素。
+> - `int top()` 获取堆栈顶部的元素。
+> - `int getMin()` 获取堆栈中的最小元素。
+
+```C++
+class MinStack {
+public:
+    stack<pair<int,int>> stk;
+    MinStack() {}
+
+    void push(int val) {
+        stk.push({val,min(val,getMin())});
+    }
+
+    void pop() {
+        stk.pop();
+    }
+
+    int top() {
+        return stk.top().first;
+    }
+
+    int getMin() {
+        return stk.empty()?INT_MAX:stk.top().second;
+    }
+};
+```
+
+采用 **“栈中存对” (Stack of Pairs)** 的策略，将当前数值与**该时刻的全局最小值**绑定在一起存入栈中。每次入栈时，实时计算并记录“当前值与栈顶最小值”的较小者；出栈时，随元素移除，最小值状态也**自动回溯**至上一层，从而确保在 $O(1)$ 时间内获取最小值。
+
+## [160. 相交链表](https://leetcode.cn/problems/intersection-of-two-linked-lists/)
+
+> 给你两个单链表的头节点 `headA` 和 `headB` ，请你找出并返回两个单链表相交的起始节点。如果两个链表不存在相交节点，返回 `null` 。
+>
+> 题目数据 **保证** 整个链式结构中不存在环。
+>
+> **注意**，函数返回结果后，链表必须 **保持其原始结构** 。
+
+```C++
+ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        ListNode* cur1=headA;
+        ListNode* cur2=headB;
+        if(!cur1||!cur2) return nullptr;
+        while(cur1!=cur2){
+            cur1=cur1==nullptr?headB:cur1->next;
+            cur2=cur2==nullptr?headA:cur2->next;
+        }
+        return cur1;
+    }
+```
+
+利用**双指针**技巧，让两个指针分别遍历完自己的链表后**跳转到对方链表**的头部。通过这种方式，两个指针走过的总路程均为 $L_A + L_B$，从而巧妙地**消除非公共部分的长度差异**，最终在相交节点（或终点 `null`）相遇。
+
+## [169. 多数元素](https://leetcode.cn/problems/majority-element/)
+
+> 给定一个大小为 `n` 的数组 `nums` ，返回其中的多数元素。多数元素是指在数组中出现次数 **大于** `⌊ n/2 ⌋` 的元素。
+>
+> 你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+
+```C++
+int majorityElement(vector<int>& nums) {
+        int cand, cnt=0;
+        for(int x:nums){
+            if(cnt==0) cand=x;
+            cnt+=(cand==x)?1:-1;
+        }
+        return cand;
+    }
+```
+
+Boyer–Moore 投票算法
+
+多数元素出现次数 **> n / 2，**不同元素可以 **两两抵消，**最后剩下的候选人，一定是多数元素。
+
+## [198. 打家劫舍](https://leetcode.cn/problems/house-robber/)
+
+> 你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，**如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警**。
+>
+> 给定一个代表每个房屋存放金额的非负整数数组，计算你 **不触动警报装置的情况下** ，一夜之内能够偷窃到的最高金额。
+
+```C++
+int rob(vector<int>& nums) {
+        if(nums.size()==1) return nums[0];
+        vector<int> dp(nums.size());
+        dp[0]=nums[0];
+        dp[1]=max(dp[0],nums[1]);
+        for(int i=2;i<nums.size();i++){
+            dp[i]=max(dp[i-2]+nums[i],dp[i-1]);
+        }
+        return dp[nums.size()-1];
+    }
+```
+
+利用**动态规划**解决“相邻不可兼得”的约束问题。对于每一间房屋，状态转移的核心在于**抉择**：要么**偷窃当前房屋**（此时只能加上 `i-2` 位置的累积金额），要么**跳过当前房屋**（直接继承 `i-1` 位置的累积金额），通过始终取两者的**最大值**来递推全局最优解。
+
+## [200. 岛屿数量](https://leetcode.cn/problems/number-of-islands/)
+
+> 给你一个由 `'1'`（陆地）和 `'0'`（水）组成的的二维网格，请你计算网格中岛屿的数量。
+>
+> 岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+>
+> 此外，你可以假设该网格的四条边均被水包围。
+
+```C++
+class Solution {
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        int m=grid.size(),n=grid[0].size();
+        int ans=0;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(grid[i][j]=='1'){
+                    ans++;
+                    dfs(grid,i,j);
+                }
+            }
+        }
+        return ans;
+    }
+    void dfs(vector<vector<char>>& grid, int i, int j) {
+        int m=grid.size(),n=grid[0].size();
+        if(i<0||i>=m||j<0||j>=n||grid[i][j]=='0') return;
+        grid[i][j]='0';
+        dfs(grid,i+1,j);
+        dfs(grid,i,j+1);
+        dfs(grid,i-1,j);
+        dfs(grid,i,j-1);
+    }
+};
+```
+
+dfs: 把当前陆地及其上下左右所有连通的陆地，全部访问一遍
+
+遍历网格，遇到 `'1'` 计数一次，并用 DFS/BFS 把整座岛淹掉，最终统计岛屿数量。
+
+## [206. 反转链表](https://leetcode.cn/problems/reverse-linked-list/)
+
+> 给你单链表的头节点 `head` ，请你反转链表，并返回反转后的链表。
+
+```C++
+ListNode* reverseList(ListNode* head) {
+        ListNode* pre=nullptr;
+        ListNode* nxt=nullptr;
+        ListNode* cur=head;
+        while(cur){
+            nxt=cur->next;
+            cur->next=pre;
+            pre=cur;
+            cur=nxt;
+        }
+        return pre;
+    }
+```
+
+采用**迭代法**（双指针），在遍历过程中维护 `pre`（前驱）、`cur`（当前）和 `nxt`（后继）三个指针。核心逻辑在于先暂存后继节点以防断链，随后将当前节点的 `next` 指针**反向指回** `pre`，最后整体向后移动指针，直到遍历结束。
+
+## ❌[207. 课程表](https://leetcode.cn/problems/course-schedule/)
+
+> 你这个学期必须选修 `numCourses` 门课程，记为 `0` 到 `numCourses - 1` 。
+>
+> 在选修某些课程之前需要一些先修课程。 先修课程按数组 `prerequisites` 给出，其中 `prerequisites[i] = [a(i), b(i)]` ，表示如果要学习课程 `a(i)` 则 **必须** 先学习课程 `b(i)`( )。
+>
+> - 例如，先修课程对 `[0, 1]` 表示：想要学习课程 `0` ，你需要先完成课程 `1` 。
+>
+> 请你判断是否可能完成所有课程的学习？如果可以，返回 `true` ；否则，返回 `false` 。
+
+```C++
+bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> graph(numCourses);
+        vector<int> indegree(numCourses,0);
+        for(auto& p:prerequisites){
+            graph[p[1]].push_back(p[0]);
+            indegree[p[0]]++;
+        }
+        queue<int> q;
+        for(int i=0;i<numCourses;i++){
+            if(indegree[i]==0) q.push(i);
+        }
+        int cnt=0;
+        while(!q.empty()){
+            int cur=q.front();q.pop();
+            cnt++;
+            for(int next:graph[cur]){
+                if(--indegree[next]==0) q.push(next);
+            }
+        }
+        return cnt==numCourses;
+    }
+```
+
+把课程关系建成有向图，用拓扑排序。
+
+每次学习入度为 0 的课程，若最终能学完所有课程，说明图中无环，否则存在循环依赖。
+
+正在思考中
+
+## ❌[208. 实现 Trie (前缀树)](https://leetcode.cn/problems/implement-trie-prefix-tree/)
+
+> **[Trie](https://baike.baidu.com/item/字典树/9825209?fr=aladdin)**（发音类似 "try"）或者说 **前缀树** 是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。这一数据结构有相当多的应用情景，例如自动补全和拼写检查。
+>
+> 请你实现 Trie 类：
+>
+> - `Trie()` 初始化前缀树对象。
+> - `void insert(String word)` 向前缀树中插入字符串 `word` 。
+> - `boolean search(String word)` 如果字符串 `word` 在前缀树中，返回 `true`（即，在检索之前已经插入）；否则，返回 `false` 。
+> - `boolean startsWith(String prefix)` 如果之前已经插入的字符串 `word` 的前缀之一为 `prefix` ，返回 `true` ；否则，返回 `false` 。
+
+```C++
+
+```
+
+思路
+
+## [215. 数组中的第K个最大元素](https://leetcode.cn/problems/kth-largest-element-in-an-array/)
+
+> 给定整数数组 `nums` 和整数 `k`，请返回数组中第 **`k`** 个最大的元素。
+>
+> 请注意，你需要找的是数组排序后的第 `k` 个最大的元素，而不是第 `k` 个不同的元素。
+>
+> 你必须设计并实现时间复杂度为 `O(n)` 的算法解决此问题。
+
+```Java
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        int n = nums.size();
+        return quickSelect(nums, 0, n - 1, n - k);
+    }
+    int quickSelect(vector<int>& nums, int l, int r, int k) {
+        int pivot = nums[l];
+        int i = l, j = r;
+        while (i < j) {
+            while (i < j && nums[j] >= pivot) j--;
+            nums[i] = nums[j];
+            while (i < j && nums[i] <= pivot) i++;
+            nums[j] = nums[i];
+        }
+        nums[i] = pivot;
+        if (i == k) return nums[i];
+        else if (i < k) return quickSelect(nums, i + 1, r, k);
+        else return quickSelect(nums, l, i - 1, k);
+    }
+};
+```
+
+第 k 大 = 下标 n - k
+
+每次 partition 后，pivot 会到达它排序后的最终位置。
+
+如果 pivot 的下标等于 n-k，直接返回；否则只在包含目标下标的一侧继续递归，
+
+平均时间复杂度是 O(n)。
+
+主函数里的 `n - k` 是“目标下标”， quickSelect 里的 `k` 已经不是“第 k 大”，而是“要找的下标”。
+
+在挖坑法中，pivot 先被取出，数组中始终只有一个坑。
+
+i 和 j 分别从左右向中间移动，每次用对侧找到的数填坑，
+
+当 i 和 j 相遇时，坑的位置正好是 pivot 的最终排序位置。
+
+## [221. 最大正方形](https://leetcode.cn/problems/maximal-square/)
+
+> 在一个由 `'0'` 和 `'1'` 组成的二维矩阵内，找到只包含 `'1'` 的最大正方形，并返回其面积。
+
+```C++
+int maximalSquare(vector<vector<char>>& matrix) {
+        int m=matrix.size(),n=matrix[0].size();
+        vector dp(m+1,vector<int> (n+1));
+        int ans=0;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(matrix[i][j]=='1'){
+                    dp[i+1][j+1]=min({dp[i][j+1],dp[i+1][j],dp[i][j]})+1;
+                    ans=max(ans,dp[i+1][j+1]);
+                }
+            }
+        }
+        return ans*ans;
+    }
+```
+
+利用**二维动态规划**，定义 `dp[i][j]` 为以当前坐标为**右下角**的最大正方形边长。对于每个为 `'1'` 的位置，受限于其**左方、上方及左上方**的邻居状态（类似“木桶效应”），取这三者的**最小值**加 1 来确定当前最大边长，最终返回边长的平方作为面积。
+
+## [226. 翻转二叉树](https://leetcode.cn/problems/invert-binary-tree/)
+
+> 给你一棵二叉树的根节点 `root` ，翻转这棵二叉树，并返回其根节点。
+
+```C++
+TreeNode* invertTree(TreeNode* root) {
+        if(!root) return{};
+        swap(root->left,root->right);
+        invertTree(root->left);
+        invertTree(root->right);
+        return root;
+    }
+```
+
+利用**递归**（DFS）遍历二叉树，对于每一个访问到的节点，直接**交换其左右子树**指针，随后深入递归处理子节点，从而“自顶向下”地将整棵树翻转为**镜像**结构。
+
+## [234. 回文链表](https://leetcode.cn/problems/palindrome-linked-list/)
+
+> 给你一个单链表的头节点 `head` ，请你判断该链表是否为回文链表。如果是，返回 `true` ；否则，返回 `false` 。
+
+```C++
+class Solution {
+public:
+    ListNode* findMiddle(ListNode* head){
+        ListNode* fast=head;
+        ListNode* slow=head;
+        while(fast&&fast->next){
+            fast=fast->next->next;
+            slow=slow->next;
+        }
+        return slow;
+    }
+    ListNode* reverse(ListNode* head){
+        ListNode* pre=nullptr;
+        ListNode* nxt=nullptr;
+        ListNode* cur=head;
+        while(cur){
+            nxt=cur->next;
+            cur->next=pre;
+            pre=cur;
+            cur=nxt;
+        }
+        return pre;
+    }
+
+    bool isPalindrome(ListNode* head) {
+        ListNode* dummy1=new ListNode(0);
+        ListNode* dummy2=new ListNode(0);
+        ListNode* list1=findMiddle(head);
+        ListNode* list2=reverse(list1);
+        dummy2->next=list2;
+        dummy1->next=head;
+        while(dummy1->next&&dummy2->next){
+            if(dummy1->next->val==dummy2->next->val){
+                dummy1=dummy1->next;
+                dummy2=dummy2->next;
+            }else return false;
+        }
+        return true;
+    }
+};
+```
+
+结合 **快慢指针** 和 **链表反转** 技巧，首先利用快慢指针定位链表的**中点**，随后将**后半部分**链表进行原地反转，最后通过双指针同步比较前半段与反转后的后半段是否一致，从而在 $O(N)$ 时间且 $O(1)$ 空间内完成回文校验。
+
+## [236. 二叉树的最近公共祖先](https://leetcode.cn/problems/lowest-common-ancestor-of-a-binary-tree/)
+
+> 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。
+>
+> [百度百科](https://baike.baidu.com/item/最近公共祖先/8918834?fr=aladdin)中最近公共祖先的定义为：“对于有根树 T 的两个节点 p、q，最近公共祖先表示为一个节点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（**一个节点也可以是它自己的祖先**）。”
+
+```C++
+TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(!root) return nullptr;
+        if(root==q||root==p) return root;
+        TreeNode* left=lowestCommonAncestor(root->left,p,q);
+        TreeNode* right=lowestCommonAncestor(root->right,p,q);
+        if(left&&right) return root;
+        else if(!left&&right) return right;
+        else if(left&&!right) return left;
+        else return nullptr;
+    }
+```
+
+利用**递归**（DFS）进行后序遍历。当遇到节点 `p` 或 `q` 时直接返回该节点；若在当前节点的**左、右子树**中分别找到了这两个节点（即 `left` 和 `right` 均非空），则说明当前节点即为**最近公共祖先**；若仅有一侧找到了节点，则向上返回该侧的结果（代表目标节点或已找到的公共祖先）。
+
+## [238. 除了自身以外数组的乘积](https://leetcode.cn/problems/product-of-array-except-self/)
+
+> 给你一个整数数组 `nums`，返回 数组 `answer` ，其中 `answer[i]` 等于 `nums` 中除了 `nums[i]` 之外其余各元素的乘积 。
+>
+> 题目数据 **保证** 数组 `nums`之中任意元素的全部前缀元素和后缀的乘积都在 **32 位** 整数范围内。
+>
+> 请 **不要使用除法，**且在 `O(n)` 时间复杂度内完成此题。
+
+```C++
+vector<int> productExceptSelf(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> prefix(n);
+        vector<int> suffix(n);
+        vector<int> res(n);
+        prefix[0]=nums[0];
+        suffix[n-1]=nums[n-1];
+        for(int i=1;i<n;i++){
+            prefix[i]=prefix[i-1]*nums[i];
+        }
+        for(int i=n-2;i>=0;i--){
+            suffix[i]=suffix[i+1]*nums[i];
+        }
+        res[0]=suffix[1];
+        res[n-1]=prefix[n-2];
+        for(int i=1;i<n-1;i++){
+            res[i]=prefix[i-1]*suffix[i+1];
+        }
+        return res;
+    }
+```
+
+利用**前缀积**与**后缀积**的思想，将问题分解为“当前位置左侧所有数的乘积”乘以“当前位置右侧所有数的乘积”。通过两次遍历分别预计算这两个辅助数组，最后将对应位置的左积与右积相乘，从而在**不使用除法**的情况下得到结果。
+
+## [239. 滑动窗口最大值](https://leetcode.cn/problems/sliding-window-maximum/)
+
+> 给你一个整数数组 `nums`，有一个大小为 `k` 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 `k` 个数字。滑动窗口每次只向右移动一位。
+>
+> 返回 _滑动窗口中的最大值_ 。
+
+```C++
+vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        deque<int> dq;
+        vector<int> res;
+        for(int i=0;i<nums.size();i++){
+            if(!dq.empty()&&dq.front()<i-k+1) dq.pop_front();
+            while(!dq.empty()&&nums[i]>nums[dq.back()]) dq.pop_back();
+            dq.push_back(i);
+            if(i>=k-1) res.push_back(nums[dq.front()]);
+        }
+        return res;
+    }
+```
+
+用**单调递减队列**。 队列里存的是**下标**，并且保证从队首到队尾对应的值是递减的。 每次右指针右移时： 1️⃣ 先判断队首下标是否已经滑出窗口，如果是就弹出； 2️⃣ 再从队尾把所有比当前值小的元素弹出，因为它们不可能成为最大值； 3️⃣ 把当前下标加入队尾； 当窗口大小达到 `k`（也就是 `i >= k-1`）时，队首元素就是当前窗口的最大值。 整个过程每个元素最多进出队一次，时间复杂度是 `O(n)`。
+
+当前窗口 **合法下标范围** 是：[i - k + 1 , i]
+
+`if (!dq.empty() && dq.front() <= i - k)`, 保证队首下标始终在窗口内
+
+`if (i >= k - 1)`, 保证窗口长度已经达到 k
+
+`dq.front() <= i - k` 用来移除滑出窗口的最大值候选； `i >= k - 1` 表示窗口第一次形成，从这时开始才能记录最大值。
+
+## [240. 搜索二维矩阵 II](https://leetcode.cn/problems/search-a-2d-matrix-ii/)
+
+> 编写一个高效的算法来搜索 _`m`_`x`_`n`_ 矩阵 `matrix` 中的一个目标值 `target` 。该矩阵具有以下特性：
+>
+> - 每行的元素从左到右升序排列。
+> - 每列的元素从上到下升序排列。
+
+```C++
+bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        int m=matrix.size(),n=matrix[0].size();
+        int i=0,j=n-1;
+        while(i<m&&j>=0){
+            int val=matrix[i][j];
+            if(val==target) return true;
+            else if(val>target) j--;
+            else i++;
+        }
+        return false;
+    }
+```
+
+利用**行列递增**的特性，将查找过程抽象为在矩阵中“行走”。从矩阵的**右上角**出发（该位置是当前行的最大值，同时是当前列的最小值）：若当前值大于目标，则向**左**移动（排除整列）；若当前值小于目标，则向**下**移动（排除整行）。通过这种方式逐步缩小查找范围，时间复杂度为 $O(M+N)$。
+
+## [279. 完全平方数](https://leetcode.cn/problems/perfect-squares/)
+
+> 给你一个整数 `n` ，返回 _和为_ _`n`_ _的完全平方数的最少数量_ 。
+>
+> **完全平方数** 是一个整数，其值等于另一个整数的平方；换句话说，其值等于一个整数自乘的积。例如，`1`、`4`、`9` 和 `16` 都是完全平方数，而 `3` 和 `11` 不是。
+
+```C++
+int numSquares(int n) {
+        vector<int> dp(n+1,INT_MAX);
+        dp[0]=0;
+        for(int i=1;i<=n;i++){
+            for(int j=1;j*j<=i;j++){
+                dp[i]=min(dp[i],dp[i-j*j]+1);
+            }
+        }
+        return dp[n];
+    }
+```
+
+利用**动态规划**（类比完全背包问题），定义 `dp[i]` 为和为 $i$ 的最少完全平方数个数。通过遍历所有小于等于当前数 $i$ 的平方数 $j^2$，尝试将问题转化为求解“剩余数值 $i-j^2$ 的最优解加 1”，并在所有可能的平方数选择中取**最小值**。
+
+## [283. 移动零](https://leetcode.cn/problems/move-zeroes/)
+
+> 给定一个数组 `nums`，编写一个函数将所有 `0` 移动到数组的末尾，同时保持非零元素的相对顺序。
+>
+> **请注意** ，必须在不复制数组的情况下原地对数组进行操作。
+
+```C++
+void moveZeroes(vector<int>& nums) {
+        int left=0,right=0;
+        for(int i=0;i<nums.size();i++){
+            if(nums[i]){
+                swap(nums[right],nums[left]);
+                left++;
+            }
+            right++;
+        }
+    }
+```
+
+利用**双指针**（快慢指针）技巧。使用快指针（`right`/`i`）遍历数组寻找**非零元素**，同时维护一个慢指针（`left`）指向**下一个存放非零值的位置**。每当遇到非零数时，将其与慢指针处的元素**交换**，并将慢指针向右移动，从而在保持相对顺序的前提下，将所有非零元素移至数组前端，零元素自然归并至末尾。
+
+## [287. 寻找重复数](https://leetcode.cn/problems/find-the-duplicate-number/)
+
+> 给定一个包含 `n + 1` 个整数的数组 `nums` ，其数字都在 `[1, n]` 范围内（包括 `1` 和 `n`），可知至少存在一个重复的整数。
+>
+> 假设 `nums` 只有 **一个重复的整数** ，返回 **这个重复的数** 。
+>
+> 你设计的解决方案必须 **不修改** 数组 `nums` 且只用常量级 `O(1)` 的额外空间。
+
+```C++
+int findDuplicate(vector<int>& nums) {
+        int fast=0,slow=0;
+        do{
+            fast=nums[nums[fast]];
+            slow=nums[slow];
+        }while(fast!=slow);
+        slow=0;
+        while(fast!=slow){
+            fast=nums[fast];
+            slow=nums[slow];
+        }
+        return slow;
+    }
+```
+
+将数组的值视为指向下一个下标的“指针”，由于存在重复数字，必然会形成一个带环的链表；通过快慢指针找到环的入口，该入口的值即为重复数。
+
+为什么数组可以看作链表？
+
+1. 数组长度为 n+1，数字范围在 [1, n]。
+2. 这意味着每个位置 `nums[i]` 都可以跳转到另一个合法的下标。
+3. 如果有重复数字（比如有两个 `2`），那么就会有两个不同的下标指向同一个位置 `2`，这在链表结构中正好形成了“环的入口”。
+
+## ❌[297. 二叉树的序列化与反序列化](https://leetcode.cn/problems/serialize-and-deserialize-binary-tree/)
+
+> 序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。
+>
+> 请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+>
+> **提示:** 输入输出格式与 LeetCode 目前使用的方式一致，详情请参阅 [LeetCode 序列化二叉树的格式](https://leetcode.cn/help-center/3812581/)。你并非必须采取这种方式，你也可以采用其他的方法解决这个问题。
+
+```C++
+
+```
+
+思路
+
+## [300. 最长递增子序列](https://leetcode.cn/problems/longest-increasing-subsequence/)
+
+> 给你一个整数数组 `nums` ，找到其中最长严格递增子序列的长度。
+>
+> **子序列** 是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。例如，`[3,6,2,7]` 是数组 `[0,3,1,6,2,2,7]` 的子序列。
+
+```C++
+int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size(),ans=1;
+        if(n==1) return 1;
+        vector<int> dp(n,1);
+        for(int i=1;i<n;i++){
+            for(int j=0;j<i;j++){
+                if(nums[i]>nums[j]) dp[i]=max(dp[j]+1,dp[i]);
+                ans=max(ans,dp[i]);
+            }
+        }
+        return ans;
+    }
+```
+
+利用**动态规划**，定义 `dp[i]` 为以第 $i$ 个元素**结尾**的最长上升子序列长度。通过双重循环遍历，对于每个元素 `nums[i]`，回头检查所有之前的元素 `nums[j]`，若满足**递增关系**（`nums[i] > nums[j]`），则尝试将当前元素拼接到 `j` 的序列后以更新最大长度，最终取所有位置的峰值。
+
+## ❌[301. 删除无效的括号](https://leetcode.cn/problems/remove-invalid-parentheses/)
+
+> 给你一个由若干括号和字母组成的字符串 `s` ，删除最小数量的无效括号，使得输入的字符串有效。
+>
+> 返回所有可能的结果。答案可以按 **任意顺序** 返回。
+
+```C++
+
+```
+
+思路
+
+## [309. 买卖股票的最佳时机含冷冻期](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-with-cooldown/)
+
+> 给定一个整数数组`prices`，其中第 `prices[i]` 表示第 _`i`_ 天的股票价格 。
+>
+> 设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:
+>
+> - 卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。
+>
+> **注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+
+```C++
+int maxProfit(vector<int>& prices) {
+        //0持有1保持卖出2今天卖出3冷冻
+        int n=prices.size();
+        vector<vector<int>> dp(n,vector<int>(4));
+        dp[0][0]=0-prices[0];
+        dp[0][1]=0;
+        dp[0][2]=0;
+        dp[0][3]=0;
+        for(int i=1;i<n;i++){
+            dp[i][0]=max(max(dp[i-1][1],dp[i-1][3])-prices[i],dp[i-1][0]);
+            dp[i][1]=max(dp[i-1][1],dp[i-1][3]);
+            dp[i][2]=dp[i-1][0]+prices[i];
+            dp[i][3]=dp[i-1][2];
+        }
+        return max(dp[n-1][1],max(dp[n-1][2],dp[n-1][3]));
+    }
+```
+
+利用**动态规划**构建多状态机，将每天的交易状态细分为四种：**持有**、**保持卖出**（非冷冻期，随时可买）、**今天卖出**和**冷冻期**。核心逻辑在于处理**冷冻期约束**：只有在“保持卖出”或“冷冻期”结束后才能再次买入（转移至持有态），而“今天卖出”后的次日强制进入“冷冻期”，通过在这些状态间进行最优转移，求解多次交易的最大累计利润。
+
+## [312. 戳气球](https://leetcode.cn/problems/burst-balloons/)
+
+> 有 `n` 个气球，编号为`0` 到 `n - 1`，每个气球上都标有一个数字，这些数字存在数组 `nums` 中。
+>
+> 现在要求你戳破所有的气球。戳破第 `i` 个气球，你可以获得 `nums[i - 1] * nums[i] * nums[i + 1]` 枚硬币。 这里的 `i - 1` 和 `i + 1` 代表和 `i` 相邻的两个气球的序号。如果 `i - 1`或 `i + 1` 超出了数组的边界，那么就当它是一个数字为 `1` 的气球。
+>
+> 求所能获得硬币的最大数量。
+
+```C++
+int maxCoins(vector<int>& nums) {
+        nums.insert(nums.begin(),1);
+        nums.push_back(1);
+        int n=nums.size();
+        vector<vector<int>> dp(n,vector<int>(n));
+        for(int i=n-1;i>=0;i--){
+            for(int j=i+2;j<n;j++){
+                for(int k=i+1;k<j;k++){
+                    dp[i][j]=max(dp[i][j],dp[i][k]+dp[k][j]+nums[i]*nums[j]*nums[k]);
+                }
+            }
+        }
+        return dp[0][n-1];
+    }
+```
+
+区间 DP，在数组两端补 1，定义 dp[i][j] 表示**戳完开区间 (i, j) 的最大金币**。
+
+枚举区间内最后被戳的气球 k，转移方程是
+
+dp[i][k] + dp[k][j] + nums[i] _ nums[k] _ nums[j]。
+
+按区间长度从小到大计算，最终返回 dp[0][n−1]。
+
+外层循环：i 从右往左，因为状态转移用到：dp[i][k] 和 dp[k][j]，
+
+**dp[i][j] 依赖两个更短的区间**
+
+区间 DP 的遍历顺序必须保证状态转移所依赖的区间已经计算完成， 在 312 中如果 `i` 从左往右，会使用到尚未计算的 dp 状态，导致结果错误。
+
+`vector<vector<int>> dp(n, vector<int>(n));`
+
+创建n行，每一行是一个长度为 `n`、值全为 `0` 的 `vector<int>`
+
+## [322. 零钱兑换](https://leetcode.cn/problems/coin-change/)
+
+> 给你一个整数数组 `coins` ，表示不同面额的硬币；以及一个整数 `amount` ，表示总金额。
+>
+> 计算并返回可以凑成总金额所需的 **最少的硬币个数** 。如果没有任何一种硬币组合能组成总金额，返回 `-1` 。
+>
+> 你可以认为每种硬币的数量是无限的。
+
+```C++
+int coinChange(vector<int>& coins, int amount) {
+        vector<int> dp(amount+1,INT_MAX);
+        dp[0]=0;
+        for(int i=0;i<coins.size();i++){
+            for(int j=coins[i];j<=amount;j++){
+                if(dp[j-coins[i]]!=INT_MAX) dp[j]=min(dp[j],dp[j-coins[i]]+1);
+            }
+        }
+        return dp[amount]==INT_MAX?-1:dp[amount];
+    }
+```
+
+利用**动态规划**（完全背包问题的变体），定义 `dp[j]` 为凑成金额 `j` 所需的**最少硬币数量**。通过外层遍历硬币类型、内层**正向遍历**金额（从小到大，意味着允许**重复使用**同一面额），在每次迭代中尝试加入当前硬币，并取“当前已知最优解”与“加入新硬币后的解”的**最小值**来更新状态。
+
+## [337. 打家劫舍 III](https://leetcode.cn/problems/house-robber-iii/)
+
+> 小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为 `root` 。
+>
+> 除了 `root` 之外，每栋房子有且只有一个“父“房子与之相连。一番侦察之后，聪明的小偷意识到“这个地方的所有房屋的排列类似于一棵二叉树”。 如果 **两个直接相连的房子在同一天晚上被打劫** ，房屋将自动报警。
+>
+> 给定二叉树的 `root` 。返回 **_在不触动警报的情况下_** _，小偷能够盗取的最高金额_ 。
+
+```C++
+class Solution {
+public:
+    int rob(TreeNode* root) {
+        vector<int> result;
+        result=robtree(root);
+        return max(result[0],result[1]);
+    }
+
+    vector<int> robtree(TreeNode* cur){
+        if(!cur) return {0,0};
+        vector<int> left=robtree(cur->left);
+        vector<int> right=robtree(cur->right);
+        int val1=cur->val+left[0]+right[0];
+        int val2=max(left[0],left[1])+max(right[0],right[1]);
+        return {val2,val1};
+    }
+};
+```
+
+利用**树形动态规划**（Tree DP）结合**后序遍历**。对于每个节点，递归地计算并返回两个状态值：
+
+1. **偷当前节点**（`val1`）：此时必须**跳过**左右子节点，收益为“当前节点值 + 左子不偷 + 右子不偷”。
+2. **不偷当前节点**（`val2`）：此时左右子节点**可偷可不偷**，取各自状态下的最大值之和。
+
+通过自底向上的推导，最终在根节点处比较这两种选择的最大值。
+
+## [338. 比特位计数](https://leetcode.cn/problems/counting-bits/)
+
+> 给你一个整数 `n` ，对于 `0 <= i <= n` 中的每个 `i` ，计算其二进制表示中 **`1`** **的个数** ，返回一个长度为 `n + 1` 的数组 `ans` 作为答案。
+
+```C++
+vector<int> countBits(int n) {
+        vector<int> ans(n+1);
+        for(int i=1;i<=n;i++){
+            ans[i]=ans[i&(i-1)]+1;
+        }
+        return ans;
+    }
+```
+
+利用 **动态规划** 结合 **位运算** 技巧。核心逻辑在于 `i & (i - 1)` 这一操作，它能**消除数字 $i$ 二进制表示中最右侧的一个 1**（即最低有效位）。
+
+因此，数字 $i$ 包含的 1 的个数，必然等于“消除掉这一个 1 后的那个数”（即 `i & (i-1)`，该数一定小于 $i$ 且已计算过）包含的 1 的个数 **加 1**。通过这种方式，可以在 $O(N)$ 时间内一次性递推算出所有数的比特位计数。
+
+## [347. 前 K 个高频元素](https://leetcode.cn/problems/top-k-frequent-elements/)
+
+> 给你一个整数数组 `nums` 和一个整数 `k` ，请你返回其中出现频率前 `k` 高的元素。你可以按 **任意顺序** 返回答案。
+
+```C++
+vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int,int> cnt;
+        int max_cnt=0;
+        for(int n:nums){
+            cnt[n]++;
+            max_cnt=max(max_cnt,cnt[n]);
+        }
+        vector<vector<int>> buckets(max_cnt+1);
+        for(auto& [x,c]:cnt){
+            buckets[c].push_back(x);
+        }
+        vector<int> ans;
+        for(int i=max_cnt;i>=0&&ans.size()<k;i--){
+            ans.insert(ans.end(),buckets[i].begin(),buckets[i].end());
+        }
+        return ans;
+    }
+```
+
+采用 **哈希表** 结合 **桶排序** (Bucket Sort) 的策略，实现了 $O(N)$ 的最优时间复杂度。
+
+核心逻辑分为三步：
+
+1. **频率统计**：利用哈希表统计每个元素出现的次数。
+2. **入桶**：将“频率”作为数组的**下标**，构建桶数组 `buckets[frequency]`，将出现次数相同的数字归入同一个桶中。
+3. **倒序收集**：从**最高频率**（桶数组末尾）开始向前遍历，依次收集桶中的元素，直到收集满 $k$ 个为止。这避免了使用堆（Heap）所需的 $\log$ 级排序开销。
+
+## [394. 字符串解码](https://leetcode.cn/problems/decode-string/)
+
+> 给定一个经过编码的字符串，返回它解码后的字符串。
+>
+> 编码规则为: `k[encoded_string]`，表示其中方括号内部的 `encoded_string` 正好重复 `k` 次。注意 `k` 保证为正整数。
+>
+> 你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+>
+> 此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 `k` ，例如不会出现像 `3a` 或 `2[4]` 的输入。
+>
+> 测试用例保证输出的长度不会超过 `10(5)`。
+
+```C++
+string decodeString(string s) {
+        stack<int> numSt;
+        stack<string> strSt;
+        int k=0;
+        string cur="";
+        for(char ch:s){
+            if(isdigit(ch)) k=k*10+(ch-'0');
+            else if(ch=='['){
+                numSt.push(k);
+                strSt.push(cur);
+                k=0;
+                cur="";
+            }else if(ch==']'){
+                int repeat=numSt.top();numSt.pop();
+                string prev=strSt.top();strSt.pop();
+                while(repeat--) prev+=cur;
+                cur=prev;
+            }else cur+=ch;
+        }
+        return cur;
+    }
+```
+
+k = k \* 10 + (c - '0');
+
+_处理多位数：比如 "12" 先遇到 '1' 得 1，再遇到 '2' 得 1\*10+2=12_
+
+**栈模拟**。 顺序扫描字符串，用一个栈存重复次数，一个栈存进入括号前的字符串。 遇到数字就累积倍数，遇到 `[` 把当前状态入栈并清空， 遇到 `]` 就出栈，把当前字符串按倍数展开并拼回上一层。 扫描结束后，当前字符串就是答案。 时间复杂度 O(n)，空间复杂度 O(n)。
+
+## ❌[399. 除法求值](https://leetcode.cn/problems/evaluate-division/)
+
+> 给你一个变量对数组 `equations` 和一个实数值数组 `values` 作为已知条件，其中 `equations[i] = [A(i), B(i)]` 和 `values[i]` 共同表示等式 `A(i) / B(i) = values[i]` 。每个 `A(i)` 或 `B(i)` 是一个表示单个变量的字符串。
+>
+> 另有一些以数组 `queries` 表示的问题，其中 `queries[j] = [C(j), D(j)]` 表示第 `j` 个问题，请你根据已知条件找出 `C(j) / D(j) = ?` 的结果作为答案。
+>
+> 返回 **所有问题的答案** 。如果存在某个无法确定的答案，则用 `-1.0` 替代这个答案。如果问题中出现了给定的已知条件中没有出现的字符串，也需要用 `-1.0` 替代这个答案。
+>
+> **注意：**输入总是有效的。你可以假设除法运算中不会出现除数为 0 的情况，且不存在任何矛盾的结果。
+>
+> **注意：**未在等式列表中出现的变量是未定义的，因此无法确定它们的答案。
+
+```C++
+
+```
+
+思路
+
+## [406. 根据身高重建队列](https://leetcode.cn/problems/queue-reconstruction-by-height/)
+
+> 假设有打乱顺序的一群人站成一个队列，数组 `people` 表示队列中一些人的属性（不一定按顺序）。每个 `people[i] = [h(i), k(i)]` 表示第 `i` 个人的身高为 `h(i)` ，前面 **正好** 有 `k(i)`( )个身高大于或等于 `h(i)` 的人。
+>
+> 请你重新构造并返回输入数组 `people` 所表示的队列。返回的队列应该格式化为数组 `queue` ，其中 `queue[j] = [h(j), k(j)]` 是队列中第 `j` 个人的属性（`queue[0]` 是排在队列前面的人）。
+
+```C++
+class Solution {
+public:
+    static bool cmp(vector<int>& a,vector<int>& b){
+        if(a[0]==b[0]) return a[1]<b[1];
+        return a[0]>b[0];
+    }
+    vector<vector<int>> reconstructQueue(vector<vector<int>>& people) {
+        sort(people.begin(),people.end(),cmp);
+        vector<vector<int>> ans;
+        for(int i=0;i<people.size();i++){
+            int pos=people[i][1];
+            ans.insert(ans.begin()+pos,people[i]);
+        }
+        return ans;
+    }
+};
+```
+
+利用 **贪心算法** (Greedy) 策略。核心思想是 **“高个子先站队，矮个子插队”**。
+
+首先根据身高 $h$ 进行 **降序排序**（若身高相同，则按 $k$ 升序）。这样做的妙处在于：当我们处理某个具体的人时，已经排在队列中的人**全部都比他高（或相等）**。
+
+因此，只需要按照他的 $k$ 值作为**索引**，将其插入到队列的对应位置即可。后续插入的“矮个子”即使站到了他前面，也不会影响他对“前面有多少个高个子”的计数（因为矮个子对高个子的 $k$ 值没有贡献），从而保证了队列属性的正确性。
+
+## [416. 分割等和子集](https://leetcode.cn/problems/partition-equal-subset-sum/)
+
+> 给你一个 **只包含正整数** 的 **非空** 数组 `nums` 。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。
+
+```C++
+bool canPartition(vector<int>& nums) {
+        int sum=0;
+        for(int n:nums) sum+=n;
+        if(sum%2!=0) return false;
+        vector<bool> dp(sum+1,false);
+        sum=sum/2;
+        dp[0]=true;
+        for(int i=0;i<nums.size();i++){
+            for(int j=sum;j>=0;j--){
+                if(j>=nums[i]) dp[j]=dp[j]||dp[j-nums[i]];
+            }
+        }
+        return dp[sum];
+    }
+```
+
+利用 **0/1 背包问题** 的动态规划思想。首先计算数组总和，若为奇数直接返回 `false`（无法均分），否则将目标设定为总和的一半 (`sum / 2`)。
+
+使用一维数组 `dp` 进行空间优化，定义 `dp[j]` 为是否能凑出和为 `j` 的子集。核心逻辑在于**外层遍历物品，内层倒序遍历容量**：通过从大到小遍历 `j`，保证在计算 `dp[j]` 时引用的 `dp[j - nums[i]]` 是**上一轮**（即未加入当前数字前）的状态，从而避免同一个数字被重复使用。
+
+## [437. 路径总和 III](https://leetcode.cn/problems/path-sum-iii/)
+
+> 给定一个二叉树的根节点 `root` ，和一个整数 `targetSum` ，求该二叉树里节点值之和等于 `targetSum` 的 **路径** 的数目。
+>
+> **路径** 不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。
+
+```C++
+class Solution {
+public:
+    int target=0,ans=0;
+    unordered_map<long long, int> prefix;
+    void dfs(TreeNode* node, long long curSum){
+        if(!node) return;
+        curSum+=node->val;
+        if(prefix.count(curSum-target)) ans+=prefix[curSum-target];
+        prefix[curSum]++;
+        dfs(node->left,curSum);
+        dfs(node->right,curSum);
+        prefix[curSum]--;
+    }
+    int pathSum(TreeNode* root, int targetSum) {
+        target=targetSum;
+        prefix[0]=1;
+        dfs(root,0);
+        return ans;
+    }
+};
+```
+
+DFS 遍历二叉树，把从根到当前节点的路径和当作前缀和，用哈希表统计历史前缀和出现次数，当前前缀和减去 target 的次数就是以当前节点结尾的合法路径数。
+
+`prefix[0] = 1` 表示：在任何节点之前，存在一条“和为 0 的空路径”。
+
+在 DFS 开始之前，前缀和为 0 的路径，出现过 1 次。这个「路径」就是：空路径（什么节点都不选）
+
+要想**把任意路径和都表示成两个前缀和的差**，必须添加一个 0，否则当路径是前缀时（从根节点开始的路径），没法减去一个数。
+
+## [438. 找到字符串中所有字母异位词](https://leetcode.cn/problems/find-all-anagrams-in-a-string/)
+
+> 给定两个字符串 `s` 和 `p`，找到 `s` 中所有 `p` 的 异位词 的子串，返回这些子串的起始索引。不考虑答案输出的顺序。
+
+```C++
+vector<int> findAnagrams(string s, string p) {
+        vector<int> res;
+        if(s.size()<p.size()) return res;
+        vector<int> cnt(26,0);
+        for(char c:p) cnt[c-'a']++;
+        int left=0,right=0;
+        int need=p.size();
+        while(right<s.size()){
+            if(cnt[s[right]-'a']-- >0) need--;
+            right++;
+            if(right-left==p.size()){
+                if(need==0) res.push_back(left);
+                if(cnt[s[left]-'a']++ >=0) need++;
+                left++;
+            }
+        }
+        return res;
+    }
+```
+
+Need 表示 **当前窗口中还差多少个字符才能凑成一个异位词。**
+
+if (cnt[s[right] - 'a']-- > 0) need--;
+
+看 s[right] 这个字符是否是 **我们还需要的**
+
+cnt[x]-- 表示这个字符被窗口“拿走了”，`cnt == 0` 说明这个字符是“刚好满足需求的”
+
+用**固定长度滑动窗口**。 先用一个大小为 26 的数组统计 `p` 中每个字符需要的次数，并用一个变量 `need` 表示窗口中还缺多少个字符。 然后在 `s` 上维护一个长度始终等于 `p.size()` 的窗口。 窗口右移时，如果加入的字符是当前还需要的，就让 `need--`； 当窗口长度达标后，如果 `need == 0`，说明当前窗口正好是 `p` 的一个异位词，记录左端点。 最后窗口左移时，对称地恢复计数和 `need`。 整个过程每个字符只进出窗口一次，时间复杂度 O(n)，空间复杂度 O(1)。
+
+## [448. 找到所有数组中消失的数字](https://leetcode.cn/problems/find-all-numbers-disappeared-in-an-array/)
+
+> 给你一个含 `n` 个整数的数组 `nums` ，其中 `nums[i]` 在区间 `[1, n]` 内。请你找出所有在 `[1, n]` 范围内但没有出现在 `nums` 中的数字，并以数组的形式返回结果。
+
+```C++
+vector<int> findDisappearedNumbers(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> res;
+        for(int num:nums){
+            int x=(num-1)%n;
+            if(nums[x]<=n) nums[x]+=n;
+        }
+        for(int i=0;i<n;i++){
+            if(nums[i]<=n) res.emplace_back(i+1);
+        }
+        return res;
+    }
+```
+
+利用 **原地哈希** (In-place Hashing) 策略，巧妙地将输入数组本身作为哈希表使用，从而实现 $O(1)$ 的额外空间复杂度。
+
+核心逻辑在于利用数字范围 $[1, N]$ 与数组下标 $[0, N-1]$ 的映射关系：
+
+1. **标记**：遍历数组，对于每个出现的数值 `num`，将其对应的下标 `(num - 1) % n` 处的元素**加上 n**。这样，凡是数值大于 $n$ 的位置，就代表该位置对应的数字（即 `下标 + 1`）**已经出现过**。
+2. **筛选**：再次遍历数组，若某一下标 `i` 处的元素值仍然小于等于 $n$，说明该位置从未被哈希函数“访问”过，即数字 `i+1` **缺失**。
+
+## [461. 汉明距离](https://leetcode.cn/problems/hamming-distance/)
+
+> 两个整数之间的 [汉明距离](https://baike.baidu.com/item/汉明距离) 指的是这两个数字对应二进制位不同的位置的数目。
+>
+> 给你两个整数 `x` 和 `y`，计算并返回它们之间的汉明距离。
+
+```Java
+int hammingDistance(int x, int y) {
+        int res=0,s=x^y;
+        while(s){
+            res+=s&1;
+            s>>=1;
+        }
+        return res;
+    }
+```
+
+利用 **异或运算** (XOR) 和 **位操作**。首先计算 $x \oplus y$，该操作会将两个数字二进制表示中**不同**的位标记为 `1`，相同的位标记为 `0`。随后，通过循环不断检查运算结果的**最低有效位** (`s & 1`) 是否为 1 并累加计数，同时将数字**右移** (`s >>= 1`)，从而统计出所有不同位的数量。
+
+## [494. 目标和](https://leetcode.cn/problems/target-sum/)
+
+> 给你一个非负整数数组 `nums` 和一个整数 `target` 。
+>
+> 向数组中的每个整数前添加 `'+'` 或 `'-'` ，然后串联起所有整数，可以构造一个 **表达式** ：
+>
+> - 例如，`nums = [2, 1]` ，可以在 `2` 之前添加 `'+'` ，在 `1` 之前添加 `'-'` ，然后串联起来得到表达式 `"+2-1"` 。
+>
+> 返回可以通过上述方法构造的、运算结果等于 `target` 的不同 **表达式** 的数目。
+
+```C++
+int findTargetSumWays(vector<int>& nums, int target) {
+        int sum=0;
+        for(int n:nums) sum+=n;
+        if((sum+target)%2==1||abs(target)>sum) return 0;
+        int bagSize=(sum+target)/2;
+        vector<int> dp(bagSize+1,0);
+        dp[0]=1;
+        for(int i=0;i<nums.size();i++){
+            for(int j=bagSize;j>=nums[i];j--){
+                dp[j]=dp[j]+dp[j-nums[i]];
+            }
+        }
+        return dp[bagSize];
+    }
+```
+
+利用 **0/1 背包问题**（子集和问题）的动态规划思想。
+
+首先通过数学推导将问题转化为**在数组中选取若干元素，使其和为** **`bagSize`** **的方法数有多少？**
+
+核心逻辑：
+
+1. **边界检查**：若 `sum + target` 为奇数，或 `target` 绝对值超过总和，则无法凑成，直接返回 0。
+2. **空间优化 DP**：使用一维数组 `dp[j]` 表示填满容量为 $j$ 的背包的方法数。
+3. **逆序遍历**：内层循环从 `bagSize` 倒序遍历到 `nums[i]`，确保每个物品在每轮计算中只被使用一次（典型的 0/1 背包处理方式）。
+
+## [538. 把二叉搜索树转换为累加树](https://leetcode.cn/problems/convert-bst-to-greater-tree/)
+
+> 给出二叉 **搜索** 树的根节点，该树的节点值各不相同，请你将其转换为累加树（Greater Sum Tree），使每个节点 `node` 的新值等于原树中大于或等于 `node.val` 的值之和。
+>
+> 提醒一下，二叉搜索树满足下列约束条件：
+>
+> - 节点的左子树仅包含键 **小于** 节点键的节点。
+> - 节点的右子树仅包含键 **大于** 节点键的节点。
+> - 左右子树也必须是二叉搜索树。
+
+```C++
+class Solution {
+public:
+    int sum=0;
+    TreeNode* convertBST(TreeNode* root) {
+        if(!root) return nullptr;
+        convertBST(root->right);
+        sum+=root->val;
+        root->val=sum;
+        convertBST(root->left);
+        return root;
+    }
+};
+```
+
+利用 **二叉搜索树 (BST)** 的有序性，采用 **反向中序遍历**（$Right \to Root \to Left$）。由于 BST 的右子节点大于根节点，这种遍历方式保证了节点严格按照 **从大到小** 的顺序被访问。
+
+核心逻辑是维护一个全局的累加变量 `sum`：在遍历过程中，将当前节点的值累加到 `sum` 中，随后用新的 `sum` 更新当前节点的值。本质上，这是在计算树中节点值的 **后缀和**，从而将 BST 转换为累加树。
+
+## [543. 二叉树的直径](https://leetcode.cn/problems/diameter-of-binary-tree/)
+
+> 给你一棵二叉树的根节点，返回该树的 **直径** 。
+>
+> 二叉树的 **直径** 是指树中任意两个节点之间最长路径的 **长度** 。这条路径可能经过也可能不经过根节点 `root` 。
+>
+> 两节点之间路径的 **长度** 由它们之间边数表示。
+
+```C++
+class Solution {
+public:
+    int maxVal=0;
+    int diameterOfBinaryTree(TreeNode* root) {
+        depthOfNode(root);
+        return maxVal;
+    }
+    int depthOfNode(TreeNode* cur){
+        if(!cur) return 0;
+        int left=depthOfNode(cur->left);
+        int right=depthOfNode(cur->right);
+        maxVal=max(left+right,maxVal);
+        return max(left,right)+1;
+    }
+};
+```
+
+利用 **深度优先搜索** (DFS) 结合 **后序遍历** 的思想。核心在于将“求直径”的问题转化为求“深度”的子问题。
+
+在递归计算每个节点 **最大深度** 的过程中，顺带计算以该节点为 **转折点**（即路径最高点）的最长路径长度（即 `左子树深度 + 右子树深度`），并实时更新全局最大值 `maxVal`。函数最终返回自身的深度（`max(左, 右) + 1`）供父节点使用。
+
+## [560. 和为 K 的子数组](https://leetcode.cn/problems/subarray-sum-equals-k/)
+
+> 给你一个整数数组 `nums` 和一个整数 `k` ，请你统计并返回 _该数组中和为_ _`k`_ _的子数组的个数_ 。
+>
+> 子数组是数组中元素的连续非空序列。
+
+```C++
+int subarraySum(vector<int>& nums, int k) {
+        int pre=0,cnt=0;
+        unordered_map<int,int> mp;
+        mp[0]=1;
+        for(auto s:nums){
+            pre+=s;
+            if(mp.count(pre-k)) cnt+=mp[pre-k];
+            mp[pre]++;
+        }
+        return cnt;
+    }
+```
+
+利用 **前缀和** (Prefix Sum) 结合 **哈希表** 优化。核心思想是将“寻找和为 $k$ 的连续子数组”转化为“在当前位置之前，寻找前缀和等于 `pre - k` 的出现次数”。
+
+核心逻辑
+
+1. **前缀和转换**：定义 $pre[i]$ 为数组前 $i$ 个元素的和。那么子数组 $[j, i]$ 的和可以表示为 $pre[i] - pre[j-1]$。
+2. **等式变形**：我们要找的是满足 $pre[i] - pre[j-1] = k$ 的区间，等价于在遍历到 $i$ 时，寻找之前有多少个 $j$ 满足 $pre[j-1] = pre[i] - k$。
+3. **哈希表计数**：利用 `unordered_map` 存储每个前缀和出现的**频次**。
+   1. **初始化** `mp[0] = 1`：这代表前缀和为 0 的情况出现过一次（用于处理从数组第一个元素开始就满足和为 $k$ 的情况）。
+   2. **实时累加**：在一次遍历中，计算当前前缀和 `pre`，在哈希表中查找 `pre - k`，将其出现的次数累加进结果 `cnt`，然后更新哈希表中 `pre` 的频次。
+
+这种方法将原本 $O(N^2)$ 的暴力枚举优化到了 **$O(N)$** 的时间复杂度。
+
+## [581. 最短无序连续子数组](https://leetcode.cn/problems/shortest-unsorted-continuous-subarray/)
+
+> 给你一个整数数组 `nums` ，你需要找出一个 **连续子数组** ，如果对这个子数组进行升序排序，那么整个数组都会变为升序排序。
+>
+> 请你找出符合题意的 **最短** 子数组，并输出它的长度。
+
+```SQL
+int findUnsortedSubarray(vector<int>& nums) {
+        int n=nums.size(),left=-1,right=-1;
+        int maxv=INT_MIN,minv=INT_MAX;
+        for(int i=0;i<n;i++){
+            if(maxv<nums[i]) maxv=nums[i];
+            else if (maxv>nums[i]) right=i;
+            if(minv>nums[n-i-1]) minv=nums[n-i-1];
+            else if(minv<nums[n-i-1]) left=n-i-1;
+        }
+        return right==-1?0:right-left+1;
+    }
+```
+
+思路
+
+## [617. 合并二叉树](https://leetcode.cn/problems/merge-two-binary-trees/)
+
+> 给你两棵二叉树： `root1` 和 `root2` 。
+>
+> 想象一下，当你将其中一棵覆盖到另一棵之上时，两棵树上的一些节点将会重叠（而另一些不会）。你需要将这两棵树合并成一棵新二叉树。合并的规则是：如果两个节点重叠，那么将这两个节点的值相加作为合并后节点的新值；否则，**不为** null 的节点将直接作为新二叉树的节点。
+>
+> 返回合并后的二叉树。
+>
+> **注意:** 合并过程必须从两个树的根节点开始。
+
+```C++
+TreeNode* mergeTrees(TreeNode* root1, TreeNode* root2) {
+        if(!root1) return root2;
+        if(!root2) return root1;
+        root1->val+=root2->val;
+        root1->left=mergeTrees(root1->left,root2->left);
+        root1->right=mergeTrees(root1->right,root2->right);
+        return root1;
+    }
+```
+
+思路
+
+## [621. 任务调度器](https://leetcode.cn/problems/task-scheduler/)
+
+> 给你一个用字符数组 `tasks` 表示的 CPU 需要执行的任务列表，用字母 A 到 Z 表示，以及一个冷却时间 `n`。每个周期或时间间隔允许完成一项任务。任务可以按任何顺序完成，但有一个限制：两个 **相同种类** 的任务之间必须有长度为 `n` 的冷却时间。
+>
+> 返回完成所有任务所需要的 **最短时间间隔** 。
+
+```Java
+class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) {
+        vector<int> cnt(26, 0);
+        for (char ch : tasks) cnt[ch - 'A']++;
+        int maxCnt = 0;
+        for (int x : cnt) maxCnt = max(maxCnt, x);
+        int k = 0;
+        for (int x : cnt) {
+            if (x == maxCnt) k++;
+        }
+        int ans = (maxCnt - 1) * (n + 1) + k;
+        return max((int)tasks.size(), ans);
+    }
+};
+```
+
+思路
+
+最短时间 = max( 任务总数 , (maxCnt - 1) \* (n + 1) + maxCntTasks )
+
+`n` 约束的是“中间空多少”，但调度周期必须把“任务自己”也算上，所以是 `n + 1`。
+
+**Q：为什么要取 max？**
+
+> 因为公式只是“最少空闲情况下的下限”，如果其他任务足够多，就不需要 idle，答案就是任务总数。
+
+**Q：为什么只看出现次数最多的任务？**
+
+> 因为它决定了最小冷却间隔的整体结构，其他任务只是在填空。
+
+## [647. 回文子串](https://leetcode.cn/problems/palindromic-substrings/)
+
+> 给你一个字符串 `s` ，请你统计并返回这个字符串中 **回文子串** 的数目。
+>
+> **回文字符串** 是正着读和倒过来读一样的字符串。
+>
+> **子字符串** 是字符串中的由连续字符组成的一个序列。
+
+```C++
+class Solution {
+public:
+    int countSubstrings(string s) {
+        int ans=0;
+        for(int i=0;i<s.size();i++){
+            ans+=extend(s,i,i);
+            ans+=extend(s,i,i+1);
+        }
+        return ans;
+    }
+    int extend(const string& s, int l, int r){
+        int res=0;
+        while(l>=0&&r<s.size()&&s[l]==s[r]){
+            l--;
+            r++;
+            res++;
+        }
+        return res;
+    }
+};
+```
+
+思路
+
+## [739. 每日温度](https://leetcode.cn/problems/daily-temperatures/)
+
+> 给定一个整数数组 `temperatures` ，表示每天的温度，返回一个数组 `answer` ，其中 `answer[i]` 是指对于第 `i` 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 `0` 来代替。
+
+```C++
+vector<int> dailyTemperatures(vector<int>& temperatures) {
+        stack<int> st;
+        vector<int> ans(temperatures.size(),0);
+        for(int i=0;i<temperatures.size();i++){
+            while(!st.empty()&&temperatures[i]>temperatures[st.top()]){
+                ans[st.top()]=i-st.top();
+                st.pop();
+            }
+            st.push(i);
+        }
+        return ans;
+    }
+```
+
+思路
+
+## 个人进度
+
+50题，超过60%
+
+67题，超过70%
+
+82题，超过75%
+
+100题，超过80%
+
+130题，超过85.7%
+
+150题，超过88.4% (25.9.7
+
+164题，超过90% (25.9.8
+
+200题，超过92.9% (25.9.28
+
+238题，超过95% (25.10.8
+
+300题，超过96.9%（25.11.28
