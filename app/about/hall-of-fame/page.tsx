@@ -3,7 +3,7 @@ import { genPageMetadata } from '~/app/seo'
 import { CheckmatePage } from '~/components/checkmate/checkmate-page'
 import { PageTheme } from '~/components/ui/page-theme'
 
-export const metadata = genPageMetadata({ title: 'Hall of Fame' })
+export const metadata = genPageMetadata({ title: '名人堂' })
 
 export default function HallOfFamePage() {
   return (

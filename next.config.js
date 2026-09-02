@@ -1,9 +1,3 @@
-const { withContentlayer } = require('next-contentlayer2')
-
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
-
 const UMAMI_DEFAULT_URL = 'https://cloud.umami.is/script.js'
 
 function getOrigin(value) {
@@ -20,13 +14,12 @@ const developmentScriptSources = process.env.NODE_ENV === 'development' ? " 'uns
 
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline'${developmentScriptSources} https://giscus.app ${umamiOrigin};
+  script-src 'self' 'unsafe-inline'${developmentScriptSources} ${umamiOrigin};
   style-src 'self' 'unsafe-inline';
   img-src 'self' blob: data: https://cdnjs.cloudflare.com;
   media-src 'self';
-  connect-src 'self' https://giscus.app ${umamiOrigin}${developmentConnectSources};
+  connect-src 'self' ${umamiOrigin}${developmentConnectSources};
   font-src 'self';
-  frame-src https://giscus.app;
   object-src 'none';
   base-uri 'self';
   form-action 'self';
@@ -79,12 +72,11 @@ const unoptimized = process.env.UNOPTIMIZED ? true : undefined
  * @type {import('next/dist/next-server/server/config').NextConfig}
  **/
 module.exports = () => {
-  const plugins = [withContentlayer, withBundleAnalyzer]
-  return plugins.reduce((acc, next) => next(acc), {
+  return {
     output,
     basePath,
     reactStrictMode: true,
-    pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+    pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
     images: {
       qualities: [75, 100],
       unoptimized,
@@ -123,5 +115,5 @@ module.exports = () => {
 
       return config
     },
-  })
+  }
 }
