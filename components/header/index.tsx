@@ -3,15 +3,12 @@
 import clsx from 'clsx'
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
-import { KbarSearchTrigger } from '~/components/search/kbar-trigger'
 import { Container } from '~/components/ui/container'
 import { Link } from '~/components/ui/link'
 import { HEADER_NAV_LINKS } from '~/data/navigation'
 import { SITE_METADATA } from '~/data/site-metadata'
-import { MoreLinks } from './more-links'
 import { Logo } from './logo'
 import { MobileNav } from './mobile-nav'
-import { CheckNavMenu } from './check-nav-menu'
 
 let logged = false
 
@@ -23,6 +20,9 @@ function logASCIItext() {
 
 export function Header() {
   const pathname = usePathname()
+  const activeHref = [...HEADER_NAV_LINKS]
+    .sort((left, right) => right.href.length - left.href.length)
+    .find(({ href }) => pathname === href || pathname.startsWith(`${href}/`))?.href
 
   useEffect(logASCIItext, [])
 
@@ -40,35 +40,19 @@ export function Header() {
         <div className="flex w-full items-center justify-between sm:w-auto sm:gap-8">
           <Logo className="shrink-0" />
           <nav className="hidden items-center gap-3 sm:flex" aria-label="Primary navigation">
-            {HEADER_NAV_LINKS.map(({ title, href, children }) => {
-              const isActive = pathname.startsWith(href)
-              return (
-                children ? (
-                  <CheckNavMenu
-                    key={title}
-                    href={href}
-                    title={title}
-                    isActive={isActive}
-                    items={children}
-                  />
-                ) : (
-                  <Link key={title} href={href} className="px-1 py-1 font-medium sm:translate-x-1">
-                    <span
-                      className="nav-interactive"
-                      data-active={isActive}
-                      data-umami-event={`nav-${href.replace('/', '')}`}
-                    >
-                      {title}
-                    </span>
-                  </Link>
-                )
-              )
-            })}
-            <MoreLinks />
+            {HEADER_NAV_LINKS.map(({ title, href }) => (
+              <Link key={href} href={href} className="px-1 py-1 font-medium sm:translate-x-1">
+                <span
+                  className="nav-interactive"
+                  data-active={href === activeHref}
+                  data-umami-event={`nav-${href.replace('/', '')}`}
+                >
+                  {title}
+                </span>
+              </Link>
+            ))}
           </nav>
-          <div className="hidden h-4 w-px shrink-0 bg-gray-200 md:block dark:bg-gray-600" />
           <div className="flex items-center gap-1 sm:gap-3">
-            <KbarSearchTrigger />
             <MobileNav />
           </div>
         </div>

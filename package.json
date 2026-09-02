@@ -9,92 +9,47 @@
     "start": "next start",
     "dev": "next dev -p 3435 --webpack",
     "build": "cross-env INIT_CWD=$PWD next build --webpack",
-    "postbuild": "node ./scripts/post-build.mjs",
     "serve": "next start",
-    "analyze": "cross-env ANALYZE=true next build",
-    "lint": "eslint app components layouts utils scripts --fix",
+    "lint": "eslint app components",
     "prepare": "husky",
     "typecheck": "npx tsc --noEmit"
   },
   "dependencies": {
-    "@giscus/react": "^3.1.0",
     "@headlessui/react": "2.2.10",
-    "@next/bundle-analyzer": "16.3.4",
-    "@supabase/supabase-js": "^2.110.0",
-    "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/postcss": "^4.3.2",
-    "@tailwindcss/typography": "^0.5.20",
-    "@upstash/redis": "^1.38.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "body-scroll-lock": "^4.0.0-beta.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "contentlayer2": "0.5.8",
-    "esbuild": "0.28.2",
     "eslint-config-next": "^16.3.4",
-    "github-slugger": "^2.0.0",
-    "hast-util-from-html-isomorphic": "^2.0.0",
-    "image-size": "2.0.2",
-    "js-yaml": "^5.2.1",
-    "kbar": "1.0.0",
     "lucide-react": "^1.38.0",
-    "mdast-util-to-string": "^4.0.0",
     "next": "16.3.4",
-    "next-contentlayer2": "0.5.8",
     "next-themes": "^0.4.6",
     "postcss": "^8.5.16",
-    "probe-image-size": "^7.3.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "react-medium-image-zoom": "^5.4.8",
-    "reading-time": "1.5.0",
-    "rehype-autolink-headings": "^7.1.0",
-    "rehype-citation": "^2.3.2",
-    "rehype-katex": "^7.0.1",
-    "rehype-preset-minify": "7.0.1",
-    "rehype-pretty-code": "^0.14.3",
-    "rehype-slug": "^6.0.0",
-    "remark": "^15.0.1",
-    "remark-gfm": "^4.0.1",
-    "remark-github-blockquote-alert": "^2.1.0",
-    "remark-math": "^6.0.0",
-    "shiki": "^4.3.1",
-    "tailwindcss": "^4.3.2",
-    "unist-util-visit": "^5.1.0"
+    "tailwindcss": "^4.3.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.0",
     "@commitlint/config-conventional": "^21.2.0",
     "@svgr/webpack": "^8.1.0",
     "@types/body-scroll-lock": "^3.1.2",
-    "@types/mdast": "^4.0.4",
-    "@types/mdx": "^2.0.14",
     "@types/node": "^26.1.0",
-    "@types/probe-image-size": "^7.2.5",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@types/unist": "^3.0.3",
     "cross-env": "^10.1.0",
     "eslint": "^9.39.5",
-    "fontmin": "^1.1.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.4.1",
     "prettier": "^3.9.4",
     "prettier-plugin-tailwindcss": "^0.8.0",
-    "tsx": "^4.23.0",
-    "typescript": "^6.0.3",
-    "vfile": "^6.0.3"
+    "typescript": "^6.0.3"
   },
   "lint-staged": {
-    "*.+(js|jsx|ts|tsx|json|css|md|mdx)": [
+    "*.+(js|jsx|ts|tsx|json|css|md)": [
       "prettier --write"
     ]
-  },
-  "overrides": {
-    "kbar": {
-      "react": "$react",
-      "react-dom": "$react-dom"
-    }
   }
 }

@@ -25,12 +25,6 @@ public/sitemap.xml
 /build
 *.xml
 
-# rss feed
-/public/feed.xml
-
-# search
-/public/search.json
-
 # misc
 .DS_Store
 
@@ -47,9 +41,6 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# Contentlayer
-.contentlayer
-
 # VSCode
 /.vscode/
 
@@ -57,9 +48,6 @@ yarn-error.log*
 .eslintcache
 
 scripts/imdb-movies.csv
-
-# supabase
-supabase/
 
 # ts build
 tsconfig.tsbuildinfo

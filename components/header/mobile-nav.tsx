@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { Link } from '~/components/ui/link'
 import { Twemoji } from '~/components/ui/twemoji'
-import { HEADER_NAV_LINKS, MORE_NAV_LINKS } from '~/data/navigation'
+import { HEADER_NAV_LINKS } from '~/data/navigation'
 import { SITE_METADATA } from '~/data/site-metadata'
 import { Logo } from './logo'
 import { ThemeSwitcher } from './theme-switcher'
@@ -17,6 +17,9 @@ export function MobileNav() {
   const [navShow, setNavShow] = useState(false)
   const navRef = useRef<HTMLElement | null>(null)
   const pathname = usePathname()
+  const activeHref = [...HEADER_NAV_LINKS]
+    .sort((left, right) => right.href.length - left.href.length)
+    .find(({ href }) => pathname === href || pathname.startsWith(`${href}/`))?.href
 
   const openNav = () => {
     if (navRef.current) disableBodyScroll(navRef.current)
@@ -85,13 +88,13 @@ export function MobileNav() {
                 aria-label="Mobile navigation"
                 className="mt-12 flex h-[calc(100dvh-7rem)] flex-col items-start gap-7 overflow-y-auto pb-10"
               >
-                {[...HEADER_NAV_LINKS, ...MORE_NAV_LINKS].map((link) => (
+                {HEADER_NAV_LINKS.map((link) => (
                   <div key={link.title} className="flex flex-col items-start gap-3">
                     <Link
                       href={link.href}
                       className={clsx(
                         'font-display hover:text-accent dark:hover:text-accent-soft py-1 text-2xl font-bold tracking-wide outline outline-0 transition-colors',
-                        pathname === link.href || pathname.startsWith(`${link.href}/`)
+                        link.href === activeHref
                           ? 'text-accent dark:text-accent-soft'
                           : 'text-ink dark:text-cream'
                       )}
@@ -100,25 +103,6 @@ export function MobileNav() {
                       <Twemoji emoji={link.emoji} />
                       <span className="ml-2">{link.title}</span>
                     </Link>
-                    {link.children ? (
-                      <div className="border-line dark:border-line-dark ml-3 flex flex-col gap-2 border-l pl-5">
-                        {link.children.map((child) => (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className={clsx(
-                              'hover:text-accent dark:hover:text-accent-soft py-1 text-base font-semibold transition-colors',
-                              pathname === child.href
-                                ? 'text-accent dark:text-accent-soft'
-                                : 'text-muted dark:text-muted-dark'
-                            )}
-                            onClick={closeNav}
-                          >
-                            {child.title}
-                          </Link>
-                        ))}
-                      </div>
-                    ) : null}
                   </div>
                 ))}
                 <div className="mt-5">
