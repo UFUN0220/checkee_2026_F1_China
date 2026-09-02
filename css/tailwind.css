@@ -50,67 +50,177 @@
   }
 }
 
+/* 更强版本 */
 :root {
   --site-ambient-background:
-    linear-gradient(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2)),
-    /* 1. 左下深紫暗部：制造空间深度 */
-    radial-gradient(circle at 8% 88%, rgb(90 45 110 / 0.35), transparent 28%),
-    /* 2. 右上雾紫光斑：形成对角视觉牵引 */
-    radial-gradient(circle at 85% 12%, rgb(154 123 170 / 0.3), transparent 34%),
-    /* 3. 中部柔粉大晕圈：承上启下，让紫色不硬 */
-    radial-gradient(circle at 50% 58%, rgb(216 180 194 / 0.26), transparent 40%),
-    /* 4. 右侧玫红点睛：小面积高饱和，提升贵气但不抢 */
-    radial-gradient(circle at 92% 42%, rgb(184 92 120 / 0.22), transparent 24%),
-    /* 5. 底部冷灰紫底色：统一画面，防止彩色发脏 */
-    linear-gradient(140deg, #f7f5f8 0%, #f0eaf2 48%, #f8f6f8 100%);
+    radial-gradient(
+      circle at 0% 85%,
+      rgb(120 0 215 / 0.42),
+      transparent 45%
+    ),
+
+    radial-gradient(
+      circle at 35% 0%,
+      rgb(208 0 168 / 0.32),
+      transparent 40%
+    ),
+
+    radial-gradient(
+      circle at 85% 35%,
+      rgb(255 23 75 / 0.30),
+      transparent 42%
+    ),
+
+    radial-gradient(
+      circle at 100% 90%,
+      rgb(255 107 0 / 0.24),
+      transparent 38%
+    ),
+
+    radial-gradient(
+      circle at 55% 55%,
+      rgb(255 245 250 / 0.9),
+      transparent 55%
+    ),
+
+    linear-gradient(
+      140deg,
+      #fbf8fd,
+      #f8edf7,
+      #fff7f0
+    );
 }
 
 html.dark {
   --site-ambient-background:
-    linear-gradient(rgb(11 11 13 / 0.26), rgb(11 11 13 / 0.26)),
-    radial-gradient(circle at 8% 88%, rgb(76 36 98 / 0.26), transparent 30%),
-    radial-gradient(circle at 85% 12%, rgb(94 54 108 / 0.2), transparent 34%),
-    radial-gradient(circle at 50% 58%, rgb(105 51 82 / 0.16), transparent 40%),
-    radial-gradient(circle at 92% 42%, rgb(112 36 72 / 0.14), transparent 24%),
-    linear-gradient(140deg, #0b0b0d 0%, #151019 48%, #0e0d12 100%);
+    radial-gradient(
+      circle at 4% 94%,
+      rgb(66 19 102 / 0.52),
+      transparent 42%
+    ),
+
+    radial-gradient(
+      circle at 88% 8%,
+      rgb(145 72 181 / 0.40),
+      transparent 45%
+    ),
+
+    radial-gradient(
+      circle at 52% 52%,
+      rgb(155 76 119 / 0.28),
+      transparent 48%
+    ),
+
+    radial-gradient(
+      circle at 98% 44%,
+      rgb(174 43 70 / 0.24),
+      transparent 32%
+    ),
+
+    linear-gradient(
+      138deg,
+      #08070a 0%,
+      #1a1021 28%,
+      #2a1728 53%,
+      #180f1c 76%,
+      #0b080d 100%
+    );
 }
 
 :root {
   --page-background-reading:
-    linear-gradient(rgb(255 255 255 / 0.22), rgb(255 255 255 / 0.22)),
-    radial-gradient(circle at 10% 86%, rgb(91 177 174 / 0.2), transparent 29%),
-    radial-gradient(circle at 84% 14%, rgb(123 194 214 / 0.24), transparent 34%),
-    radial-gradient(circle at 48% 58%, rgb(179 225 216 / 0.2), transparent 40%),
-    radial-gradient(circle at 92% 44%, rgb(137 205 191 / 0.16), transparent 24%),
-    linear-gradient(140deg, #f3f9fa 0%, #eaf5f2 48%, #f6faf8 100%);
-  --page-background-check:
-    linear-gradient(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.2)),
-    radial-gradient(circle at 10% 86%, rgb(184 137 82 / 0.2), transparent 29%),
-    radial-gradient(circle at 84% 14%, rgb(235 190 113 / 0.23), transparent 34%),
-    radial-gradient(circle at 48% 58%, rgb(239 194 155 / 0.2), transparent 40%),
-    radial-gradient(circle at 92% 44%, rgb(205 107 87 / 0.17), transparent 24%),
-    linear-gradient(140deg, #fbf6e8 0%, #f4ead5 48%, #fbf4e9 100%);
+
+    /* 左下：深海蓝青 */
+    radial-gradient(
+      circle at 5% 88%,
+      rgb(0 74 122 / 0.42),
+      transparent 42%
+    ),
+
+    /* 左上：极光青绿 */
+    radial-gradient(
+      circle at 35% 5%,
+      rgb(0 178 154 / 0.30),
+      transparent 40%
+    ),
+
+    /* 右侧：蓝紫主光 */
+    radial-gradient(
+      circle at 88% 38%,
+      rgb(82 76 190 / 0.34),
+      transparent 42%
+    ),
+
+    /* 右下：冷紫点睛 */
+    radial-gradient(
+      circle at 96% 90%,
+      rgb(124 65 170 / 0.22),
+      transparent 38%
+    ),
+
+    /* 中央浅色空间 */
+    radial-gradient(
+      circle at 52% 52%,
+      rgb(235 249 247 / 0.9),
+      transparent 55%
+    ),
+
+    linear-gradient(
+      140deg,
+      #f5fafb 0%,
+      #eaf1f4 45%,
+      #f9fafc 100%
+    );
 }
 
-html.dark {
-  --page-background-reading:
-    linear-gradient(rgb(10 22 25 / 0.24), rgb(10 22 25 / 0.24)),
-    radial-gradient(circle at 10% 86%, rgb(38 111 109 / 0.22), transparent 29%),
-    radial-gradient(circle at 84% 14%, rgb(47 111 137 / 0.24), transparent 34%),
-    radial-gradient(circle at 48% 58%, rgb(54 119 108 / 0.16), transparent 40%),
-    radial-gradient(circle at 92% 44%, rgb(38 116 105 / 0.14), transparent 24%),
-    linear-gradient(140deg, #0d1b1d 0%, #112325 48%, #0d1919 100%);
+:root {
   --page-background-check:
-    linear-gradient(rgb(37 24 13 / 0.2), rgb(37 24 13 / 0.2)),
-    radial-gradient(circle at 10% 86%, rgb(126 83 42 / 0.22), transparent 29%),
-    radial-gradient(circle at 84% 14%, rgb(141 102 45 / 0.22), transparent 34%),
-    radial-gradient(circle at 48% 58%, rgb(141 75 50 / 0.17), transparent 40%),
-    radial-gradient(circle at 92% 44%, rgb(143 61 51 / 0.16), transparent 24%),
-    linear-gradient(140deg, #211b14 0%, #282019 48%, #1d1713 100%);
+
+    /* 左下：深陶土红 */
+    radial-gradient(
+      circle at 5% 88%,
+      rgb(128 42 35 / 0.44),
+      transparent 42%
+    ),
+
+    /* 左上：琥珀金 */
+    radial-gradient(
+      circle at 35% 5%,
+      rgb(224 156 38 / 0.34),
+      transparent 40%
+    ),
+
+    /* 右侧：燃烧橙红 */
+    radial-gradient(
+      circle at 88% 38%,
+      rgb(230 72 38 / 0.34),
+      transparent 42%
+    ),
+
+    /* 右下：莓紫 */
+    radial-gradient(
+      circle at 96% 90%,
+      rgb(128 48 100 / 0.26),
+      transparent 38%
+    ),
+
+    /* 中央奶油区域 */
+    radial-gradient(
+      circle at 52% 52%,
+      rgb(255 244 220 / 0.9),
+      transparent 55%
+    ),
+
+    linear-gradient(
+      140deg,
+      #fcf7ed 0%,
+      #f4e6d0 45%,
+      #fff8ef 100%
+    );
 }
 
 .page-theme-shell {
-  min-height: 100%;
+  min-height: 100dvh;
 }
 
 .page-theme-shell[data-page-theme='reading'] {
@@ -140,7 +250,6 @@ body:has([data-page-theme='check']) {
 
 body:has(.about-page) {
   overflow: hidden;
-  background: var(--site-ambient-background);
 }
 
 body:has(.about-page) > footer {
@@ -337,7 +446,7 @@ body:has(.mobile-home-page) {
   min-height: 100dvh;
   overflow: hidden;
   isolation: isolate;
-  background: var(--site-ambient-background);
+  background: var(--page-background-check);
 }
 
 .about-page > .site-container {
@@ -805,8 +914,7 @@ body:has(.mobile-home-page) {
   color: #aaa69b;
 }
 
-.dark .desktop-home-page,
-.dark .about-page {
+.dark .desktop-home-page {
   color: #f5f5f7;
   background: var(--site-ambient-background);
 }

@@ -4,6 +4,7 @@ import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/re
 import { clearAllBodyScrollLocks, disableBodyScroll, enableBodyScroll } from 'body-scroll-lock'
 import { clsx } from 'clsx'
 import { Menu, X } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { Link } from '~/components/ui/link'
 import { Twemoji } from '~/components/ui/twemoji'
@@ -14,43 +15,41 @@ import { ThemeSwitcher } from './theme-switcher'
 
 export function MobileNav() {
   const [navShow, setNavShow] = useState(false)
-  const navRef = useRef<HTMLDivElement | null>(null)
+  const navRef = useRef<HTMLElement | null>(null)
+  const pathname = usePathname()
 
-  const onToggleNav = () => {
-    setNavShow((status) => {
-      if (status) {
-        if (navRef.current) enableBodyScroll(navRef.current)
-      } else {
-        // Prevent scrolling
-        if (navRef.current) disableBodyScroll(navRef.current)
-      }
-      return !status
-    })
+  const openNav = () => {
+    if (navRef.current) disableBodyScroll(navRef.current)
+    setNavShow(true)
+  }
+
+  const closeNav = () => {
+    if (navRef.current) enableBodyScroll(navRef.current)
+    setNavShow(false)
   }
 
   useEffect(() => {
     return clearAllBodyScrollLocks
-  })
+  }, [])
 
   return (
     <>
       <div
-        className={clsx([
-          'rounded p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700',
-          'flex items-center justify-center hidden sm:hidden',
-        ])}
+        className="flex items-center justify-center sm:hidden"
         data-umami-event="mobile-nav-toggle"
       >
         <button
           aria-label="Toggle Menu"
-          onClick={onToggleNav}
-          className="flex h-11 w-11 items-center justify-center"
+          aria-expanded={navShow}
+          aria-controls="mobile-navigation"
+          onClick={openNav}
+          className="nav-interactive h-11 w-11 justify-center p-0"
         >
           <Menu size={22} />
         </button>
       </div>
       <Transition appear show={navShow} as={Fragment} unmount={false}>
-        <Dialog as="div" onClose={onToggleNav} unmount={false}>
+        <Dialog as="div" onClose={closeNav} unmount={false}>
           <TransitionChild
             as={Fragment}
             enter="ease-out duration-300"
@@ -73,23 +72,30 @@ export function MobileNav() {
             leaveTo="translate-x-full opacity-0"
             unmount={false}
           >
-            <DialogPanel className="bg-paper dark:bg-paper-dark fixed inset-0 z-70 h-full w-full px-6 duration-300 sm:px-10">
-              <div className="flex items-center gap-3 pt-7">
+            <DialogPanel className="bg-paper/95 dark:bg-paper-dark/98 fixed inset-0 z-70 h-dvh w-full overflow-hidden px-7 backdrop-blur-xl duration-300">
+              <div className="flex items-center gap-3 pt-6">
                 <Logo />
                 <span className="text-muted dark:text-muted-dark text-sm font-semibold">
                   {SITE_METADATA.headerTitle}
                 </span>
               </div>
               <nav
+                id="mobile-navigation"
                 ref={navRef}
-                className="mt-16 flex h-full basis-0 flex-col items-start gap-6 overflow-y-auto pt-2"
+                aria-label="Mobile navigation"
+                className="mt-12 flex h-[calc(100dvh-7rem)] flex-col items-start gap-7 overflow-y-auto pb-10"
               >
                 {[...HEADER_NAV_LINKS, ...MORE_NAV_LINKS].map((link) => (
                   <div key={link.title} className="flex flex-col items-start gap-3">
                     <Link
                       href={link.href}
-                      className="font-display text-ink hover:text-accent dark:text-cream dark:hover:text-accent-soft py-1 text-4xl tracking-[-0.04em] outline outline-0"
-                      onClick={onToggleNav}
+                      className={clsx(
+                        'font-display hover:text-accent dark:hover:text-accent-soft py-1 text-2xl font-bold tracking-wide outline outline-0 transition-colors',
+                        pathname === link.href || pathname.startsWith(`${link.href}/`)
+                          ? 'text-accent dark:text-accent-soft'
+                          : 'text-ink dark:text-cream'
+                      )}
+                      onClick={closeNav}
                     >
                       <Twemoji emoji={link.emoji} />
                       <span className="ml-2">{link.title}</span>
@@ -100,8 +106,13 @@ export function MobileNav() {
                           <Link
                             key={child.href}
                             href={child.href}
-                            className="text-muted hover:text-accent dark:text-muted-dark dark:hover:text-accent-soft py-1 text-lg font-semibold"
-                            onClick={onToggleNav}
+                            className={clsx(
+                              'hover:text-accent dark:hover:text-accent-soft py-1 text-base font-semibold transition-colors',
+                              pathname === child.href
+                                ? 'text-accent dark:text-accent-soft'
+                                : 'text-muted dark:text-muted-dark'
+                            )}
+                            onClick={closeNav}
                           >
                             {child.title}
                           </Link>
@@ -115,9 +126,9 @@ export function MobileNav() {
                 </div>
               </nav>
               <button
-                className="text-ink hover:text-accent dark:text-cream dark:hover:text-accent-soft fixed top-5 right-4 z-80 h-12 w-12 p-3"
+                className="nav-interactive fixed top-5 right-4 z-80 h-11 w-11 justify-center p-0"
                 aria-label="Toggle Menu"
-                onClick={onToggleNav}
+                onClick={closeNav}
               >
                 <X className="h-7 w-7" strokeWidth={1.5} />
               </button>

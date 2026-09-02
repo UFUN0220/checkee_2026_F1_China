@@ -36,10 +36,10 @@ export function Header() {
         SITE_METADATA.stickyNav && 'sticky top-2 z-50 lg:top-8'
       )}
     >
-      <div className="flex items-center justify-center gap-3">
-        <div className="flex items-center gap-8">
-          <Logo />
-          <div className="gap-3 sm:flex">
+      <div className="flex items-center justify-center">
+        <div className="flex w-full items-center justify-between sm:w-auto sm:gap-8">
+          <Logo className="shrink-0" />
+          <nav className="hidden items-center gap-3 sm:flex" aria-label="Primary navigation">
             {HEADER_NAV_LINKS.map(({ title, href, children }) => {
               const isActive = pathname.startsWith(href)
               return (
@@ -52,7 +52,7 @@ export function Header() {
                     items={children}
                   />
                 ) : (
-                  <Link key={title} href={href} className="px-1 py-1 font-medium">
+                  <Link key={title} href={href} className="px-1 py-1 font-medium sm:translate-x-1">
                     <span
                       className="nav-interactive"
                       data-active={isActive}
@@ -65,9 +65,9 @@ export function Header() {
               )
             })}
             <MoreLinks />
-          </div>
+          </nav>
           <div className="hidden h-4 w-px shrink-0 bg-gray-200 md:block dark:bg-gray-600" />
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-3">
             <KbarSearchTrigger />
             <MobileNav />
           </div>

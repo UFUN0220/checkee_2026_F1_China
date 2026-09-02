@@ -69,11 +69,9 @@ export function CheckNavMenu({
     >
       <Link
         href={href}
-        className="nav-interactive"
-        data-active={isActive}
+        className="-mx-1 px-1 py-1 font-medium sm:translate-x-1"
         aria-haspopup="menu"
         aria-expanded={open}
-        data-umami-event="nav-about"
         onClick={() => {
           clearCloseTimer()
           setOpen(false)
@@ -86,7 +84,9 @@ export function CheckNavMenu({
           if (event.key === 'Escape') setOpen(false)
         }}
       >
-        {title}
+        <span className="nav-interactive" data-active={isActive} data-umami-event="nav-about">
+          {title}
+        </span>
       </Link>
       <div className="check-nav-menu-items" role="menu" hidden={!open}>
         {items.map((child) => (

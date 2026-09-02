@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   CHECKMATE_LOCATIONS,
   type CheckmateLocation,
@@ -64,19 +64,17 @@ export function CheckmateExperience({
 
 function FeatureTitle({
   children,
-  notice,
-  updatedAt,
+  trailing,
 }: {
   children: string
-  notice: CheckmateDataNotice
-  updatedAt: string
+  trailing?: ReactNode
 }) {
   return (
     <div className={styles.titleRow}>
       <header className={styles.titleBlock}>
         <h1>{children}</h1>
       </header>
-      <DataDescription notice={notice} updatedAt={updatedAt} />
+      {trailing}
     </div>
   )
 }
@@ -104,8 +102,8 @@ function WhiteHouseSelection({
   useEffect(() => setPage(1), [selectedCity])
   return (
     <div className={`${styles.view} ${styles.citiesView}`}>
-      <FeatureTitle notice={notice} updatedAt={snapshot.manifest.snapshotDate}>
-        2026年度白宫严选硕博(F1)
+      <FeatureTitle>
+        2026年度白宫严选中国硕博
       </FeatureTitle>
       <div className={styles.cityGrid} aria-label="五个城市的等待时长统计">
         {CHECKMATE_LOCATIONS.map((city) => {
@@ -129,7 +127,12 @@ function WhiteHouseSelection({
         })}
       </div>
       <div className={styles.citiesContent}>
-        <Trend trends={snapshot.monthlyF1Trends} stats={snapshot.national.waitStats} />
+        <Trend
+          trends={snapshot.monthlyF1Trends}
+          stats={snapshot.national.waitStats}
+          notice={notice}
+          updatedAt={snapshot.manifest.snapshotDate}
+        />
         <CityDetail
           city={selectedCity}
           cases={visibleCases}
@@ -166,9 +169,13 @@ function Quartiles({ stats }: { stats: WaitStats }) {
 function Trend({
   trends,
   stats,
+  notice,
+  updatedAt,
 }: {
   trends: CheckmateSnapshot['monthlyF1Trends']
   stats: WaitStats
+  notice: CheckmateDataNotice
+  updatedAt: string
 }) {
   const summary = trends.reduce(
     (total, trend) => ({
@@ -183,7 +190,8 @@ function Trend({
   return (
     <section className={styles.panel} aria-label="月度趋势">
       <div className={styles.panelHeading}>
-        <h2>2026.1-8月数据</h2>
+        <h2>2026.1-8月数据(F-1签证Check时长)</h2>
+        <DataDescription notice={notice} updatedAt={updatedAt} />
       </div>
       <div className={styles.trendSummary}>
         <strong>{summary.cases} cases</strong>
@@ -239,14 +247,14 @@ function CityDetail({
 }) {
   if (!city)
     return (
-      <section className={`${styles.panel} ${styles.cityEmpty}`} aria-live="polite">
+      <section className={`${styles.panel} ${styles.cityDetail} ${styles.cityEmpty}`} aria-live="polite">
         <MapPin size={18} strokeWidth={1.8} aria-hidden="true" />
         <span>选择一个城市查看最新案例</span>
       </section>
     )
   const [recentCases, olderCases] = splitColumns(cases)
   return (
-    <section className={styles.panel} aria-labelledby="checkmate-city-title">
+    <section className={`${styles.panel} ${styles.cityDetail}`} aria-labelledby="checkmate-city-title">
       <div className={styles.panelHeading}>
         <div>
           <h2 id="checkmate-city-title">{LOCATION_NAMES[city]} · 最新案例</h2>
@@ -321,7 +329,9 @@ function HallOfFame({
   }
   return (
     <div className={`${styles.view} ${styles.hallView}`}>
-      <FeatureTitle notice={notice} updatedAt={snapshot.snapshotDate}>
+      <FeatureTitle
+        trailing={<DataDescription notice={notice} updatedAt={snapshot.snapshotDate} />}
+      >
         名人堂
       </FeatureTitle>
       <section className={styles.hallSurface} aria-label="名人堂核心统计">

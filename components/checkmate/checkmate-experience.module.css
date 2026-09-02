@@ -42,6 +42,7 @@
   font-weight: 400;
   line-height: 1.05;
   letter-spacing: 0.012em;
+  transform: translateY(-0.28rem);
 }
 .dataNoticeTrigger {
   position: absolute;
@@ -230,15 +231,29 @@
   margin-bottom: 0.95rem;
 }
 .panelHeading h2 {
+  flex: 1 1 auto;
+  min-width: 0;
   margin: 0;
   font-size: 0.98rem;
   font-weight: 800;
+}
+.panelHeading .dataNoticeTrigger {
+  position: static;
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.2rem 0;
 }
 .panelHeading span,
 .listNote {
   margin: 0.32rem 0 0;
   color: var(--checkmate-muted);
   font-size: 0.73rem;
+}
+.cityDetail {
+  box-sizing: border-box;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
 }
 .cityEmpty {
   display: flex;
@@ -298,6 +313,12 @@
 .caseList {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.cityDetail .caseList {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 .caseColumn {
   min-width: 0;
@@ -461,7 +482,7 @@
 }
 
 @media (min-width: 761px) {
-  .about-page .feature {
+  :global(.about-page) .feature {
     box-sizing: border-box;
     height: 100%;
     padding-top: 1.25rem;
@@ -492,7 +513,8 @@
 
   .citiesView .citiesContent {
     min-height: 0;
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    height: 0;
     align-items: stretch;
     overflow: hidden;
   }
@@ -534,6 +556,11 @@
     margin: -0.35rem 0 1.1rem auto;
   }
 
+  .panelHeading .dataNoticeTrigger {
+    margin: 0;
+    padding: 0.15rem 0;
+  }
+
   .titleBlock h1 {
     font-size: clamp(2.35rem, 12vw, 3.2rem);
   }
@@ -550,6 +577,9 @@
   .citiesContent > :first-child,
   .citiesContent > :last-child {
     grid-column: auto;
+  }
+  .citiesView .citiesContent > .cityDetail {
+    height: clamp(22rem, 68dvh, 28rem);
   }
   .countStats {
     border-right: 0;
