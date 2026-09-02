@@ -12,23 +12,13 @@ export const SITE_METADATA = {
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/const/logo.jpg`,
   email: 'youfang0402@163.com',
   github: 'https://github.com/UFUN0220',
-  instagram: 'https://www.instagram.com/hta218_',
   linkedin: 'https://www.linkedin.com/in/fangyou11/',
-  x: 'UFUN0220',
   locale: 'en-US',
   stickyNav: true,
   analytics: {
     umamiAnalytics: {
-      //websiteId: process.env.NEXT_UMAMI_ID,
       websiteId: '',
-      shareUrl: 'https://analytics.leohuynh.dev/share/c9ErglxqzY5CQJ8g/leohuynh.dev',
     },
-    simpleAnalytics: false,
-  },
-  newsletter: {
-    // supports mailchimp, buttondown, convertkit, klaviyo, revue, emailoctopus, beehive
-    // Please add your .env file and modify it according to your selection
-    provider: 'buttondown',
   },
   comments: {
     giscusConfigs: {
@@ -50,10 +40,5 @@ export const SITE_METADATA = {
       // path to load documents to search
       searchDocumentsPath: `${process.env.BASE_PATH || ''}/search.json`,
     },
-  },
-  support: {
-    buyMeACoffee: 'https://www.buymeacoffee.com/leohuynh.dev',
-    paypal: 'https://paypal.me/hta218?country.x=VN&locale.x=en_US',
-    kofi: 'https://ko-fi.com/hta218',
   },
 }

@@ -28,7 +28,6 @@ import Remix from '~/icons/remix.svg'
 import RottenTomatoes from '~/icons/rottentomatoes.svg'
 import SemanticUI from '~/icons/semanticui.svg'
 import Shopify from '~/icons/shopify.svg'
-import Spotify from '~/icons/spotify.svg'
 import TailwindCSS from '~/icons/tailwind.svg'
 import Turborepo from '~/icons/turborepo.svg'
 import Typescript from '~/icons/typescript.svg'
@@ -145,10 +144,6 @@ export const BrandsMap: Record<
     Icon: Railway,
     url: 'https://railway.app',
   },
-  Spotify: {
-    Icon: Spotify,
-    url: 'https://spotify.com',
-  },
   OpenAI: {
     Icon: OpenAI,
     url: 'https://openai.com',
@@ -255,7 +250,7 @@ export function Brand(props: {
   }
 
   return (
-    <Link href={`${url}?ref=leohuynh.dev`} className={className}>
+    <Link href={url} className={className}>
       <Icon className={iconClassName} fill="currentColor" />
     </Link>
   )

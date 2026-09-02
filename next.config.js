@@ -70,12 +70,6 @@ module.exports = () => {
     pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
     images: {
       qualities: [75, 100],
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: 'i.scdn.co', // Spotify album covers
-        },
-      ],
       unoptimized,
     },
     async headers() {

@@ -24,26 +24,6 @@ module.exports = {
           '50%': { transform: 'scale(1.18)' },
           '100%': { transform: 'scale(1)' },
         },
-        // 音乐律动条 (保留，做 Spotify 组件时有用)
-        'music-bar-1': {
-          '0%, 100%': { height: '0%' },
-          '50%': { height: '70%' },
-        },
-        'music-bar-2': {
-          '0%, 100%': { height: '50%' },
-          '25%': { height: '0%' },
-          '75%': { height: '100%' },
-        },
-        'music-bar-3': {
-          '0%, 100%': { height: '70%' },
-          '15%': { height: '100%' },
-          '65%': { height: '0%' },
-        },
-        'music-bar-4': {
-          '0%, 100%': { height: '50%' },
-          '35.7%': { height: '0%' },
-          '85.7%': { height: '70%' },
-        },
       },
       animation: {
         // ✨ 新版动画配置: 0.3s 快速循环，实现"震动"感
@@ -51,10 +31,6 @@ module.exports = {
 
         // 其他保留
         'scale-up': 'scale-up 150ms ease-in-out forwards',
-        'music-bar-1': 'music-bar-1 .8s linear infinite',
-        'music-bar-2': 'music-bar-2 .8s linear infinite',
-        'music-bar-3': 'music-bar-3 .8s linear infinite',
-        'music-bar-4': 'music-bar-4 .8s linear infinite',
       },
 
       boxShadow: {
@@ -112,7 +88,6 @@ module.exports = {
         primary: colors.indigo,
         dark: '#121212',
         'dark-text': '#ffffff', // 暗色模式下的文本颜色
-        spotify: '#1DB954',
         goodreads: '#372213',
         facebook: '#1877f2',
         twitter: '#0f1419',
