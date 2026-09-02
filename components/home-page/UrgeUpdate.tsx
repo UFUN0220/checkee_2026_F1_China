@@ -91,17 +91,19 @@ export function UrgeUpdate({ variant = 'default' }: { variant?: 'default' | 'hom
   const [retryAfter, setRetryAfter] = useState(0)
 
   useEffect(() => {
+    let active = true
     const controller = new AbortController()
 
     async function fetchCount() {
       try {
         const response = await fetch('/api/urge', { signal: controller.signal })
         const payload = (await response.json()) as UrgeResponse
+        if (!active || controller.signal.aborted) return
         if (!response.ok || payload.available === false) throw new Error('Urge count unavailable')
         setCount(typeof payload.count === 'number' ? payload.count : 0)
         setStatus('idle')
       } catch {
-        if (!controller.signal.aborted) {
+        if (active && !controller.signal.aborted) {
           setCount(null)
           setStatus('error')
         }
@@ -109,7 +111,10 @@ export function UrgeUpdate({ variant = 'default' }: { variant?: 'default' | 'hom
     }
 
     fetchCount()
-    return () => controller.abort()
+    return () => {
+      active = false
+      controller.abort()
+    }
   }, [])
 
   useEffect(() => {

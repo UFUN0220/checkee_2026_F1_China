@@ -8,9 +8,8 @@ import { ImageWidgetCard } from './image-widget-card'
 import { WidgetShell } from './widget-shell'
 import { ProfileCard } from './profile-card'
 import { WeatherWidget } from './weather-widget'
-import { WorldClockWidget } from './world-clock-widget'
 import { UrgeUpdate } from '~/components/home-page/UrgeUpdate'
-import { getHomepageWorldClockCities } from '~/utils/homepage-live-widgets'
+import { LocationTimeWeather } from '~/components/home-page/LocationTimeWeather'
 
 function CalendarCard({ layout = 'desktop' }: { layout?: 'desktop' | 'flow' }) {
   return (
@@ -49,7 +48,7 @@ export function DesktopHomeCanvas({
             <WeatherWidget location={weatherLocation} />
           </WidgetShell>
           <WidgetShell widget="worldClock" label="世界时钟">
-            <WorldClockWidget cities={getHomepageWorldClockCities()} />
+            <LocationTimeWeather />
           </WidgetShell>
           <CalendarCard />
           <WidgetShell widget="urge" label="催更">

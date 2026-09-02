@@ -1,21 +1,17 @@
+import { Suspense } from 'react'
 import { genPageMetadata } from '~/app/seo'
-import { redirect } from 'next/navigation'
 import { CheckmatePage } from '~/components/checkmate/checkmate-page'
 import { PageTheme } from '~/components/ui/page-theme'
-import { Suspense } from 'react'
 
-export const metadata = genPageMetadata({ title: 'Check' })
+export const metadata = genPageMetadata({ title: 'Hall of Fame' })
 
-export default async function AboutPage({ searchParams }: { searchParams: Promise<{ view?: string }> }) {
-  const params = await searchParams
-  if (params.view === 'peers') redirect('/about/hall-of-fame')
-
+export default function HallOfFamePage() {
   return (
     <PageTheme theme="check">
       <div className="about-page">
         <div className="site-container">
           <Suspense fallback={null}>
-            <CheckmatePage view="cities" />
+            <CheckmatePage view="peers" />
           </Suspense>
         </div>
       </div>

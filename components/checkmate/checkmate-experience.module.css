@@ -20,18 +20,6 @@
   --checkmate-rule: rgb(255 255 255 / 0.08);
   --checkmate-muted: #aaa69b;
 }
-.tabs {
-  display: flex;
-  width: fit-content;
-  margin: 0 auto clamp(1.15rem, 2.4vw, 1.6rem);
-  padding: 0.2rem;
-  border: 1px solid var(--checkmate-border);
-  border-radius: 999px;
-  background: var(--checkmate-surface-strong);
-  box-shadow: 0 7px 20px rgb(0 0 0 / 0.045);
-}
-.tab,
-.tabActive,
 .secondaryButton,
 .textButton,
 .cityCard,
@@ -39,31 +27,9 @@
 .pagination button {
   font: inherit;
 }
-.tab,
-.tabActive {
-  border: 0;
-  border-radius: 999px;
-  padding: 0.5rem 0.95rem;
-  color: var(--checkmate-muted);
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition:
-    color 160ms ease,
-    background 160ms ease,
-    box-shadow 160ms ease;
-}
-.tab:hover,
-.tab:focus-visible {
-  color: var(--color-ink);
-}
-.tabActive {
-  color: white;
-  background: var(--checkmate-accent);
-  box-shadow: 0 4px 11px rgb(194 74 45 / 0.22);
-}
-.view {
-  min-width: 0;
+.titleRow {
+  position: relative;
+  min-height: 5.45rem;
 }
 .titleBlock {
   margin-bottom: 1.1rem;
@@ -77,10 +43,88 @@
   line-height: 1.05;
   letter-spacing: 0.012em;
 }
-.titleBlock p {
-  margin: 0.75rem 0 0;
+.dataNoticeTrigger {
+  position: absolute;
+  top: 0.35rem;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 0;
+  padding: 0.35rem 0;
   color: var(--checkmate-muted);
-  font-size: 0.82rem;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.72rem;
+}
+.dataNoticeTrigger:hover,
+.dataNoticeTrigger:focus-visible {
+  color: var(--checkmate-accent);
+}
+.dataNoticeDialog {
+  position: relative;
+  z-index: 80;
+}
+.dataNoticeBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgb(20 18 14 / 0.22);
+}
+.dataNoticePositioner {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+.dataNoticePanel {
+  position: relative;
+  width: min(100%, 28rem);
+  border: 1px solid var(--checkmate-border);
+  border-radius: 20px;
+  padding: 1.2rem 1.25rem;
+  color: var(--color-ink);
+  background: var(--checkmate-surface-strong);
+  box-shadow: 0 18px 50px rgb(0 0 0 / 0.18);
+}
+.dataNoticeHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.dataNoticeHeading h2 {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+.dataNoticeClose {
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.35rem;
+  color: var(--checkmate-muted);
+  background: transparent;
+  cursor: pointer;
+}
+.dataNoticeClose:hover,
+.dataNoticeClose:focus-visible {
+  color: var(--checkmate-accent);
+  background: var(--checkmate-surface);
+}
+.dataNoticePanel p {
+  margin: 0.9rem 0 0;
+  color: var(--checkmate-muted);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+.dataNoticePanel .dataNoticeUpdated {
+  margin-top: 0.45rem;
+  font-size: 0.7rem;
+}
+.view {
+  min-width: 0;
 }
 .cityGrid {
   display: grid;
@@ -119,14 +163,23 @@
   background: var(--checkmate-surface-strong);
   box-shadow: 0 14px 29px rgb(194 74 45 / 0.11);
 }
+.cityHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+}
 .cityName {
   font-size: clamp(1rem, 1.8vw, 1.18rem);
   font-weight: 800;
 }
 .cityCount {
-  margin-top: 0.78rem;
+  flex: 0 0 auto;
   color: var(--checkmate-muted);
   font-size: 0.7rem;
+  text-align: right;
+  white-space: nowrap;
 }
 .quartiles {
   display: grid;
@@ -154,9 +207,15 @@
 }
 .citiesContent {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: clamp(0.9rem, 1.8vw, 1.35rem);
   margin-top: clamp(0.9rem, 1.8vw, 1.35rem);
+}
+.citiesContent > :first-child {
+  grid-column: 1 / span 2;
+}
+.citiesContent > :last-child {
+  grid-column: 3 / span 3;
 }
 .panel {
   min-width: 0;
@@ -214,14 +273,19 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem 0.85rem;
-  margin-top: 0.9rem;
-  border-top: 1px solid var(--checkmate-rule);
-  padding-top: 0.9rem;
+  margin-bottom: 0.9rem;
+  border-bottom: 1px solid var(--checkmate-rule);
+  padding-bottom: 0.9rem;
   color: var(--checkmate-muted);
   font-size: 0.73rem;
 }
 .trendSummary strong {
   color: var(--color-ink);
+}
+.trendSummaryStats {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.85rem;
 }
 .textButton {
   border: 0;
@@ -233,6 +297,16 @@
 }
 .caseList {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.caseColumn {
+  min-width: 0;
+  padding-right: clamp(0.85rem, 1.7vw, 1.3rem);
+}
+.caseColumn + .caseColumn {
+  border-left: 1px solid var(--checkmate-rule);
+  padding-right: 0;
+  padding-left: clamp(0.85rem, 1.7vw, 1.3rem);
 }
 .caseRow {
   display: grid;
@@ -377,16 +451,6 @@
   cursor: not-allowed;
   opacity: 0.45;
 }
-.disclaimer {
-  max-width: 44rem;
-  margin: clamp(2.4rem, 5vw, 3.5rem) auto 0;
-  color: var(--checkmate-muted);
-  font-size: 0.72rem;
-  line-height: 1.65;
-  text-align: center;
-}
-.tab:focus-visible,
-.tabActive:focus-visible,
 .cityCard:focus-visible,
 .cityCardActive:focus-visible,
 .textButton:focus-visible,
@@ -395,9 +459,79 @@
   outline: 2px solid var(--checkmate-accent);
   outline-offset: 3px;
 }
+
+@media (min-width: 761px) {
+  .about-page .feature {
+    box-sizing: border-box;
+    height: 100%;
+    padding-top: 1.25rem;
+    padding-bottom: 1rem;
+  }
+
+  .citiesView,
+  .hallView {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  .citiesView .titleRow,
+  .hallView .titleRow {
+    min-height: 0;
+    flex: 0 0 5rem;
+  }
+
+  .citiesView .titleBlock,
+  .hallView .titleBlock {
+    margin-bottom: 0.55rem;
+  }
+
+  .citiesView .cityGrid {
+    flex: 0 0 auto;
+  }
+
+  .citiesView .citiesContent {
+    min-height: 0;
+    flex: 1 1 auto;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  .citiesView .citiesContent > .panel {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .hallView .hallSurface {
+    flex: 0 0 auto;
+  }
+
+  .hallView .hallAction {
+    flex: 0 0 auto;
+    margin: 0.8rem 0;
+  }
+
+  .hallView > .panel {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+}
+
 @media (max-width: 760px) {
   .feature {
     padding-top: 1.8rem;
+  }
+
+  .titleRow {
+    min-height: 0;
+  }
+
+  .dataNoticeTrigger {
+    position: static;
+    display: flex;
+    margin: -0.35rem 0 1.1rem auto;
   }
 
   .titleBlock h1 {
@@ -413,12 +547,29 @@
   .hallSurface {
     grid-template-columns: 1fr;
   }
+  .citiesContent > :first-child,
+  .citiesContent > :last-child {
+    grid-column: auto;
+  }
   .countStats {
     border-right: 0;
     border-bottom: 1px solid var(--checkmate-border);
   }
   .caseRow {
     grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .caseList {
+    grid-template-columns: 1fr;
+  }
+  .caseColumn {
+    padding-right: 0;
+    padding-left: 0;
+  }
+  .caseColumn + .caseColumn {
+    border-top: 1px solid var(--checkmate-rule);
+    border-left: 0;
+    margin-top: 0.35rem;
+    padding-top: 0.35rem;
   }
   .caseCategory {
     grid-column: 1 / -1;
@@ -475,8 +626,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .tab,
-  .tabActive,
   .cityCard,
   .cityCardActive,
   .secondaryButton,

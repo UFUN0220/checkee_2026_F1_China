@@ -8,6 +8,7 @@ import tagData from '~/json/tag-data.json'
 import { ListLayoutWithTags } from '~/layouts/list-layout-with-tags'
 import { allCoreContent } from '~/utils/contentlayer'
 import { sortPosts } from '~/utils/misc'
+import { PageTheme } from '~/components/ui/page-theme'
 
 export async function generateMetadata(props: {
   params: Promise<{ tag: string }>
@@ -47,14 +48,16 @@ export default async function TagPage(props: { params: Promise<{ tag: string }> 
     return notFound()
   }
   return (
-    <ListLayoutWithTags
-      title={title}
-      description={
-        <>
-          Things I've written about <span className="ml-2 font-medium">#{tag}</span>
-        </>
-      }
-      posts={filteredPosts}
-    />
+    <PageTheme theme="reading">
+      <ListLayoutWithTags
+        title={title}
+        description={
+          <>
+            Things I've written about <span className="ml-2 font-medium">#{tag}</span>
+          </>
+        }
+        posts={filteredPosts}
+      />
+    </PageTheme>
   )
 }

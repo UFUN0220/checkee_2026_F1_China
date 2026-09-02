@@ -5,6 +5,7 @@ import { ListLayout } from '~/layouts/list_layout_ufun'
 import { POSTS_PER_PAGE } from '~/utils/const'
 import { allCoreContent } from '~/utils/contentlayer'
 import { sortPosts } from '~/utils/misc'
+import { PageTheme } from '~/components/ui/page-theme'
 
 export const metadata = genPageMetadata({ title: 'Article' }) // TODO: update title
 
@@ -21,11 +22,14 @@ export default function BlogPage() {
   }
 
   return (
-    <ListLayout
-      posts={posts}
-      initialDisplayPosts={initialDisplayPosts}
-      pagination={pagination}
-      title="目录"
-    />
+    <div className="blog-index-page pt-4 lg:pt-12">
+      <PageTheme theme="reading">
+        <ListLayout
+          posts={posts}
+          initialDisplayPosts={initialDisplayPosts}
+          pagination={pagination}
+        />
+      </PageTheme>
+    </div>
   )
 }

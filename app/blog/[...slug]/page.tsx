@@ -12,6 +12,7 @@ import { PostLayout } from '~/layouts/post_layout_ufun'
 import { PostSimple } from '~/layouts/post-simple'
 import { allCoreContent, coreContent } from '~/utils/contentlayer'
 import { sortPosts } from '~/utils/misc'
+import { PageTheme } from '~/components/ui/page-theme'
 
 const DEFAULT_LAYOUT = 'PostLayout'
 const LAYOUTS = {
@@ -112,7 +113,7 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
   const Layout = LAYOUTS[layoutKey]
 
   return (
-    <>
+    <PageTheme theme="reading">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -120,7 +121,7 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
       <Layout content={mainContent} authorDetails={authorDetails} next={next} prev={prev}>
         <MDXLayoutRenderer code={post.body.code} components={MDX_COMPONENTS} toc={post.toc} />
       </Layout>
-    </>
+    </PageTheme>
   )
   
 }

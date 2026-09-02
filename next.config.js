@@ -16,10 +16,11 @@ function getOrigin(value) {
 
 const umamiOrigin = getOrigin(process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL || UMAMI_DEFAULT_URL)
 const developmentConnectSources = process.env.NODE_ENV === 'development' ? ' ws: wss:' : ''
+const developmentScriptSources = process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''
 
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline' https://giscus.app ${umamiOrigin};
+  script-src 'self' 'unsafe-inline'${developmentScriptSources} https://giscus.app ${umamiOrigin};
   style-src 'self' 'unsafe-inline';
   img-src 'self' blob: data: https://cdnjs.cloudflare.com;
   media-src 'self';

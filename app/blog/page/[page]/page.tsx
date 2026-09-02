@@ -4,9 +4,11 @@ import { ListLayout } from '~/layouts/list_layout_ufun'
 import { POSTS_PER_PAGE } from '~/utils/const'
 import { allCoreContent } from '~/utils/contentlayer'
 import { sortPosts } from '~/utils/misc'
+import { PageTheme } from '~/components/ui/page-theme'
 
 export const generateStaticParams = async () => {
-  const totalPages = Math.ceil(allBlogs.length / POSTS_PER_PAGE)
+  const posts = allCoreContent(sortPosts(allBlogs))
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE)
   const paths = Array.from({ length: totalPages }, (_, i) => ({ page: (i + 1).toString() }))
   return paths
 }
@@ -25,11 +27,14 @@ export default async function Page(props: { params: Promise<{ page: string }> })
   }
 
   return (
-    <ListLayout
-      posts={posts}
-      initialDisplayPosts={initialDisplayPosts}
-      pagination={pagination}
-      title="All posts"
-    />
+    <div className="blog-index-page pt-4 lg:pt-12">
+      <PageTheme theme="reading">
+        <ListLayout
+          posts={posts}
+          initialDisplayPosts={initialDisplayPosts}
+          pagination={pagination}
+        />
+      </PageTheme>
+    </div>
   )
 }

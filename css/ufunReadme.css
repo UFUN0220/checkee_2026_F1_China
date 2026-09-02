@@ -1,4 +1,20 @@
 /* ufunReadme.css */
+
+/* Keep only the article index in a desktop viewport; article detail pages do not render this wrapper. */
+@media (min-width: 1024px) {
+  body:has(.blog-index-page) {
+    overflow: hidden;
+  }
+
+  body:has(.blog-index-page) > main {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  body:has(.blog-index-page) > footer {
+    display: none;
+  }
+}
 .container {
   display: flex;
   flex-direction: column;

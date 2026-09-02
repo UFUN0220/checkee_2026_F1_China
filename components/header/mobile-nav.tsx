@@ -85,15 +85,30 @@ export function MobileNav() {
                 className="mt-16 flex h-full basis-0 flex-col items-start gap-6 overflow-y-auto pt-2"
               >
                 {[...HEADER_NAV_LINKS, ...MORE_NAV_LINKS].map((link) => (
-                  <Link
-                    key={link.title}
-                    href={link.href}
-                    className="font-display text-ink hover:text-accent dark:text-cream dark:hover:text-accent-soft py-1 text-4xl tracking-[-0.04em] outline outline-0"
-                    onClick={onToggleNav}
-                  >
-                    <Twemoji emoji={link.emoji} />
-                    <span className="ml-2">{link.title}</span>
-                  </Link>
+                  <div key={link.title} className="flex flex-col items-start gap-3">
+                    <Link
+                      href={link.href}
+                      className="font-display text-ink hover:text-accent dark:text-cream dark:hover:text-accent-soft py-1 text-4xl tracking-[-0.04em] outline outline-0"
+                      onClick={onToggleNav}
+                    >
+                      <Twemoji emoji={link.emoji} />
+                      <span className="ml-2">{link.title}</span>
+                    </Link>
+                    {link.children ? (
+                      <div className="border-line dark:border-line-dark ml-3 flex flex-col gap-2 border-l pl-5">
+                        {link.children.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className="text-muted hover:text-accent dark:text-muted-dark dark:hover:text-accent-soft py-1 text-lg font-semibold"
+                            onClick={onToggleNav}
+                          >
+                            {child.title}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
                 ))}
                 <div className="mt-5">
                   <ThemeSwitcher />

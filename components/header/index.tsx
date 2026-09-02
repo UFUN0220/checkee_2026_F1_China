@@ -11,6 +11,7 @@ import { SITE_METADATA } from '~/data/site-metadata'
 import { MoreLinks } from './more-links'
 import { Logo } from './logo'
 import { MobileNav } from './mobile-nav'
+import { CheckNavMenu } from './check-nav-menu'
 
 let logged = false
 
@@ -39,18 +40,28 @@ export function Header() {
         <div className="flex items-center gap-8">
           <Logo />
           <div className="gap-3 sm:flex">
-            {HEADER_NAV_LINKS.map(({ title, href }) => {
+            {HEADER_NAV_LINKS.map(({ title, href, children }) => {
               const isActive = pathname.startsWith(href)
               return (
-                <Link key={title} href={href} className="px-1 py-1 font-medium">
-                  <span
-                    className="nav-interactive"
-                    data-active={isActive}
-                    data-umami-event={`nav-${href.replace('/', '')}`}
-                  >
-                    {title}
-                  </span>
-                </Link>
+                children ? (
+                  <CheckNavMenu
+                    key={title}
+                    href={href}
+                    title={title}
+                    isActive={isActive}
+                    items={children}
+                  />
+                ) : (
+                  <Link key={title} href={href} className="px-1 py-1 font-medium">
+                    <span
+                      className="nav-interactive"
+                      data-active={isActive}
+                      data-umami-event={`nav-${href.replace('/', '')}`}
+                    >
+                      {title}
+                    </span>
+                  </Link>
+                )
               )
             })}
             <MoreLinks />

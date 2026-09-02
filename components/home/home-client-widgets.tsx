@@ -14,8 +14,9 @@ function useCurrentDate() {
   const [date, setDate] = useState<Date | null>(null)
 
   useEffect(() => {
-    setDate(new Date())
-    const timer = window.setInterval(() => setDate(new Date()), 60_000)
+    const updateDate = () => setDate(new Date())
+    updateDate()
+    const timer = window.setInterval(updateDate, 60_000)
     return () => window.clearInterval(timer)
   }, [])
 

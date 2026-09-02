@@ -27,6 +27,12 @@ export type CheckmateCase = {
 
 export type CheckmateSnapshot = {
   manifest: { recordCount: number; snapshotDate: string; isLive: boolean }
+  national: {
+    sampleCount: number
+    pendingCount: number
+    clearCount: number
+    waitStats: WaitStats
+  }
   locations: Record<CheckmateLocation, { sampleCount: number; waitStats: WaitStats }>
   monthlyF1Trends: Array<{
     month: string

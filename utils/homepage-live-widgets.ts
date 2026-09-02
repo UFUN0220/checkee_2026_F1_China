@@ -1,6 +1,6 @@
 import { homepageConfig } from '~/data/homepage'
-import { getLocationById, toWorldClockCity } from '~/data/locations'
-import type { HomepageLiveWidgetsConfig, WeatherLocationConfig, WorldClockCity } from '~/types/home-widgets'
+import { getLocationById } from '~/data/locations'
+import type { HomepageLiveWidgetsConfig, WeatherLocationConfig } from '~/types/home-widgets'
 
 export function getHomepageLiveWidgetsConfig(): HomepageLiveWidgetsConfig {
   return {
@@ -16,11 +16,4 @@ export function getHomepageWeatherLocation(): WeatherLocationConfig {
   }
 
   return location
-}
-
-export function getHomepageWorldClockCities(): WorldClockCity[] {
-  return homepageConfig.worldClockLocationIds.flatMap((locationId) => {
-    const location = getLocationById(locationId)
-    return location ? [toWorldClockCity(location)] : []
-  })
 }

@@ -1,4 +1,4 @@
-import type { WeatherLocationConfig, WorldClockCity } from '~/types/home-widgets'
+import type { WeatherLocationConfig } from '~/types/home-widgets'
 import type { HomepagePost } from '~/utils/homepage'
 import { DesktopHomeCanvas } from './desktop-home'
 import { MobileHomeFlow } from './mobile-home'
@@ -8,10 +8,9 @@ type ResponsiveHomeProps = {
   latestPost?: HomepagePost
   pinnedPost?: HomepagePost
   weatherLocation: WeatherLocationConfig
-  worldClockCities: WorldClockCity[]
 }
 
-export function ResponsiveHome({ latestPost, pinnedPost, weatherLocation, worldClockCities }: ResponsiveHomeProps) {
+export function ResponsiveHome({ latestPost, pinnedPost, weatherLocation }: ResponsiveHomeProps) {
   return (
     <WeatherDataProvider location={weatherLocation}>
       <div className="responsive-home-desktop">
@@ -22,7 +21,6 @@ export function ResponsiveHome({ latestPost, pinnedPost, weatherLocation, worldC
           latestPost={latestPost}
           pinnedPost={pinnedPost}
           weatherLocation={weatherLocation}
-          worldClockCities={worldClockCities}
         />
       </div>
     </WeatherDataProvider>
