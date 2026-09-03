@@ -20,9 +20,7 @@ function logASCIItext() {
 
 export function Header() {
   const pathname = usePathname()
-  const activeHref = [...HEADER_NAV_LINKS]
-    .sort((left, right) => right.href.length - left.href.length)
-    .find(({ href }) => pathname === href || pathname.startsWith(`${href}/`))?.href
+  const activeHref = HEADER_NAV_LINKS.find(({ href }) => pathname === href)?.href
 
   useEffect(logASCIItext, [])
 
@@ -30,9 +28,10 @@ export function Header() {
     <Container
       as="header"
       className={clsx(
-        'bg-white/50 px-1 py-1 backdrop-blur dark:bg-dark/50',
+        'site-header',
+        'dark:bg-dark/50 bg-white/50 px-1 py-1 backdrop-blur',
         'shadow-sm saturate-100 md:rounded-full',
-        'mx-auto max-w-lg md:max-w-md',
+        'mx-auto !w-fit !max-w-[calc(100vw-1rem)]',
         SITE_METADATA.stickyNav && 'sticky top-2 z-50 lg:top-8'
       )}
     >

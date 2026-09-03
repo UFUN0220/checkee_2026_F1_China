@@ -17,9 +17,7 @@ export function MobileNav() {
   const [navShow, setNavShow] = useState(false)
   const navRef = useRef<HTMLElement | null>(null)
   const pathname = usePathname()
-  const activeHref = [...HEADER_NAV_LINKS]
-    .sort((left, right) => right.href.length - left.href.length)
-    .find(({ href }) => pathname === href || pathname.startsWith(`${href}/`))?.href
+  const activeHref = HEADER_NAV_LINKS.find(({ href }) => pathname === href)?.href
 
   const openNav = () => {
     if (navRef.current) disableBodyScroll(navRef.current)

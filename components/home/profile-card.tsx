@@ -18,8 +18,7 @@ export function ProfileCard() {
   return (
     <section className="home-profile-card home-ufun-profile-card" aria-label="个人资料卡片">
       <div className="home-ufun-heading">
-        <span className="home-ufun-pre">uFun Pre</span>
-        <h1>优雅的烧</h1>
+        <h1 className="home-title-plain">放花千树</h1>
       </div>
 
       <img className="home-avatar" src={SITE_METADATA.siteLogo} alt="uFun avatar" />

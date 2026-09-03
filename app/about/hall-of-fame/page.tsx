@@ -1,20 +1,5 @@
-import { Suspense } from 'react'
-import { genPageMetadata } from '~/app/seo'
-import { CheckmatePage } from '~/components/checkmate/checkmate-page'
-import { PageTheme } from '~/components/ui/page-theme'
+import { redirect } from 'next/navigation'
 
-export const metadata = genPageMetadata({ title: '名人堂' })
-
-export default function HallOfFamePage() {
-  return (
-    <PageTheme theme="check">
-      <div className="about-page">
-        <div className="site-container">
-          <Suspense fallback={null}>
-            <CheckmatePage view="peers" />
-          </Suspense>
-        </div>
-      </div>
-    </PageTheme>
-  )
+export default function LegacyHallOfFamePage() {
+  redirect('/')
 }

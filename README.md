@@ -15,7 +15,7 @@ pnpm install
 pnpm dev
 ```
 
-开发服务器运行在 <http://localhost:3435>。
+开发服务器运行在 <http://localhost:3436>。
 
 ## Environment Variables
 

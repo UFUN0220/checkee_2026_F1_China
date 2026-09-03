@@ -1,6 +1,14 @@
 @config '../tailwind.config.js';
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'heishenhua';
+  src: url('/fonts/HYBlackMythU.woff2') format('woff2');
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
 @theme {
   --default-ring-width: 3px;
   --default-ring-color: var(--color-blue-500);
@@ -144,6 +152,33 @@ body:has(.about-page) > main {
   overflow: hidden;
 }
 
+body:has(.hall-of-fame-page) {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body:has(.hall-of-fame-page) > main {
+  position: relative;
+  inset: auto;
+  width: auto;
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
+.hall-of-fame-page {
+  width: 100%;
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
+.hall-of-fame-page > .site-container {
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
 @media (min-width: 1024px) {
   body:has(.personal-home-page) > header,
   body:has(.about-page) > header {
@@ -167,7 +202,9 @@ body:has(.about-page) > main {
   border: 1px solid rgb(255 255 255 / 0.8);
   border-radius: 40px;
   background: rgb(255 255 255 / 0.78);
-  box-shadow: 0 18px 50px rgb(0 0 0 / 0.06), 0 3px 10px rgb(0 0 0 / 0.03);
+  box-shadow:
+    0 18px 50px rgb(0 0 0 / 0.06),
+    0 3px 10px rgb(0 0 0 / 0.03);
   backdrop-filter: blur(18px) saturate(120%);
   -webkit-backdrop-filter: blur(18px) saturate(120%);
 }
@@ -189,14 +226,22 @@ body:has(.about-page) > main {
 
 .home-ufun-heading h1 {
   margin: 8px 0 0;
+  font-family: 'heishenhua', var(--font-nunito), sans-serif;
   background: linear-gradient(100deg, #7800d7 0%, #d000a8 28%, #ff174b 63%, #ff6b00 100%);
   background-clip: text;
   color: transparent;
-  font-size: 56px;
-  font-weight: 700;
+  font-size: 60px;
+  font-weight: 500;
   letter-spacing: -0.06em;
   line-height: 1;
   -webkit-background-clip: text;
+}
+
+.home-ufun-heading h1.home-title-plain {
+  background: none;
+  background-clip: border-box;
+  color: #000;
+  -webkit-background-clip: border-box;
 }
 
 .home-avatar {
@@ -206,7 +251,9 @@ body:has(.about-page) > main {
   border: 5px solid rgb(255 255 255 / 0.68);
   border-radius: 32px;
   object-fit: cover;
-  box-shadow: 0 16px 40px rgb(0 0 0 / 0.1), 0 2px 8px rgb(0 0 0 / 0.04);
+  box-shadow:
+    0 16px 40px rgb(0 0 0 / 0.1),
+    0 2px 8px rgb(0 0 0 / 0.04);
 }
 
 .home-copy-action {
@@ -224,7 +271,10 @@ body:has(.about-page) > main {
   box-shadow: 0 8px 18px rgb(0 113 227 / 0.2);
   font-size: 15px;
   font-weight: 600;
-  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .home-copy-action button:hover {
@@ -268,8 +318,16 @@ body:has(.about-page) > main {
   align-items: center;
   border-radius: 30px;
   padding: 8px 12px;
-  transition: background-color 100ms ease-in-out, color 100ms ease-in-out,
-    box-shadow 100ms ease-in-out, transform 100ms ease-in-out;
+  transition:
+    background-color 100ms ease-in-out,
+    color 100ms ease-in-out,
+    box-shadow 100ms ease-in-out,
+    transform 100ms ease-in-out;
+}
+
+.site-header nav a,
+#mobile-navigation a {
+  font-family: 'heishenhua', var(--font-nunito), sans-serif;
 }
 
 .nav-interactive:hover {

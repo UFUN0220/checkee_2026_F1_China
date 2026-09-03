@@ -17,8 +17,10 @@
 
 # next.js
 /.next/
+/.contentlayer/
 /out/
 public/sitemap.xml
+public/search.json
 .vercel
 
 # production

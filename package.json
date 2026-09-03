@@ -7,7 +7,7 @@
   },
   "scripts": {
     "start": "next start",
-    "dev": "next dev -p 3435 --webpack",
+    "dev": "next dev -p 3436 --webpack",
     "build": "cross-env INIT_CWD=$PWD next build --webpack",
     "serve": "next start",
     "lint": "eslint app components",
