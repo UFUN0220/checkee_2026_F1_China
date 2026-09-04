@@ -4,9 +4,10 @@ import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   CHECKMATE_LOCATIONS,
+  type CheckeeDataset,
+  type CheckeeRecord,
   type CheckmateLocation,
   type CheckmateSnapshot,
-  type HallSnapshot,
   type WaitStats,
 } from '~/data/checkmate/types'
 import {
@@ -40,11 +41,11 @@ function formatDate(value: string | null) {
 
 export function CheckmateExperience({
   checkeeSnapshot,
-  hallSnapshot,
+  checkeeDataset,
   view,
 }: {
   checkeeSnapshot: CheckmateSnapshot
-  hallSnapshot: HallSnapshot
+  checkeeDataset: CheckeeDataset
   view: CheckmateView
 }) {
   const pageKey: CheckmatePageKey = view === 'peers' ? 'hall-of-fame' : 'white-house'
@@ -55,7 +56,7 @@ export function CheckmateExperience({
       {view === 'cities' ? (
         <WhiteHouseSelection snapshot={checkeeSnapshot} notice={notice} />
       ) : (
-        <HallOfFame snapshot={hallSnapshot} notice={notice} />
+        <HallOfFame dataset={checkeeDataset} notice={notice} />
       )}
     </section>
   )
@@ -310,17 +311,17 @@ function CityCaseRow({ item }: { item: CheckmateSnapshot['cases'][number] }) {
   )
 }
 
-function HallOfFame({ snapshot, notice }: { snapshot: HallSnapshot; notice: CheckmateDataNotice }) {
+function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: CheckmateDataNotice }) {
   const [page, setPage] = useState(1)
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null)
   const cases = useMemo(
     () =>
-      [...snapshot.cases].sort(
+      [...dataset.records].sort(
         (left, right) =>
           (right.waitingDays ?? -Infinity) - (left.waitingDays ?? -Infinity) ||
-          (left.checkDate ?? '').localeCompare(right.checkDate ?? '')
+          (left.interviewDate ?? '').localeCompare(right.interviewDate ?? '')
       ),
-    [snapshot.cases]
+    [dataset.records]
   )
   const podiumCases = [cases[1], cases[0], cases[2]].filter(Boolean)
   const eliteCases = cases.slice(3, 10)
@@ -379,7 +380,7 @@ function HallOfFame({ snapshot, notice }: { snapshot: HallSnapshot; notice: Chec
         </h2>
         <div className={styles.hallTransitionActions}>
           <SubmitCaseButton />
-          <DataDescription notice={notice} updatedAt={snapshot.snapshotDate} />
+          <DataDescription notice={notice} updatedAt={dataset.snapshotDate} />
         </div>
       </section>
 
@@ -409,7 +410,7 @@ function HallOfFame({ snapshot, notice }: { snapshot: HallSnapshot; notice: Chec
   )
 }
 
-function HallFields({ item }: { item: HallSnapshot['cases'][number] }) {
+function HallFields({ item }: { item: CheckeeRecord }) {
   return (
     <>
       <span className={styles.standardLocationDegree}>
@@ -418,7 +419,7 @@ function HallFields({ item }: { item: HallSnapshot['cases'][number] }) {
       </span>
       <span className={styles.standardMajor}>{item.major || '\u00a0'}</span>
       <span className={styles.standardSchool}>{item.school || '\u00a0'}</span>
-      <span className={styles.standardDates}>{item.checkDate ? formatDate(item.checkDate) : '\u00a0'}</span>
+      <span className={styles.standardDates}>{item.interviewDate ? formatDate(item.interviewDate) : '\u00a0'}</span>
     </>
   )
 }
@@ -431,7 +432,7 @@ function HallWait({
   item,
   className,
 }: {
-  item: HallSnapshot['cases'][number]
+  item: CheckeeRecord
   className: string
 }) {
   return (
@@ -440,7 +441,7 @@ function HallWait({
         {item.waitingDays !== null ? item.waitingDays : '\u00a0'}
         {item.waitingDays !== null ? <small>天</small> : null}
       </span>
-      {item.isAp ? <span className={styles.apBadge}>AP</span> : null}
+      {item.endDate ? <span className={styles.apBadge}>AP</span> : null}
     </strong>
   )
 }
@@ -451,7 +452,7 @@ function PodiumCard({
   expanded,
   onToggle,
 }: {
-  item: HallSnapshot['cases'][number]
+  item: CheckeeRecord
   rank: number
   expanded: boolean
   onToggle: () => void
@@ -498,7 +499,7 @@ function HallRowContent({
   expanded,
   onToggle,
 }: {
-  item: HallSnapshot['cases'][number]
+  item: CheckeeRecord
   rank: number
   variant: 'elite' | 'standard'
   expanded: boolean

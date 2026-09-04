@@ -142,7 +142,7 @@
   position: relative;
   isolation: isolate;
   display: flex;
-  aspect-ratio: 1 / 0.9;
+  aspect-ratio: 1 / 1;
   flex-direction: column;
   justify-content: center;
   min-width: 0;
@@ -522,7 +522,7 @@
 }
 .caseRow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(5rem, 0.75fr);
+  grid-template-columns: minmax(6.5rem, 1fr) auto minmax(5rem, 0.75fr);
   gap: 0.75rem;
   align-items: center;
   border-top: 1px solid var(--checkmate-rule);
@@ -532,6 +532,10 @@
   margin: 0.32rem 0 0;
   color: var(--checkmate-muted);
   font-size: 0.71rem;
+  white-space: nowrap;
+}
+.caseDuration {
+  transform: translateX(0.25rem);
 }
 .status {
   display: inline-flex;
@@ -907,7 +911,8 @@
   position: relative;
   display: flex;
   min-width: 0;
-  height: clamp(14rem, 23vw, 16.5rem);
+  aspect-ratio: 1 / 1;
+  height: auto;
   overflow: hidden;
   flex-direction: column;
   justify-content: space-between;
@@ -955,7 +960,7 @@
 .podiumRank1 {
   grid-area: first;
   --podium-hover-glow: rgb(255 241 196 / 0.78);
-  height: clamp(16rem, 26vw, 18.25rem);
+  height: auto;
   border-color: color-mix(in srgb, var(--hall-gold) 34%, var(--checkmate-border));
   background:
     radial-gradient(circle at 18% 20%, rgb(255 248 218 / 0.95), transparent 34%),
@@ -1879,9 +1884,28 @@
   .citiesView .cityGrid::after {
     display: none;
   }
-  .citiesView .cityGrid > :last-child {
-    grid-column: 1 / -1;
-    aspect-ratio: 2.2 / 0.9;
+  .citiesView .cityGrid {
+    grid-template-areas:
+      'beijing beijing'
+      'shanghai guangzhou'
+      'wuhan shenyang';
+  }
+  .citiesView .cityGrid > :nth-child(1) {
+    grid-area: beijing;
+    width: calc((100% - 0.65rem) / 2);
+    justify-self: center;
+  }
+  .citiesView .cityGrid > :nth-child(2) {
+    grid-area: shanghai;
+  }
+  .citiesView .cityGrid > :nth-child(3) {
+    grid-area: guangzhou;
+  }
+  .citiesView .cityGrid > :nth-child(4) {
+    grid-area: shenyang;
+  }
+  .citiesView .cityGrid > :nth-child(5) {
+    grid-area: wuhan;
   }
   .citiesView .cityCard,
   .citiesView .cityCardActive {
@@ -2026,12 +2050,15 @@
     padding: 0;
   }
   .podiumCard {
-    height: 12.75rem;
+    aspect-ratio: 1 / 1;
+    height: auto;
     border-radius: 20px;
     padding: 0.9rem;
   }
   .podiumRank1 {
-    height: 14.75rem;
+    width: calc((100% - 0.65rem) / 2);
+    justify-self: center;
+    height: auto;
   }
   .podiumNumber {
     top: 1rem;
@@ -2129,6 +2156,9 @@
     border: 1px solid var(--checkmate-rule);
     border-radius: 14px;
     padding: 0.65rem 0.7rem;
+  }
+  .citiesView .caseDuration {
+    transform: none;
   }
   .citiesView .caseList {
     grid-template-columns: 1fr;

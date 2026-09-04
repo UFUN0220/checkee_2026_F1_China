@@ -157,7 +157,8 @@ body:has([data-page-theme='view']) {
 
 .personal-home-page > .home-profile-card {
   width: min(420px, calc(100vw - 2rem));
-  min-height: 420px;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
 }
 
 body:has(.personal-home-page) {
@@ -611,8 +612,8 @@ body:has(.hall-of-fame-page) > main {
 
   .personal-home-page > .home-profile-card {
     box-sizing: border-box;
-    width: calc(100vw - 2rem) !important;
-    max-width: calc(100vw - 2rem) !important;
+    width: min(420px, 100%) !important;
+    max-width: 100% !important;
     min-height: 0;
     padding: 1.25rem 1rem;
     border-radius: 32px;

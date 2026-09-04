@@ -44,31 +44,22 @@ export type CheckmateSnapshot = {
   cases: CheckmateCase[]
 }
 
-export type HallCase = {
+export type CheckeeRecord = {
   id: string
   location: string | null
   degree: string | null
   major: string | null
-  checkDate: string | null
-  school: string | null
-  note?: string | null
+  interviewDate: string | null
+  endDate: string | null
+  status: string | null
   waitingDays: number | null
-  status: 'Check' | 'Approve' | 'Issue'
-  isAp: boolean
+  school: string | null
+  note: string | null
 }
 
-export type HallSnapshot = {
-  sourceName?: string
+export type CheckeeDataset = {
+  sourceName: string
   snapshotDate: string
-  isMock: false
-  metrics: {
-    totalCases: number
-    approvedCases: number
-    checkCases: number
-    issueCases: number
-    apCases: number
-    apCheckCases: number
-    waitingStats: WaitStats
-  }
-  cases: HallCase[]
+  recordCount: number
+  records: CheckeeRecord[]
 }

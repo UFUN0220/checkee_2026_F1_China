@@ -6,12 +6,11 @@ export type SubmissionPayload = {
   major: string
   interviewDate: string
   status: 'Check' | 'Approved' | 'Issued' | 'Refused'
-  endDate: string | null
-  school: string | null
-  note: string | null
+  endDate?: string | null
+  school?: string | null
+  note?: string | null
 }
 
-const SUBMISSIONS_STORAGE_KEY = 'checkmate-case-submissions'
 const SUBMISSION_STATUSES = ['Check', 'Approved', 'Issued', 'Refused'] as const
 
 function validateSubmission(payload: SubmissionPayload) {
@@ -31,16 +30,13 @@ function validateSubmission(payload: SubmissionPayload) {
 export async function submitCase(payload: SubmissionPayload) {
   validateSubmission(payload)
 
-  if (typeof window === 'undefined') {
-    throw new Error('Case submission is only available in the browser')
-  }
-
-  const existing = window.localStorage.getItem(SUBMISSIONS_STORAGE_KEY)
-  const submissions = existing ? (JSON.parse(existing) as Array<Record<string, unknown>>) : []
-
-  submissions.push({
-    ...payload,
-    submittedAt: new Date().toISOString(),
+  const response = await fetch('/api/submissions', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload),
   })
-  window.localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(submissions))
+
+  if (!response.ok) {
+    throw new Error('Case submission failed')
+  }
 }
