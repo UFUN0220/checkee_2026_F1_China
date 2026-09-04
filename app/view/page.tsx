@@ -16,7 +16,7 @@ export default async function ViewPage({
 
   return (
     <PageTheme theme="view">
-      <div className="about-page">
+      <div className="about-page view-page">
         <div className="site-container">
           <Suspense fallback={null}>
             <CheckmatePage view="cities" />

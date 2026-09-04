@@ -205,6 +205,38 @@ body:has(.about-page) > main {
   overflow: hidden;
 }
 
+body:has(.view-page) {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body:has(.view-page) > main {
+  position: relative;
+  inset: auto;
+  width: auto;
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
+.view-page {
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
+.view-page > .site-container {
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
+@media (max-width: 1023px) {
+  .view-page > .site-container {
+    padding-top: 4.5rem;
+  }
+}
+
 body:has(.hall-of-fame-page) {
   overflow-x: hidden;
   overflow-y: auto;
@@ -330,10 +362,12 @@ body:has(.hall-of-fame-page) > main {
     box-shadow 180ms ease;
 }
 
-.home-copy-action button:hover {
-  background: #147ce5;
-  box-shadow: 0 10px 24px rgb(0 113 227 / 0.25);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .home-copy-action button:hover {
+    background: #147ce5;
+    box-shadow: 0 10px 24px rgb(0 113 227 / 0.25);
+    transform: translateY(-1px);
+  }
 }
 
 .home-copy-action button:focus-visible,
@@ -383,6 +417,10 @@ body:has(.hall-of-fame-page) > main {
   font-family: 'heishenhua', var(--font-nunito), sans-serif;
 }
 
+.site-mobile-navigation {
+  display: none;
+}
+
 .nav-interactive:hover {
   color: #a43d25;
   background: #f4ebe7;
@@ -416,8 +454,168 @@ body:has(.hall-of-fame-page) > main {
 }
 
 @media (max-width: 639px) {
+  body:has(.personal-home-page),
+  body:has(.view-page),
+  body:has(.hall-of-fame-page) {
+    --mobile-nav-height: 3.25rem;
+  }
+
+  body:has(.personal-home-page) > header,
+  body:has(.view-page) > header,
+  body:has(.hall-of-fame-page) > header {
+    top: calc(0.5rem + env(safe-area-inset-top));
+  }
+
+  .site-header {
+    box-sizing: border-box;
+    width: calc(100% - 1.5rem) !important;
+    max-width: none !important;
+    margin-inline: auto;
+    border: 1px solid rgb(255 255 255 / 0.66);
+    border-radius: 999px !important;
+    padding: 0.25rem 0.375rem !important;
+    background: rgb(255 255 255 / 0.62) !important;
+    box-shadow:
+      0 12px 30px rgb(45 45 55 / 0.09),
+      inset 0 1px 0 rgb(255 255 255 / 0.62);
+    backdrop-filter: blur(18px) saturate(135%);
+    -webkit-backdrop-filter: blur(18px) saturate(135%);
+  }
+
+  .site-header > div,
+  .site-header > div > div {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .site-header > div > div {
+    gap: 0.35rem;
+  }
+
+  .site-header > div > div > a:not(.mobile-nav-link) {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 0.125rem;
+    transition:
+      box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 120ms ease;
+  }
+
+  .site-header > div > div > a:not(.mobile-nav-link) img {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.75rem;
+  }
+
+  .site-mobile-navigation {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.15rem;
+  }
+
+  .mobile-nav-link {
+    display: inline-flex;
+    min-width: 0;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 0.4rem 0.55rem;
+    color: rgb(37 36 31 / 0.78);
+    font-family: 'heishenhua', var(--font-nunito), sans-serif;
+    font-size: 0.9rem;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 160ms ease,
+      transform 120ms ease;
+  }
+
+  .mobile-nav-link[data-active='true'] {
+    color: rgb(37 36 31 / 0.94);
+    background: rgb(255 255 255 / 0.54);
+    box-shadow:
+      0 5px 12px rgb(65 65 75 / 0.08),
+      inset 0 1px 0 rgb(255 255 255 / 0.64);
+  }
+
+  .site-header-logo-active {
+    box-shadow:
+      0 0 0 3px rgb(255 255 255 / 0.24),
+      0 7px 16px rgb(85 70 100 / 0.15);
+  }
+
+  .mobile-nav-link:active,
+  .site-header > div > div > a:not(.mobile-nav-link):active {
+    transform: scale(0.99);
+    transition-duration: 120ms;
+  }
+
+  .view-page > .site-container,
+  .hall-of-fame-page > .site-container {
+    padding-top: calc(var(--mobile-nav-height) + 0.75rem);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .mobile-nav-link:hover {
+      color: rgb(37 36 31 / 0.94);
+      background: rgb(255 255 255 / 0.28);
+      box-shadow: 0 6px 16px rgb(65 65 75 / 0.07);
+      transform: translateY(-1px);
+    }
+  }
+
+  .dark .site-header {
+    border-color: rgb(255 255 255 / 0.14);
+    background: rgb(25 29 35 / 0.72) !important;
+    box-shadow:
+      0 14px 32px rgb(0 0 0 / 0.28),
+      inset 0 1px 0 rgb(255 255 255 / 0.1);
+  }
+
+  .dark .mobile-nav-link {
+    color: rgb(242 239 231 / 0.76);
+  }
+
+  .dark .mobile-nav-link[data-active='true'] {
+    color: rgb(242 239 231 / 0.96);
+    background: rgb(255 255 255 / 0.1);
+    box-shadow:
+      0 5px 14px rgb(0 0 0 / 0.18),
+      inset 0 1px 0 rgb(255 255 255 / 0.12);
+  }
+
+  .dark .site-header-logo-active {
+    box-shadow:
+      0 0 0 3px rgb(255 255 255 / 0.08),
+      0 8px 18px rgb(0 0 0 / 0.24);
+  }
+
+  .personal-home-page {
+    padding: calc(var(--mobile-nav-height) + 0.5rem + env(safe-area-inset-top))
+      max(1rem, env(safe-area-inset-left))
+      max(1.5rem, env(safe-area-inset-bottom));
+    overflow: auto;
+    background-position: center;
+    background-size: 140% 140%;
+  }
+
   .personal-home-page > .home-profile-card {
-    padding: 28px 20px;
+    box-sizing: border-box;
+    width: calc(100vw - 2rem) !important;
+    max-width: calc(100vw - 2rem) !important;
+    min-height: 0;
+    padding: 1.25rem 1rem;
+    border-radius: 32px;
   }
 
   .home-ufun-heading h1 {
@@ -427,6 +625,28 @@ body:has(.hall-of-fame-page) > main {
   .home-avatar {
     width: clamp(132px, 42vw, 172px);
     height: clamp(132px, 42vw, 172px);
+    margin-top: 1rem;
+    border-radius: 28px;
+  }
+
+  .home-copy-action {
+    margin-top: 1rem;
+  }
+
+  .home-copy-action button {
+    min-height: 44px;
+    height: auto;
+    padding-inline: 1.35rem;
+  }
+
+  .home-copy-action button:active {
+    transform: scale(0.99);
+  }
+
+  .home-support-copy {
+    max-width: 100%;
+    margin-top: 1rem;
+    overflow-wrap: anywhere;
   }
 }
 

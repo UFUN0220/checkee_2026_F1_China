@@ -105,6 +105,12 @@
 .view {
   min-width: 0;
 }
+.citiesView {
+  --view-section-gap: clamp(0.75rem, 1.4vw, 1.15rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--view-section-gap);
+}
 .cityGrid {
   position: relative;
   isolation: isolate;
@@ -283,11 +289,11 @@
 }
 .cityCard:nth-child(1),
 .cityCardActive:nth-child(1) {
-  --city-tint: #a9c8d8;
+  --city-tint: #dfb0bd;
 }
 .cityCard:nth-child(2),
 .cityCardActive:nth-child(2) {
-  --city-tint: #dfb0bd;
+  --city-tint: #a9c8d8;
 }
 .cityCard:nth-child(3),
 .cityCardActive:nth-child(3) {
@@ -1263,13 +1269,12 @@
 }
 .eliteRank,
 .standardRank {
+  color: var(--checkmate-muted);
   font-family: var(--font-mono, monospace);
   font-variant-numeric: tabular-nums;
+  font-size: 0.92rem;
+  line-height: 1.2;
   letter-spacing: -0.05em;
-}
-.eliteRank {
-  color: color-mix(in srgb, var(--checkmate-accent) 80%, var(--color-ink));
-  font-size: 1.75rem;
 }
 .eliteIdentity {
   display: grid;
@@ -1280,8 +1285,8 @@
   display: grid;
   justify-items: end;
   color: var(--checkmate-accent);
-  font-size: 1.5rem;
-  line-height: 1;
+  font-size: 0.92rem;
+  line-height: 1.2;
   white-space: nowrap;
 }
 .eliteDuration small,
@@ -1348,7 +1353,9 @@
   display: flex;
   align-items: baseline;
   gap: 0.25rem;
+  color: var(--checkmate-accent);
   font-size: 0.92rem;
+  line-height: 1.2;
   white-space: nowrap;
 }
 .eliteDuration.hallWait,
@@ -1607,9 +1614,10 @@
 }
 
 @media (min-width: 761px) {
-  :global(.about-page) .feature {
+  :global(.view-page) .feature {
     box-sizing: border-box;
-    height: 100%;
+    height: auto;
+    min-height: 0;
     padding-top: 1.25rem;
     padding-bottom: 1rem;
   }
@@ -1617,9 +1625,14 @@
   .citiesView,
   .hallView {
     display: flex;
-    height: 100%;
     flex-direction: column;
     padding-top: 0.75rem;
+  }
+
+  .citiesView {
+    height: auto;
+    min-height: 0;
+    gap: var(--view-section-gap);
   }
 
   .citiesView::after {
@@ -1634,6 +1647,7 @@
 
   .citiesView .titleRow {
     order: 1;
+    margin-bottom: 0;
   }
 
   .citiesView .titleBlock,
@@ -1646,9 +1660,10 @@
     width: calc(100% - clamp(1.5rem, 4vw, 4rem));
     box-sizing: border-box;
     flex: 0 0 auto;
-    margin-top: 1rem;
+    margin-top: 0;
     margin-inline: auto;
     align-self: center;
+    transform: translateY(calc(-1 * clamp(0.25rem, 0.7vw, 0.65rem)));
   }
 
   .citiesView .cityGrid::after {
@@ -1657,13 +1672,13 @@
 
   .citiesView .citiesContent {
     order: 4;
-    width: calc(100% - clamp(1.5rem, 4vw, 4rem));
+    width: calc(100% - clamp(5rem, 9vw, 8rem));
     min-height: 0;
     flex: 0 0 30rem;
     height: 30rem;
     align-items: stretch;
-    margin-top: auto;
-    margin-bottom: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 0;
     overflow: hidden;
     grid-template-columns: minmax(0, 2fr) minmax(0, 2.5fr);
     margin-inline: auto;
@@ -1782,12 +1797,6 @@
   }
 }
 
-@media (min-width: 1024px) {
-  .citiesView .citiesContent {
-    margin-bottom: 2rem;
-  }
-}
-
 @media (max-width: 760px) {
   .submitDialogViewport {
     place-items: start center;
@@ -1814,6 +1823,23 @@
   .titleRow,
   .hallIntro {
     min-height: 6.2rem;
+  }
+
+  .citiesView .titleRow {
+    min-height: clamp(5.2rem, 24vw, 6.2rem);
+    margin-bottom: 0;
+  }
+
+  .citiesView .titleBlock {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 0.25rem;
+  }
+
+  .citiesView .titleBlock h1 {
+    font-size: clamp(2.1rem, 10.8vw, 3rem);
+    line-height: 1.08;
+    overflow-wrap: anywhere;
   }
 
   .dataNoticePopover {
@@ -1844,25 +1870,45 @@
     padding: 0 0 1.85rem;
   }
 
-  .cityGrid {
+  .citiesView .cityGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 0.65rem;
+    margin-top: 0;
   }
-  .cityGrid::after {
+  .citiesView .cityGrid::after {
     display: none;
   }
-  .cityGrid > :last-child {
+  .citiesView .cityGrid > :last-child {
     grid-column: 1 / -1;
+    aspect-ratio: 2.2 / 0.9;
   }
-  .cityCard:active,
-  .cityCardActive:active {
+  .citiesView .cityCard,
+  .citiesView .cityCardActive {
+    min-height: 7.7rem;
+    border-radius: 20px;
+    padding: 0.75rem;
+  }
+  .citiesView .cityName {
+    font-size: clamp(1.25rem, 6vw, 1.6rem);
+  }
+  .citiesView .cityCount {
+    font-size: 0.66rem;
+  }
+  .citiesView .cityCard:active,
+  .citiesView .cityCardActive:active {
     transform: scale(0.99);
     transition-duration: 120ms;
   }
-  .citiesContent {
+  .citiesView .citiesContent {
     grid-template-columns: 1fr;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 0;
+    margin-inline: 0;
   }
-  .citiesContent > :first-child,
-  .citiesContent > :last-child {
+  .citiesView .citiesContent > :first-child,
+  .citiesView .citiesContent > :last-child {
     grid-column: auto;
   }
   .citiesView .citiesContent::before {
@@ -1876,12 +1922,74 @@
     right: 1rem;
     bottom: auto;
   }
+  .citiesView .cityDetail:not(.cityEmpty) > .dataNoticePopover .dataNoticePanel {
+    top: calc(100% + 0.4rem);
+    right: 0;
+    bottom: auto;
+    transform-origin: top right;
+  }
   .citiesView .cityDetailHeading > .textButton {
     right: auto;
     left: 0;
   }
   .citiesView .cityDetailTitle {
     padding: 0 4rem 0.75rem;
+  }
+  .citiesView .citiesContent > .panel {
+    border-radius: 20px;
+    padding: 1rem;
+  }
+  .citiesView .cityDetail:not(.cityEmpty) {
+    padding-bottom: 0.65rem;
+  }
+  .citiesView .dataNoticePanel {
+    width: min(19rem, calc(100vw - 2.5rem));
+  }
+  .citiesView .cityDetail .textButton,
+  .citiesView .cityDetail .dataNoticeTrigger,
+  .citiesView .cityDetail .pagination button {
+    min-height: 40px;
+  }
+  .citiesView .cityDetail .textButton,
+  .citiesView .cityDetail .dataNoticeTrigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--checkmate-border);
+    border-radius: 999px;
+    color: var(--color-ink);
+    background: var(--checkmate-surface-strong);
+    box-shadow: 0 6px 16px rgb(73 68 58 / 0.05);
+    font: inherit;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 120ms ease;
+  }
+  .citiesView .cityDetail .textButton,
+  .citiesView .cityDetail .dataNoticeTrigger {
+    padding: 0.42rem 0.72rem;
+  }
+  .citiesView .cityDetail .textButton:active,
+  .citiesView .cityDetail .dataNoticeTrigger:active,
+  .citiesView .cityDetail .pagination button:active:not(:disabled) {
+    border-color: var(--checkmate-accent);
+    box-shadow: 0 4px 12px rgb(73 68 58 / 0.07);
+    transform: scale(0.99);
+    transition-duration: 120ms;
+  }
+  .citiesView .cityDetail .dataNoticeTrigger[aria-expanded='true'] {
+    border-color: var(--checkmate-accent);
+    color: var(--checkmate-accent);
+  }
+  .citiesView .cityDetail .pagination button {
+    min-width: 44px;
+    padding: 0.55rem 0.7rem;
+  }
+  .citiesView .cityDetail .pagination {
+    gap: 0.55rem;
+    margin-top: 0.75rem;
+    padding-bottom: 0.2rem;
   }
   .hallIntro {
     min-height: 6.2rem;
@@ -1965,16 +2073,12 @@
     border-radius: 14px;
     padding: 0.72rem 0.75rem;
   }
-  .eliteRank {
-    font-size: 1.35rem;
-  }
   .eliteIdentity {
     gap: 0.45rem;
   }
   .eliteDuration {
     grid-column: 3;
     grid-row: 1 / span 2;
-    font-size: 1.25rem;
   }
   .eliteList {
     gap: 0.45rem;
@@ -2019,24 +2123,35 @@
     grid-column: 2 / -1;
     grid-row: 5;
   }
-  .caseRow {
+  .citiesView .caseRow {
     grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.4rem 0.6rem;
+    border: 1px solid var(--checkmate-rule);
+    border-radius: 14px;
+    padding: 0.65rem 0.7rem;
   }
-  .caseList {
+  .citiesView .caseList {
     grid-template-columns: 1fr;
   }
-  .caseColumn {
+  .citiesView .caseColumn {
     padding-right: 0;
     padding-left: 0;
   }
-  .caseColumn + .caseColumn {
-    border-top: 1px solid var(--checkmate-rule);
+  .citiesView .caseColumn + .caseColumn {
+    border-top: 0;
     border-left: 0;
-    margin-top: 0.35rem;
-    padding-top: 0.35rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
   }
-  .caseCategory {
+  .citiesView .caseRow p {
+    overflow-wrap: anywhere;
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+  .citiesView .caseCategory {
     grid-column: 1 / -1;
+    min-width: 0;
+    text-align: left;
   }
   .trendTable {
     display: grid;
