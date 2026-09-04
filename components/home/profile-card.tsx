@@ -35,7 +35,7 @@ export function ProfileCard() {
       </div>
 
       <p className="home-support-copy">
-        请我吃 葡式蛋挞6只+吮指原味鸡4块 (三角) 起或 V我50 起*
+        请我吃 葡式蛋挞6只+吮指原味鸡4块 起或 V我50 起*
       </p>
     </section>
   )

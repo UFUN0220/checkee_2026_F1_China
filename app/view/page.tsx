@@ -15,7 +15,7 @@ export default async function ViewPage({
   if (params.view === 'peers') redirect('/')
 
   return (
-    <PageTheme theme="check">
+    <PageTheme theme="view">
       <div className="about-page">
         <div className="site-container">
           <Suspense fallback={null}>

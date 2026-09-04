@@ -7,7 +7,7 @@ export const metadata = genPageMetadata({ title: '名人堂' })
 
 export default function HomePage() {
   return (
-    <PageTheme theme="check">
+    <PageTheme theme="hall">
       <div className="about-page hall-of-fame-page">
         <div className="site-container">
           <Suspense fallback={null}>

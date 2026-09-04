@@ -61,13 +61,29 @@
     radial-gradient(circle at 100% 90%, rgb(255 107 0 / 0.24), transparent 38%),
     radial-gradient(circle at 55% 55%, rgb(255 245 250 / 0.9), transparent 55%),
     linear-gradient(140deg, #fbf8fd, #f8edf7, #fff7f0);
-  --page-background-check:
-    radial-gradient(circle at 5% 88%, rgb(128 42 35 / 0.44), transparent 42%),
-    radial-gradient(circle at 35% 5%, rgb(224 156 38 / 0.34), transparent 40%),
-    radial-gradient(circle at 88% 38%, rgb(230 72 38 / 0.34), transparent 42%),
-    radial-gradient(circle at 96% 90%, rgb(128 48 100 / 0.26), transparent 38%),
-    radial-gradient(circle at 52% 52%, rgb(255 244 220 / 0.9), transparent 55%),
-    linear-gradient(140deg, #fcf7ed 0%, #f4e6d0 45%, #fff8ef 100%);
+  --page-background-about:
+    radial-gradient(ellipse at 50% 46%, rgb(255 251 248 / 0.92), transparent 58%),
+    radial-gradient(circle at 72% 8%, rgb(255 255 255 / 0.32), transparent 20%),
+    radial-gradient(ellipse at -4% 88%, rgb(17 129 132 / 0.36), transparent 48%),
+    radial-gradient(circle at 25% -5%, rgb(100 72 185 / 0.32), transparent 38%),
+    radial-gradient(circle at 92% 18%, rgb(219 62 126 / 0.3), transparent 40%),
+    radial-gradient(circle at 102% 84%, rgb(236 163 62 / 0.26), transparent 34%),
+    radial-gradient(circle at 56% 42%, rgb(181 112 203 / 0.14), transparent 48%),
+    linear-gradient(138deg, #f7fbfa 0%, #f4f0fb 27%, #fbf1f5 54%, #fff5e9 78%, #f6fbfa 100%);
+  --page-background-hall:
+    radial-gradient(ellipse at 50% 42%, rgb(255 252 245 / 0.96), transparent 64%),
+    radial-gradient(ellipse at -6% 12%, rgb(214 78 66 / 0.24), transparent 40%),
+    radial-gradient(ellipse at 104% 24%, rgb(233 143 83 / 0.28), transparent 48%),
+    radial-gradient(ellipse at 18% 104%, rgb(227 185 97 / 0.3), transparent 46%),
+    radial-gradient(circle at 100% 86%, rgb(213 142 65 / 0.18), transparent 34%),
+    linear-gradient(142deg, #fbf3ef 0%, #fff8f1 28%, #fffaf2 52%, #fbf2df 80%, #fcf8ef 100%);
+  --page-background-view:
+    radial-gradient(ellipse at 50% 46%, rgb(252 252 249 / 0.98), transparent 64%),
+    radial-gradient(ellipse at 8% -8%, rgb(90 111 139 / 0.17), transparent 48%),
+    radial-gradient(ellipse at 104% 14%, rgb(77 125 127 / 0.13), transparent 42%),
+    radial-gradient(ellipse at -8% 102%, rgb(117 131 148 / 0.1), transparent 40%),
+    radial-gradient(circle at 94% 96%, rgb(169 198 210 / 0.12), transparent 34%),
+    linear-gradient(138deg, #f3f5f8 0%, #f5f8f8 30%, #faf9f5 56%, #f3f6f8 82%, #f6f8f9 100%);
 }
 
 html.dark {
@@ -77,6 +93,36 @@ html.dark {
     radial-gradient(circle at 52% 52%, rgb(155 76 119 / 0.28), transparent 48%),
     radial-gradient(circle at 98% 44%, rgb(174 43 70 / 0.24), transparent 32%),
     linear-gradient(138deg, #08070a 0%, #1a1021 28%, #2a1728 53%, #180f1c 76%, #0b080d 100%);
+  --page-background-about:
+    radial-gradient(ellipse at 50% 46%, rgb(15 16 23 / 0.42), transparent 56%),
+    radial-gradient(ellipse at -4% 94%, rgb(18 105 103 / 0.48), transparent 46%),
+    radial-gradient(circle at 28% 0%, rgb(91 57 151 / 0.42), transparent 38%),
+    radial-gradient(circle at 92% 18%, rgb(144 42 84 / 0.38), transparent 42%),
+    radial-gradient(circle at 102% 86%, rgb(145 91 34 / 0.26), transparent 34%),
+    radial-gradient(circle at 52% 48%, rgb(91 52 105 / 0.2), transparent 48%),
+    linear-gradient(
+      138deg,
+      #060b0d 0%,
+      #10171c 23%,
+      #211426 48%,
+      #29151e 67%,
+      #15100d 84%,
+      #080b0d 100%
+    );
+  --page-background-hall:
+    radial-gradient(ellipse at 50% 44%, rgb(54 47 43 / 0.76), transparent 68%),
+    radial-gradient(ellipse at -8% 22%, rgb(107 35 43 / 0.3), transparent 44%),
+    radial-gradient(ellipse at 106% 36%, rgb(143 71 39 / 0.28), transparent 46%),
+    radial-gradient(ellipse at 20% 106%, rgb(139 104 47 / 0.24), transparent 42%),
+    radial-gradient(circle at 96% 90%, rgb(148 84 38 / 0.18), transparent 32%),
+    linear-gradient(142deg, #2e2628 0%, #302629 26%, #2c2521 52%, #2b231b 78%, #221d18 100%);
+  --page-background-view:
+    radial-gradient(ellipse at 50% 46%, rgb(34 42 49 / 0.76), transparent 66%),
+    radial-gradient(ellipse at -6% 20%, rgb(51 77 103 / 0.24), transparent 48%),
+    radial-gradient(ellipse at 104% 30%, rgb(42 77 76 / 0.22), transparent 44%),
+    radial-gradient(ellipse at 16% 104%, rgb(71 90 110 / 0.14), transparent 40%),
+    radial-gradient(circle at 96% 92%, rgb(132 151 166 / 0.06), transparent 32%),
+    linear-gradient(138deg, #111820 0%, #19232d 30%, #1d262d 54%, #182427 80%, #141b22 100%);
 }
 
 .site-container {
@@ -87,9 +133,16 @@ html.dark {
   min-height: 100dvh;
 }
 
-.page-theme-shell[data-page-theme='check'],
-body:has([data-page-theme='check']) {
-  background: var(--page-background-check);
+.page-theme-shell[data-page-theme='hall'],
+body:has([data-page-theme='hall']) {
+  --page-theme-background: var(--page-background-hall);
+  background: var(--page-background-hall);
+}
+
+.page-theme-shell[data-page-theme='view'],
+body:has([data-page-theme='view']) {
+  --page-theme-background: var(--page-background-view);
+  background: var(--page-background-view);
 }
 
 .personal-home-page {
@@ -99,7 +152,7 @@ body:has([data-page-theme='check']) {
   place-items: center;
   padding: 5.5rem 1rem 1.5rem;
   overflow: hidden;
-  background: var(--site-ambient-background);
+  background: var(--page-background-about);
 }
 
 .personal-home-page > .home-profile-card {
@@ -109,7 +162,7 @@ body:has([data-page-theme='check']) {
 
 body:has(.personal-home-page) {
   overflow: hidden;
-  background: var(--site-ambient-background);
+  background: var(--page-background-about);
 }
 
 body:has(.personal-home-page) > header,
@@ -143,7 +196,7 @@ body:has(.about-page) > main {
   min-height: 100dvh;
   overflow: hidden;
   isolation: isolate;
-  background: var(--page-background-check);
+  background: var(--page-theme-background, var(--site-ambient-background));
 }
 
 .about-page > .site-container {

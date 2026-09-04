@@ -46,19 +46,29 @@ export type CheckmateSnapshot = {
 
 export type HallCase = {
   id: string
-  startDate: string
-  endDate: string | null
-  effectiveEndDate: string
-  waitingDays: number
-  status: 'approved' | 'pending' | 'other'
+  location: string | null
   degree: string | null
   major: string | null
-  mergedInfo: string | null
+  checkDate: string | null
+  school: string | null
+  note?: string | null
+  waitingDays: number | null
+  status: 'Check' | 'Approve' | 'Issue'
+  isAp: boolean
 }
 
 export type HallSnapshot = {
+  sourceName?: string
   snapshotDate: string
   isMock: false
-  metrics: { totalCases: number; approvedCases: number; waitingStats: WaitStats }
+  metrics: {
+    totalCases: number
+    approvedCases: number
+    checkCases: number
+    issueCases: number
+    apCases: number
+    apCheckCases: number
+    waitingStats: WaitStats
+  }
   cases: HallCase[]
 }
