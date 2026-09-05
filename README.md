@@ -1,31 +1,118 @@
-# UFUN
+# UFUN · Checkmate
 
-个人主页与 Checkmate 信息展示网站，使用 Next.js App Router 构建。
+面向 F-1 签证 Check 公开案例的个人信息展示与数据观察网站。项目使用 Next.js App Router 构建，提供名人堂、五城统计、个人主页和案例提交入口。
 
-## Tech Stack
+> 页面中的统计来自已纳入项目的公开样本，仅用于观察样本趋势；它不代表官方处理时间、完整人群或任何个人结果。
+
+## 功能一览
+
+- **名人堂（`/`）**：按等待时长展示 2026 年公开案例，包含 Top 3、后续排名、备注展开与分页。
+- **五城数据统计（`/view`）**：展示北京、上海、广州、沈阳、武汉的样本量与 Q1 / Median / Q3；可切换城市，查看月度趋势和最新案例。
+- **个人主页（`/about`）**：个人资料与联系入口。
+- **案例提交**：在名人堂打开表单后，可提交面签地点、学位、专业、状态、日期和可选备注；前端与服务端都会校验必填项、状态和日期先后关系。
+- **主题与体验**：支持浅色 / 深色主题、响应式布局、站点地图与 robots 元数据，以及可选 Umami 访问统计。
+
+## 路由
+
+| 路径 | 页面 | 主要内容 |
+| --- | --- | --- |
+| `/` | 名人堂 | 公开案例排名、详情备注、分页与案例提交入口 |
+| `/view` | F-1 数据统计 | 五城分位数、月度趋势、按城市筛选的案例列表 |
+| `/about` | 个人主页 | 个人资料与联系入口 |
+| `/api/submissions` | 案例提交接口 | 接收并校验表单数据，然后写入 Supabase |
+
+## 技术栈
 
 - Node.js 24、Next.js 16、React 19、TypeScript
-- Tailwind CSS 4、Lucide React
-- Checkmate 静态数据与交互式统计页面
+- Tailwind CSS 4 与 CSS Modules
+- Headless UI、Lucide React、next-themes
+- Supabase（仅服务端案例提交写入）
+- Umami、Vercel Analytics、Vercel Speed Insights（可选分析能力）
 
-## Development
+## 本地开发
+
+### 前置条件
+
+- Node.js `>=24 <25`
+- pnpm
+
+安装依赖并启动开发服务器：
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-开发服务器运行在 <http://localhost:3436>。
+开发服务器默认运行在 <http://localhost:3436>。
 
-## Environment Variables
+## 环境变量
 
-复制 `.env.example` 为 `.env.local`，按需填写 Umami 配置。不要将真实密钥提交到仓库。
+先复制 `.env.example` 为 `.env.local`，再按所需功能填写变量。
 
-## Build
+| 变量 | 是否必需 | 说明 |
+| --- | --- | --- |
+| `NEXT_PUBLIC_UMAMI_ID` | 否 | Umami 网站 ID。 |
+| `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | 否 | Umami 脚本地址。 |
+| `SUPABASE_URL` | 提交案例时必需 | Supabase 项目 URL，仅由服务端读取。 |
+| `SUPABASE_SECRET_KEY` | 提交案例时必需 | Supabase Secret Key（通常以 `sb_secret_` 开头），仅供服务端 API 使用。 |
+| `BASE_PATH` | 否 | 部署在子路径时使用。 |
+| `EXPORT` | 否 | 按部署需求启用静态导出。 |
+| `UNOPTIMIZED` | 否 | 按部署需求关闭图片优化。 |
+
+`SUPABASE_SECRET_KEY` 具备高权限：不要使用 `NEXT_PUBLIC_` 前缀，不要提交到仓库，也不要在浏览器端使用。当前提交接口会把记录写入 `case_submissions` 表；该表需要支持以下字段：
+
+`location`、`degree`、`major`、`interview_date`、`start_date`、`status`、`end_date`、`school`、`note`、`compact_note`、`detail_note`、`waiting_days`。
+
+提交记录与页面内的静态展示样本是两条独立数据流：提交成功不代表会立即出现在名人堂或统计页面，后续应经过审核和数据更新流程。
+
+## 数据与更新
+
+网站展示使用构建时导入的 JSON 快照：
+
+- `json/checkmate/checkee-static-snapshot.json`：五城统计、月度趋势和案例明细。
+- `data/checkmate/ufun_checkee_pure_processed.json`：名人堂案例数据。
+
+`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为名人堂 JSON。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。
+
+更新数据后，请核对快照日期、样本范围与页面的数据说明，再执行构建验证。
+
+## 常用命令
+
+```bash
+# 启动开发服务器（端口 3436）
+pnpm dev
+
+# 生产构建
+pnpm build
+
+# 启动生产服务器
+pnpm start
+
+# 代码检查
+pnpm lint
+
+# TypeScript 类型检查
+pnpm typecheck
+```
+
+## 项目结构
+
+```text
+app/                    路由、页面、元数据与案例提交 API
+components/checkmate/   名人堂、五城统计和案例提交界面
+data/checkmate/         名称、类型、数据说明与名人堂样本
+json/checkmate/         五城统计快照
+lib/supabase/           服务端 Supabase 客户端
+scripts/                数据转换辅助脚本
+css/                    全局主题与样式
+```
+
+## 验证
+
+每次修改后至少执行：
 
 ```bash
 pnpm build
-pnpm start
 ```
 
-构建会生成 Next.js 生产构建。
+该命令会完成生产编译、TypeScript 检查与页面生成。

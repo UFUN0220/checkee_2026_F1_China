@@ -11,6 +11,7 @@ const MAX_LENGTHS = {
   school: 160,
   note: 1000,
 } as const
+const COMPACT_NOTE_LIMIT = 28
 
 type SubmissionBody = {
   location?: unknown
@@ -42,6 +43,15 @@ function optionalString(value: unknown, field: 'school' | 'note') {
   return normalized
 }
 
+function buildCompactNote(detailNote: string | null) {
+  if (!detailNote) return null
+  if (detailNote.length <= COMPACT_NOTE_LIMIT) return detailNote
+
+  const firstSentence = detailNote.split(/(?<=[。！？!?；;\n])/u, 1)[0]?.trim() || detailNote
+  if (firstSentence.length <= COMPACT_NOTE_LIMIT) return firstSentence
+  return `${firstSentence.slice(0, COMPACT_NOTE_LIMIT - 1).trimEnd()}…`
+}
+
 function normalizedDate(value: unknown, field: 'interviewDate' | 'endDate', required: boolean) {
   if (value === undefined || value === null || value === '') {
     if (required) throw new BadRequestError(`Missing ${field}`)
@@ -62,6 +72,16 @@ function normalizedDate(value: unknown, field: 'interviewDate' | 'endDate', requ
   return value
 }
 
+function currentDate() {
+  return new Date().toISOString().slice(0, 10)
+}
+
+function daysBetween(startDate: string, endDate: string) {
+  const start = Date.parse(`${startDate}T00:00:00Z`)
+  const end = Date.parse(`${endDate}T00:00:00Z`)
+  return Math.round((end - start) / 86_400_000)
+}
+
 async function parseBody(request: Request) {
   let body: SubmissionBody
   try {
@@ -78,6 +98,7 @@ async function parseBody(request: Request) {
   const degree = requiredString(body.degree, 'degree')
   const major = requiredString(body.major, 'major')
   const interviewDate = normalizedDate(body.interviewDate, 'interviewDate', true)
+  if (!interviewDate) throw new BadRequestError('Missing interviewDate')
   const endDate = normalizedDate(body.endDate, 'endDate', false)
   const status = typeof body.status === 'string' ? body.status.trim() : ''
   if (!ALLOWED_STATUSES.has(status)) throw new BadRequestError('Invalid status')
@@ -86,16 +107,23 @@ async function parseBody(request: Request) {
   if (normalizedEndDate && interviewDate && normalizedEndDate < interviewDate) {
     throw new BadRequestError('End date cannot be earlier than interview date')
   }
+  const waitingDays = daysBetween(interviewDate, normalizedEndDate || currentDate())
+  if (waitingDays < 0) throw new BadRequestError('Invalid waiting days')
+  const detailNote = optionalString(body.note, 'note')
 
   return {
     location,
     degree,
     major,
     interview_date: interviewDate,
+    start_date: interviewDate,
     status,
     end_date: normalizedEndDate,
     school: optionalString(body.school, 'school'),
-    note: optionalString(body.note, 'note'),
+    note: detailNote,
+    compact_note: buildCompactNote(detailNote),
+    detail_note: detailNote,
+    waiting_days: waitingDays,
   }
 }
 

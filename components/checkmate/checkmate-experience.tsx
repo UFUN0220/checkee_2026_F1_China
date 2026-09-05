@@ -1,6 +1,7 @@
 'use client'
 
 import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   CHECKMATE_LOCATIONS,
@@ -288,7 +289,21 @@ function splitColumns<T>(items: T[]): [T[], T[]] {
   return [items.slice(0, midpoint), items.slice(midpoint)]
 }
 
+function HallSectionDivider({ children }: { children: string }) {
+  return (
+    <div className={styles.hallSectionDivider}>
+      <span className={styles.hallSectionDividerLine} aria-hidden="true" />
+      <span className={styles.hallSectionDividerText}>{children}</span>
+      <span className={styles.hallSectionDividerLine} aria-hidden="true" />
+    </div>
+  )
+}
+
 function CityCaseRow({ item }: { item: CheckmateSnapshot['cases'][number] }) {
+  const category = item.majorCategory.trim()
+  const firstCategoryWord = category.split(/\s+/)[0] ?? ''
+  const hasMultipleCategoryWords = firstCategoryWord !== category
+
   return (
     <article className={styles.caseRow}>
       <div>
@@ -306,7 +321,21 @@ function CityCaseRow({ item }: { item: CheckmateSnapshot['cases'][number] }) {
         {formatDays(item.durationDays)}
         <small>天</small>
       </strong>
-      <span className={styles.caseCategory}>{item.majorCategory}</span>
+      {hasMultipleCategoryWords ? (
+        <span
+          className={`${styles.caseCategory} ${styles.caseCategoryTooltipTrigger}`}
+          tabIndex={0}
+          aria-label={`专业：${category}`}
+          title={category}
+        >
+          {firstCategoryWord}
+          <span className={styles.caseCategoryTooltip} aria-hidden="true">
+            {category}
+          </span>
+        </span>
+      ) : (
+        <span className={styles.caseCategory}>{category}</span>
+      )}
     </article>
   )
 }
@@ -318,8 +347,8 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
     () =>
       [...dataset.records].sort(
         (left, right) =>
-          (right.waitingDays ?? -Infinity) - (left.waitingDays ?? -Infinity) ||
-          (left.interviewDate ?? '').localeCompare(right.interviewDate ?? '')
+          right.waitingDays - left.waitingDays ||
+          String(left.startDate ?? '').localeCompare(String(right.startDate ?? ''))
       ),
     [dataset.records]
   )
@@ -346,53 +375,60 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
           {podiumCases.map((item) => {
             const rank = cases.indexOf(item) + 1
             return (
-              <PodiumCard
-                item={item}
-                rank={rank}
-                expanded={expandedNoteId === item.id}
-                onToggle={() => setExpandedNoteId((current) => (current === item.id ? null : item.id))}
-                key={item.id}
-              />
+              rank === 1 ? (
+                <div className={styles.podiumChampion} key={item.id}>
+                  <PodiumCard
+                    item={item}
+                    rank={rank}
+                    expanded={expandedNoteId === item.id}
+                    onToggle={() =>
+                      setExpandedNoteId((current) => (current === item.id ? null : item.id))
+                    }
+                  />
+                  <div className={styles.podiumActions}>
+                    <SubmitCaseButton />
+                    <DataDescription notice={notice} updatedAt={dataset.snapshotDate} />
+                  </div>
+                </div>
+              ) : (
+                <PodiumCard
+                  item={item}
+                  rank={rank}
+                  expanded={expandedNoteId === item.id}
+                  onToggle={() =>
+                    setExpandedNoteId((current) => (current === item.id ? null : item.id))
+                  }
+                  key={item.id}
+                />
+              )
             )
           })}
         </div>
       </section>
 
+      <HallSectionDivider>但愿人长久，千里共Check娟</HallSectionDivider>
+
       <section className={styles.eliteSection} aria-label="等待时长排名">
-        <div className={styles.hallSectionDivider} aria-hidden="true" />
         <div className={styles.eliteList}>
           {eliteCases.map((item, index) => (
             <HallRowContent
               item={item}
               rank={index + 4}
               variant="elite"
-              expanded={expandedNoteId === item.id}
-              onToggle={() => setExpandedNoteId((current) => (current === item.id ? null : item.id))}
               key={item.id}
             />
           ))}
         </div>
       </section>
 
-      <section className={styles.hallTransition} aria-labelledby="hall-transition-title">
-        <h2 id="hall-transition-title" className={styles.hallTransitionTitle}>
-          她最后一次回复我是在春天，签证也是。
-        </h2>
-        <div className={styles.hallTransitionActions}>
-          <SubmitCaseButton />
-          <DataDescription notice={notice} updatedAt={dataset.snapshotDate} />
-        </div>
-      </section>
-
       <section className={styles.standardSection} aria-label="完整案例列表">
+        <HallSectionDivider>曲径通幽处，Check房花木深</HallSectionDivider>
         <div className={styles.standardList}>
           {visibleCases.map((item, index) => (
             <HallRowContent
               item={item}
               rank={10 + (page - 1) * pageSize + index + 1}
               variant="standard"
-              expanded={expandedNoteId === item.id}
-              onToggle={() => setExpandedNoteId((current) => (current === item.id ? null : item.id))}
               key={item.id}
             />
           ))}
@@ -419,7 +455,7 @@ function HallFields({ item }: { item: CheckeeRecord }) {
       </span>
       <span className={styles.standardMajor}>{item.major || '\u00a0'}</span>
       <span className={styles.standardSchool}>{item.school || '\u00a0'}</span>
-      <span className={styles.standardDates}>{item.interviewDate ? formatDate(item.interviewDate) : '\u00a0'}</span>
+      <span className={styles.standardDates}>{formatDate(item.startDate)}</span>
     </>
   )
 }
@@ -438,8 +474,8 @@ function HallWait({
   return (
     <strong className={`${className} ${styles.hallWait}`}>
       <span className={styles.hallWaitValue}>
-        {item.waitingDays !== null ? item.waitingDays : '\u00a0'}
-        {item.waitingDays !== null ? <small>天</small> : null}
+        {item.waitingDays}
+        <small>天</small>
       </span>
       {item.endDate ? <span className={styles.apBadge}>AP</span> : null}
     </strong>
@@ -457,7 +493,7 @@ function PodiumCard({
   expanded: boolean
   onToggle: () => void
 }) {
-  const note = item.note?.trim() || ''
+  const note = item.detailNote?.trim() || ''
   const hasNote = Boolean(note)
 
   return (
@@ -479,15 +515,11 @@ function PodiumCard({
           : undefined
       }
     >
-      <span className={styles.podiumNumber} aria-hidden="true">
-        {String(rank).padStart(2, '0')}
-      </span>
-      <span className={styles.podiumRankLabel}>#{rank}</span>
       <div className={styles.podiumContent}>
         <HallFields item={item} />
-        <HallWait item={item} className={styles.podiumDuration} />
         <HallNote note={note} expanded={expanded} />
       </div>
+      <HallWait item={item} className={styles.podiumDuration} />
     </article>
   )
 }
@@ -496,45 +528,51 @@ function HallRowContent({
   item,
   rank,
   variant,
-  expanded,
-  onToggle,
 }: {
   item: CheckeeRecord
   rank: number
   variant: 'elite' | 'standard'
-  expanded: boolean
-  onToggle: () => void
 }) {
-  const note = item.note?.trim() || ''
-  const hasNote = Boolean(note)
   const rowClass = variant === 'elite' ? styles.eliteRow : styles.standardRow
   const rankClass = variant === 'elite' ? styles.eliteRank : styles.standardRank
   const waitClass = variant === 'elite' ? styles.eliteDuration : styles.standardDuration
 
   return (
-    <article
-      className={`${rowClass} ${expanded && hasNote ? styles.standardRowOpen : ''}`}
-      data-note-trigger={hasNote ? 'true' : undefined}
-      role={hasNote ? 'button' : undefined}
-      tabIndex={hasNote ? 0 : undefined}
-      aria-expanded={hasNote ? expanded : undefined}
-      onClick={hasNote ? onToggle : undefined}
-      onKeyDown={
-        hasNote
-          ? (event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault()
-                onToggle()
-              }
-            }
-          : undefined
-      }
-    >
+    <article className={rowClass}>
       <strong className={rankClass}>{String(rank).padStart(2, '0')}</strong>
-      <HallFields item={item} />
+      <span className={styles.standardLocationDegree}>
+        <span>{item.location || '\u00a0'}</span>
+        <span>{item.degree || '\u00a0'}</span>
+      </span>
+      <span className={styles.standardMajor}>{item.major || '\u00a0'}</span>
+      <span className={styles.standardSchool}>{item.school || '\u00a0'}</span>
+      <span className={styles.standardDates}>{formatDate(item.startDate)}</span>
+      <span className={styles.standardEndDate}>{item.endDate ? formatDate(item.endDate) : '\u00a0'}</span>
+      <HallNotePopover item={item} />
       <HallWait item={item} className={waitClass} />
-      <HallNote note={note} expanded={expanded} />
     </article>
+  )
+}
+
+function HallNotePopover({ item }: { item: CheckeeRecord }) {
+  const compactNote = item.compactNote?.trim() || ''
+  const detailNote = item.detailNote?.trim() || ''
+  const hasDetail = Boolean(detailNote && detailNote !== compactNote)
+  const displayNote = compactNote || detailNote
+
+  if (!displayNote) return <span className={styles.standardNoteEmpty} aria-hidden="true" />
+  if (!hasDetail) return <span className={styles.standardNote}>{displayNote}</span>
+
+  return (
+    <Popover className={styles.standardNotePopover}>
+      <PopoverButton type="button" className={styles.standardNoteButton}>
+        {displayNote}
+      </PopoverButton>
+      <PopoverPanel transition className={styles.standardNotePanel}>
+        <strong>备注</strong>
+        <p>{detailNote}</p>
+      </PopoverPanel>
+    </Popover>
   )
 }
 

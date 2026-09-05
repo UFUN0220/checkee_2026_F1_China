@@ -17,20 +17,19 @@ from xml.etree import ElementTree
 
 SOURCE_NAME = "ufun_checkee_pure_processed.xlsx"
 
-# Confirmed from Sheet1's header row:
-# A 地点, B 学位, C 专业, E 面签日期, F 状态, G 结束日期,
-# H 学校, J Note, K 等待天数. D and I are not used by the website.
-SOURCE_COLUMNS = {
-    "location": "A",
-    "degree": "B",
-    "major": "C",
-    "interviewDate": "E",
-    "status": "F",
-    "endDate": "G",
-    "school": "H",
-    "note": "J",
-    "waitingDays": "K",
+SOURCE_HEADERS = {
+    "location": ("地点", "location"),
+    "degree": ("学位", "degree"),
+    "major": ("专业", "major"),
+    "interviewDate": ("面签日期", "interview date", "interviewDate"),
+    "status": ("状态", "status"),
+    "endDate": ("结束日期", "end date", "endDate"),
+    "school": ("学校", "school"),
+    "note": ("Note", "备注", "note"),
+    "waitingDays": ("等待天数", "waiting days", "waitingDays"),
 }
+
+COMPACT_NOTE_LIMIT = 28
 
 
 def local_name(tag: str) -> str:
@@ -98,29 +97,70 @@ def number_value(value):
     return int(number) if number.is_integer() else number
 
 
+def header_columns(header_values):
+    columns = {}
+    for cell_reference, value in header_values.items():
+        normalized = normalize(value)
+        if not normalized:
+            continue
+        column = re.sub(r"\d+$", "", cell_reference)
+        columns.setdefault(normalized.casefold(), []).append(column)
+
+    resolved = {}
+    for field, aliases in SOURCE_HEADERS.items():
+        for alias in aliases:
+            matches = columns.get(alias.casefold())
+            if matches:
+                resolved[field] = matches[0]
+                break
+        if field not in resolved:
+            raise ValueError(f"Missing Excel header for {field}: {aliases}")
+    return resolved
+
+
+def compact_note(value):
+    detail = normalize(value)
+    if not detail:
+        return None
+    if len(detail) <= COMPACT_NOTE_LIMIT:
+        return detail
+
+    first_sentence = re.split(r"(?<=[。！？!?；;\n])", detail, maxsplit=1)[0].strip()
+    candidate = first_sentence or detail
+    if len(candidate) <= COMPACT_NOTE_LIMIT:
+        return candidate
+    return candidate[: COMPACT_NOTE_LIMIT - 1].rstrip() + "…"
+
+
 def convert(input_path: Path, output_path: Path, snapshot_date: str):
     records = []
-    for excel_row, values in read_xlsx(input_path):
-        if excel_row == "1":
-            continue
-        row = {name: values.get(f"{column}{excel_row}") for name, column in SOURCE_COLUMNS.items()}
+    rows = read_xlsx(input_path)
+    header_row, header_values = next(rows)
+    columns = header_columns(header_values)
+
+    for excel_row, values in rows:
+        row = {name: values.get(f"{column}{excel_row}") for name, column in columns.items()}
         location = normalize(row["location"])
         interview_date = date_value(row["interviewDate"])
         status = normalize(row["status"])
         if not location or not interview_date or not status:
             continue
+        detail_note = normalize(row["note"])
+        waiting_days = number_value(row["waitingDays"])
+        if waiting_days is None:
+            raise ValueError(f"Missing waiting days at Excel row {excel_row}")
         records.append(
             {
                 "id": f"ufun-checkee-{int(excel_row):03d}",
                 "location": location,
-                "degree": normalize(row["degree"]),
-                "major": normalize(row["major"]),
-                "interviewDate": interview_date,
-                "endDate": date_value(row["endDate"]),
-                "status": status,
-                "waitingDays": number_value(row["waitingDays"]),
+                "degree": normalize(row["degree"]) or "",
+                "major": normalize(row["major"]) or "",
                 "school": normalize(row["school"]),
-                "note": normalize(row["note"]),
+                "startDate": interview_date,
+                "endDate": date_value(row["endDate"]),
+                "compactNote": compact_note(detail_note),
+                "detailNote": detail_note,
+                "waitingDays": waiting_days,
             }
         )
 

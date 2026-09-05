@@ -303,7 +303,12 @@ export function SubmitCaseButton() {
                   <button type="button" className={styles.submitSecondaryButton} onClick={close} disabled={isSubmitting}>
                     取消
                   </button>
-                  <button type="submit" className={styles.submitPrimaryButton} disabled={!isValid || isSubmitting}>
+                  <button
+                    type="submit"
+                    className={styles.submitPrimaryButton}
+                    disabled={isSubmitting}
+                    aria-busy={isSubmitting}
+                  >
                     {isSubmitting ? '提交中…' : '提交'}
                   </button>
                 </div>

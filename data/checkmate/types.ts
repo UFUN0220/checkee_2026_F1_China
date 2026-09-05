@@ -44,18 +44,20 @@ export type CheckmateSnapshot = {
   cases: CheckmateCase[]
 }
 
-export type CheckeeRecord = {
+export type HallRecord = {
   id: string
-  location: string | null
-  degree: string | null
-  major: string | null
-  interviewDate: string | null
-  endDate: string | null
-  status: string | null
-  waitingDays: number | null
+  location: string
+  degree: string
+  major: string
   school: string | null
-  note: string | null
+  startDate: string
+  endDate: string | null
+  compactNote: string | null
+  detailNote: string | null
+  waitingDays: number
 }
+
+export type CheckeeRecord = HallRecord
 
 export type CheckeeDataset = {
   sourceName: string
