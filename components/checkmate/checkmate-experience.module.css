@@ -663,6 +663,7 @@
   cursor: pointer;
   font-size: 0.72rem;
   font-weight: 700;
+  white-space: nowrap;
   transition:
     border-color 160ms ease,
     box-shadow 180ms ease,
@@ -673,6 +674,74 @@
   border-color: color-mix(in srgb, var(--checkmate-accent) 48%, var(--checkmate-border));
   box-shadow: 0 8px 20px rgb(42 35 25 / 0.07);
   transform: translateY(-1px);
+}
+.contactCaseButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  border: 1px solid var(--checkmate-border);
+  border-radius: 999px;
+  padding: 0.42rem 0.62rem;
+  color: var(--checkmate-muted);
+  background: color-mix(in srgb, var(--checkmate-surface-strong) 88%, var(--checkmate-accent) 4%);
+  box-shadow: 0 5px 15px rgb(42 35 25 / 0.035);
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    border-color 160ms ease,
+    box-shadow 180ms ease,
+    color 160ms ease,
+    transform 180ms ease;
+}
+.contactCaseButton:hover,
+.contactCaseButton:focus-visible {
+  border-color: color-mix(in srgb, var(--checkmate-accent) 34%, var(--checkmate-border));
+  color: var(--color-ink);
+  box-shadow: 0 8px 20px rgb(42 35 25 / 0.06);
+  transform: translateY(-1px);
+}
+.contactDialog {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+}
+.contactDialogPanel {
+  width: min(100%, 34rem);
+}
+.contactDialogCopy {
+  margin: 0 0 0.85rem;
+  color: var(--checkmate-muted);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+.contactDialogEmail {
+  margin-bottom: 1rem;
+  color: var(--checkmate-muted);
+  font-size: 0.78rem;
+}
+.contactDialogEmail a {
+  color: var(--checkmate-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+.contactDialogForm {
+  display: grid;
+  gap: 0.85rem;
+}
+.contactDialogHint {
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  color: var(--checkmate-muted);
+  background: color-mix(in srgb, var(--checkmate-accent) 6%, transparent);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+.contactDialogHint strong {
+  color: var(--color-ink);
+  font-weight: 700;
 }
 .submitDialog {
   position: fixed;
@@ -858,6 +927,7 @@
 }
 .submitDialogClose:focus-visible,
 .submitCaseButton:focus-visible,
+.contactCaseButton:focus-visible,
 .submitSecondaryButton:focus-visible,
 .submitPrimaryButton:focus-visible {
   outline: 2px solid var(--checkmate-accent);
@@ -914,6 +984,7 @@
   padding: var(--podium-lift) var(--podium-inline-padding) 0;
 }
 .podiumChampion {
+  position: relative;
   display: grid;
   min-width: 0;
   grid-area: first;
@@ -922,41 +993,156 @@
   margin-top: calc(-1 * var(--podium-lift));
 }
 .podiumActions {
+  --jade-control: rgb(133 177 158 / 0.16);
+  --jade-warm: rgb(190 157 83 / 0.13);
+  --jade-cool: rgb(97 157 142 / 0.15);
+  position: absolute;
+  z-index: 3;
+  right: auto;
+  bottom: calc(-1 * var(--podium-lift));
+  left: 50%;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto auto;
   min-width: 0;
   align-items: center;
   justify-content: center;
-  gap: 0.55rem;
+  justify-items: center;
+  box-sizing: border-box;
+  width: min(21.5rem, calc(100% + 3rem));
+  margin: 0;
+  overflow: visible;
+  gap: 0.72rem;
+  border: 1px solid rgb(255 255 255 / 0.26);
+  border-radius: 1.35rem;
+  padding: 0.72rem 0.78rem 0.8rem;
+  background:
+    radial-gradient(circle at 50% 0%, rgb(255 255 255 / 0.36), transparent 58%),
+    linear-gradient(145deg, rgb(255 255 255 / 0.2), color-mix(in srgb, var(--jade-control) 52%, transparent));
+  box-shadow:
+    0 9px 24px rgb(49 79 68 / 0.07),
+    0 24px 44px color-mix(in srgb, var(--jade-control) 44%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.5),
+    inset 0 -10px 18px rgb(62 107 91 / 0.035);
+  transform: translateX(-50%);
+  isolation: isolate;
+}
+.podiumActions::before {
+  position: absolute;
+  z-index: -1;
+  inset: -0.75rem -1.2rem -0.85rem;
+  border-radius: 2rem;
+  background:
+    radial-gradient(circle at 30% 52%, var(--jade-warm), transparent 42%),
+    radial-gradient(circle at 70% 52%, var(--jade-cool), transparent 44%);
+  content: '';
+  filter: blur(13px);
+  opacity: 0.72;
+  pointer-events: none;
+}
+.podiumActionButtons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 0;
+  width: 100%;
+  gap: 0.7rem;
 }
 .podiumActions .submitCaseButton,
-.podiumActions .dataNoticePopover,
-.podiumActions .dataNoticeTrigger {
+.podiumActions .contactCaseButton {
+  --jade-button-tint: var(--jade-control);
   box-sizing: border-box;
+  position: relative;
   width: 100%;
   min-width: 0;
-  min-height: 2.25rem;
+  min-height: 2.875rem;
+  border: 1px solid color-mix(in srgb, var(--checkmate-border) 62%, var(--jade-button-tint) 38%);
+  border-radius: 0.9rem;
+  padding: 0.68rem 0.72rem;
+  color: color-mix(in srgb, var(--color-ink) 88%, var(--jade-button-tint) 12%);
+  background:
+    radial-gradient(circle at 18% 10%, rgb(255 255 255 / 0.6), transparent 48%),
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 72%, var(--jade-button-tint) 28%),
+      color-mix(in srgb, var(--checkmate-surface) 78%, var(--jade-button-tint) 22%));
+  box-shadow:
+    0 4px 10px rgb(42 35 25 / 0.05),
+    0 12px 22px color-mix(in srgb, var(--jade-button-tint) 42%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.62),
+    inset 0 -5px 10px color-mix(in srgb, var(--jade-button-tint) 18%, transparent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  transition:
+    border-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .podiumActions .submitCaseButton {
+  --jade-button-tint: var(--jade-warm);
   justify-content: center;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.75rem;
+}
+.podiumActions .contactCaseButton {
+  --jade-button-tint: var(--jade-cool);
+  justify-content: center;
+}
+.podiumActions .submitCaseButton:hover,
+.podiumActions .submitCaseButton:focus-visible,
+.podiumActions .contactCaseButton:hover,
+.podiumActions .contactCaseButton:focus-visible {
+  border-color: color-mix(in srgb, var(--checkmate-border) 46%, var(--jade-button-tint) 54%);
+  background:
+    radial-gradient(circle at 18% 10%, rgb(255 255 255 / 0.74), transparent 48%),
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 64%, var(--jade-button-tint) 36%),
+      color-mix(in srgb, var(--checkmate-surface) 69%, var(--jade-button-tint) 31%));
+  box-shadow:
+    0 8px 16px rgb(42 35 25 / 0.07),
+    0 16px 26px color-mix(in srgb, var(--jade-button-tint) 52%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.74);
+  transform: translateY(-2px);
 }
 .podiumActions .dataNoticeTrigger {
+  min-height: 0;
+  border: 1px solid color-mix(in srgb, var(--checkmate-border) 64%, var(--jade-control) 36%);
+  border-radius: 0.72rem;
   justify-content: center;
-  padding: 0.5rem 0.5rem;
-  font-size: 0.75rem;
+  padding: 0.46rem 0.82rem;
+  color: color-mix(in srgb, var(--color-ink) 68%, var(--jade-control) 32%);
+  background:
+    radial-gradient(circle at 22% 12%, rgb(255 255 255 / 0.42), transparent 52%),
+    linear-gradient(135deg, color-mix(in srgb, var(--checkmate-surface-strong) 74%, white 26%), color-mix(in srgb, var(--checkmate-surface-strong) 72%, var(--jade-control) 28%));
+  box-shadow:
+    0 4px 10px rgb(42 35 25 / 0.035),
+    0 9px 18px color-mix(in srgb, var(--jade-control) 36%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.46);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition:
+    border-color 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.podiumActions .dataNoticeTrigger:hover,
+.podiumActions .dataNoticeTrigger:focus-visible {
+  border-color: color-mix(in srgb, var(--checkmate-border) 46%, var(--jade-control) 54%);
+  box-shadow:
+    0 6px 14px rgb(42 35 25 / 0.055),
+    0 0 18px color-mix(in srgb, var(--jade-control) 46%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.55);
+  transform: translateY(-1px);
 }
 .podiumActions > .dataNoticePopover {
   position: relative;
   top: auto;
   right: auto;
   z-index: 1;
-}
-.podiumActions .submitCaseButton {
-  justify-self: auto;
+  margin: 0;
 }
 .podiumCard {
+  --medal-edge: rgb(226 244 235 / 0.62);
+  --medal-sheen: rgb(248 255 250 / 0.4);
+  --medal-ambient: rgb(91 136 120 / 0.16);
   position: relative;
   display: flex;
   min-width: 0;
@@ -965,16 +1151,18 @@
   overflow: hidden;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid var(--checkmate-border);
+  border: 1px solid var(--medal-edge);
   border-radius: 50%;
   padding: clamp(0.9rem, 1.6vw, 1.15rem);
   background:
-    radial-gradient(circle at 18% 18%, rgb(255 255 255 / 0.82), transparent 34%),
-    radial-gradient(circle at 86% 80%, rgb(126 145 166 / 0.2), transparent 42%),
-    linear-gradient(135deg, #fbfcfd 0%, #e8edf1 38%, #cbd4dc 72%, #eef2f5 100%);
+    radial-gradient(circle at 78% 13%, var(--medal-sheen), transparent 31%),
+    radial-gradient(circle at 18% 84%, var(--medal-ambient), transparent 42%),
+    linear-gradient(145deg, #f7fcf8 0%, #e5f0ea 38%, #c6dcd2 72%, #edf7f1 100%);
   box-shadow:
-    0 12px 30px rgb(42 35 25 / 0.06),
-    inset 0 1px 0 rgb(255 255 255 / 0.7);
+    0 4px 10px rgb(49 79 68 / 0.08),
+    0 20px 50px var(--medal-ambient),
+    inset 0 2px 0 rgb(255 255 255 / 0.72),
+    inset 0 -16px 26px rgb(48 92 75 / 0.08);
   isolation: isolate;
   transition:
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -983,111 +1171,153 @@
 .podiumCard::before {
   position: absolute;
   z-index: 0;
-  inset: 0;
+  inset: 0.42rem;
   border-radius: inherit;
   background:
-    radial-gradient(circle at 78% 16%, var(--podium-hover-glow), transparent 46%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.14), transparent 48%);
+    radial-gradient(circle at 78% 14%, var(--medal-sheen), transparent 38%),
+    radial-gradient(ellipse at 32% 62%, rgb(255 255 255 / 0.12), transparent 42%),
+    linear-gradient(135deg, transparent 30%, rgb(255 255 255 / 0.13) 48%, transparent 66%);
+  border: 1px solid color-mix(in srgb, var(--medal-edge) 68%, transparent);
   content: '';
-  opacity: 0.12;
+  opacity: 0.82;
   pointer-events: none;
-  transition: opacity 380ms ease;
+  transition: opacity 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .podiumCard::after {
   position: absolute;
   z-index: -1;
-  width: 9rem;
-  height: 9rem;
+  inset: 9%;
   border-radius: 50%;
+  background: var(--medal-ambient);
   content: '';
-  filter: blur(7px);
-  opacity: 0.26;
+  filter: blur(16px);
+  opacity: 0.46;
   pointer-events: none;
-  top: -4.5rem;
-  right: -3.5rem;
+  transition: opacity 380ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .podiumRank1 {
+  --medal-edge: rgb(255 247 211 / 0.8);
+  --medal-sheen: rgb(255 255 247 / 0.68);
+  --medal-ambient: rgb(193 167 91 / 0.18);
   --podium-hover-glow: rgb(255 241 196 / 0.78);
   height: auto;
-  border-color: color-mix(in srgb, var(--hall-gold) 34%, var(--checkmate-border));
+  border-color: color-mix(in srgb, #cbb16b 42%, var(--medal-edge));
   background:
-    radial-gradient(circle at 18% 20%, rgb(255 248 218 / 0.95), transparent 34%),
-    radial-gradient(circle at 86% 80%, rgb(211 154 47 / 0.3), transparent 42%),
-    linear-gradient(135deg, #fffaf0 0%, #f8e8b8 38%, #e7c46d 72%, #f6e4b2 100%);
+    radial-gradient(circle at 78% 13%, rgb(255 255 249 / 0.9), transparent 32%),
+    radial-gradient(circle at 18% 84%, rgb(186 155 74 / 0.22), transparent 44%),
+    linear-gradient(145deg, #fffef7 0%, #f5edcf 36%, #ddd09a 70%, #b6a262 100%);
   box-shadow:
-    0 14px 34px rgb(161 111 33 / 0.1),
-    inset 0 1px 0 rgb(255 255 255 / 0.82);
+    0 4px 10px rgb(117 96 43 / 0.1),
+    0 20px 50px rgb(193 167 91 / 0.16),
+    inset 0 2px 0 rgb(255 255 255 / 0.92),
+    inset 0 -16px 26px rgb(126 101 43 / 0.1);
 }
 .podiumRank2 {
   grid-area: second;
+  --medal-edge: rgb(231 247 242 / 0.78);
+  --medal-sheen: rgb(239 255 250 / 0.68);
+  --medal-ambient: rgb(102 150 143 / 0.17);
   --podium-hover-glow: rgb(235 244 250 / 0.62);
+  border-color: color-mix(in srgb, #9dbdb5 42%, var(--medal-edge));
   background:
-    radial-gradient(circle at 20% 18%, rgb(255 255 255 / 0.92), transparent 32%),
-    radial-gradient(circle at 88% 78%, rgb(126 145 166 / 0.24), transparent 42%),
-    linear-gradient(135deg, #fbfcfd 0%, #e8edf1 38%, #cbd4dc 72%, #eef2f5 100%);
+    radial-gradient(circle at 78% 13%, rgb(255 255 255 / 0.9), transparent 31%),
+    radial-gradient(circle at 18% 84%, rgb(83 132 126 / 0.22), transparent 44%),
+    linear-gradient(145deg, #fbfffd 0%, #e5f1ed 37%, #c2d9d3 70%, #8eaaa7 100%);
+  box-shadow:
+    0 4px 10px rgb(61 94 86 / 0.1),
+    0 20px 50px rgb(102 150 143 / 0.15),
+    inset 0 2px 0 rgb(255 255 255 / 0.94),
+    inset 0 -16px 26px rgb(61 103 95 / 0.1);
 }
 .podiumRank3 {
   grid-area: third;
+  --medal-edge: rgb(255 231 224 / 0.78);
+  --medal-sheen: rgb(255 242 235 / 0.7);
+  --medal-ambient: rgb(160 94 83 / 0.17);
   --podium-hover-glow: rgb(255 228 207 / 0.66);
+  border-color: color-mix(in srgb, #c78f83 42%, var(--medal-edge));
   background:
-    radial-gradient(circle at 20% 16%, rgb(255 239 224 / 0.9), transparent 34%),
-    radial-gradient(circle at 86% 82%, rgb(151 76 43 / 0.28), transparent 42%),
-    linear-gradient(135deg, #fff4eb 0%, #e7b08b 40%, #b97855 74%, #ebc0a2 100%);
+    radial-gradient(circle at 78% 13%, rgb(255 248 243 / 0.9), transparent 32%),
+    radial-gradient(circle at 18% 84%, rgb(153 80 70 / 0.22), transparent 44%),
+    linear-gradient(145deg, #fff6f1 0%, #edc6bd 38%, #c99287 70%, #95645d 100%);
+  box-shadow:
+    0 4px 10px rgb(105 63 55 / 0.1),
+    0 20px 50px rgb(160 94 83 / 0.15),
+    inset 0 2px 0 rgb(255 255 255 / 0.9),
+    inset 0 -16px 26px rgb(111 58 50 / 0.1);
 }
 .podiumRank1::after {
-  background: var(--hall-gold);
+  background: var(--medal-ambient);
 }
 .podiumRank2::after {
-  background: var(--hall-silver);
+  background: var(--medal-ambient);
 }
 .podiumRank3::after {
-  background: var(--hall-bronze);
+  background: var(--medal-ambient);
 }
 .podiumContent {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, max-content));
-  grid-template-areas:
-    'location major'
-    'school dates'
-    'note note';
-  justify-content: center;
-  align-content: center;
-  gap: 0.45rem 0.8rem;
-  width: 100%;
-  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.28rem;
+  width: calc(100% - 1rem);
+  margin: 0;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 1.25rem;
+  padding: clamp(0.75rem, 1.4vw, 1rem) 0.75rem 0.62rem;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.14), rgb(255 255 255 / 0.035));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.24),
+    inset 0 -8px 16px rgb(62 107 91 / 0.045);
+  backdrop-filter: blur(3px);
   text-align: center;
   font-family: 'FangSong', '仿宋', 'FangSong_GB2312', 'STFangsong', serif;
   font-weight: 400;
   letter-spacing: 0.01em;
 }
-.podiumContent .standardLocationDegree {
-  grid-area: location;
-  justify-self: center;
-  font-size: clamp(1.02rem, 1.5vw, 1.18rem);
+.podiumIdentity {
+  display: grid;
+  justify-items: center;
+  gap: 0.2rem;
 }
-.podiumContent .standardMajor {
-  grid-area: major;
-  justify-self: center;
-  font-size: clamp(0.96rem, 1.4vw, 1.08rem);
+.podiumLocation {
+  color: color-mix(in srgb, var(--color-ink) 88%, var(--checkmate-muted));
+  font-size: clamp(1.08rem, 1.7vw, 1.28rem);
+  font-weight: 500;
+  line-height: 1.1;
 }
-.podiumContent .standardSchool {
-  grid-area: school;
-  justify-self: center;
-  font-size: clamp(0.88rem, 1.23vw, 0.99rem);
+.podiumDegreeMajor {
+  display: inline-flex;
+  align-items: baseline;
+  color: color-mix(in srgb, var(--color-ink) 78%, var(--checkmate-muted));
+  font-size: clamp(0.82rem, 1.2vw, 0.94rem);
+  line-height: 1.2;
 }
-.podiumContent .standardDates {
-  grid-area: dates;
-  justify-self: center;
-  font-size: clamp(0.88rem, 1.23vw, 0.99rem);
+.podiumDegreeMajor > span + span::before {
+  margin: 0 0.3rem;
+  color: var(--checkmate-muted);
+  content: '·';
+}
+.podiumSchool,
+.podiumDate {
+  color: var(--checkmate-muted);
+  font-size: clamp(0.76rem, 1.08vw, 0.86rem);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.podiumDate {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
 .podiumContent .standardNote {
-  grid-area: note;
-  justify-self: center;
+  align-self: center;
+  margin-top: 0.15rem;
   max-width: 100%;
-  font-size: clamp(0.88rem, 1.23vw, 0.99rem);
-  line-height: 1.3;
+  font-size: clamp(0.72rem, 1vw, 0.8rem);
+  line-height: 1.25;
 }
 .podiumCard[data-note-trigger='true'] {
   cursor: pointer;
@@ -1234,6 +1464,48 @@
   font-weight: 400;
   letter-spacing: 0.22em;
 }
+.podiumDuration.hallWait {
+  display: grid;
+  grid-template-areas:
+    'value'
+    'label';
+  align-items: center;
+  justify-items: center;
+  gap: 0.24rem;
+  width: max-content;
+  min-width: 0;
+}
+.podiumDuration .hallWaitValue {
+  grid-area: value;
+  gap: 0.16rem;
+  color: inherit;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.55rem, 4.6vw, 3.85rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.86;
+}
+.podiumDuration .hallWaitValue small {
+  color: color-mix(in srgb, currentColor 62%, var(--checkmate-muted));
+  font-family: 'FangSong', '仿宋', 'FangSong_GB2312', 'STFangsong', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+}
+.podiumDuration::after {
+  grid-area: label;
+  color: color-mix(in srgb, var(--color-ink) 46%, transparent);
+  content: 'WAIT DAYS';
+  font-family: var(--font-mono, monospace);
+  font-size: 0.47rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  line-height: 1;
+}
+.podiumDuration .apBadge {
+  position: absolute;
+  top: -0.1rem;
+  right: -1.35rem;
+}
 .podiumRank1 .podiumDuration {
   color: var(--hall-gold);
 }
@@ -1352,7 +1624,7 @@
 }
 .eliteList {
   display: grid;
-  gap: 0.55rem;
+  gap: 0.7rem;
 }
 .eliteRow,
 .standardRow {
@@ -1370,10 +1642,14 @@
   grid-template-columns:
     3rem minmax(5rem, 0.65fr) minmax(6rem, 0.8fr) minmax(5.5rem, 0.72fr) 4rem 4rem
     minmax(12rem, 2.4fr) 4.5rem;
-  gap: clamp(0.5rem, 1.25vw, 0.9rem);
+  gap: clamp(0.6rem, 1.35vw, 1rem);
   align-items: center;
-  min-height: 4.25rem;
-  padding: 0.7rem 0.75rem;
+  min-height: 4.55rem;
+  border-radius: 18px;
+  padding: 0.82rem 0.9rem;
+  box-shadow:
+    0 8px 24px rgb(89 69 44 / 0.045),
+    inset 0 1px 0 rgb(255 255 255 / 0.32);
   transition:
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
     background 360ms ease,
@@ -1463,6 +1739,14 @@
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
     background 360ms ease,
     box-shadow 380ms ease;
+}
+.eliteRow.completedRow,
+.standardRow.completedRow {
+  background: linear-gradient(135deg, rgb(80 160 100 / 0.16), rgb(80 160 100 / 0.07));
+}
+.eliteRow.refusedRow,
+.standardRow.refusedRow {
+  background: linear-gradient(135deg, rgb(180 70 70 / 0.16), rgb(180 70 70 / 0.07));
 }
 .standardRow::before {
   position: absolute;
@@ -1560,6 +1844,37 @@
   line-height: 1.25;
   letter-spacing: 0.01em;
   white-space: nowrap;
+}
+.apInline {
+  margin-left: 0.32rem;
+  color: rgb(46 113 78 / 0.9);
+  font-size: 0.7em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.refusedText {
+  color: rgb(140 40 40 / 0.85);
+  font-weight: 600;
+}
+.eliteRow .standardLocationDegree {
+  gap: 0.4rem;
+  font-size: 0.95rem;
+}
+.eliteRow .standardMajor {
+  font-size: 0.92rem;
+}
+.eliteRow .standardSchool,
+.eliteRow .standardDates,
+.eliteRow .standardEndDate,
+.eliteRow .standardNote,
+.eliteRow .standardNoteButton {
+  font-size: 0.84rem;
+}
+.eliteRow .eliteRank {
+  font-size: 0.98rem;
+}
+.eliteRow .eliteDuration {
+  font-size: 1.08rem;
 }
 .standardNote {
   min-width: 0;
@@ -1661,10 +1976,10 @@
 }
 @media (hover: hover) and (pointer: fine) {
   .podiumRank1:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     box-shadow:
-      0 5px 12px rgb(107 77 35 / 0.12),
-      0 24px 50px rgb(183 145 68 / 0.18),
+      0 5px 12px rgb(117 96 43 / 0.12),
+      0 24px 50px rgb(193 167 91 / 0.2),
       inset 0 1px 0 rgb(255 255 255 / 0.88);
   }
   .podiumRank2:hover,
@@ -1673,14 +1988,14 @@
   }
   .podiumRank2:hover {
     box-shadow:
-      0 4px 10px rgb(67 78 89 / 0.1),
-      0 20px 42px rgb(126 145 166 / 0.13),
+      0 4px 10px rgb(61 94 86 / 0.1),
+      0 20px 42px rgb(102 150 143 / 0.17),
       inset 0 1px 0 rgb(255 255 255 / 0.8);
   }
   .podiumRank3:hover {
     box-shadow:
-      0 4px 10px rgb(101 66 48 / 0.1),
-      0 20px 42px rgb(151 76 43 / 0.13),
+      0 4px 10px rgb(105 63 55 / 0.1),
+      0 20px 42px rgb(160 94 83 / 0.17),
       inset 0 1px 0 rgb(255 255 255 / 0.8);
   }
   .podiumCard:hover::before {
@@ -1722,35 +2037,71 @@
     opacity: 0.42;
   }
 }
+.eliteRow.completedRow:hover,
+.standardRow.completedRow:hover {
+  background: linear-gradient(135deg, rgb(80 160 100 / 0.2), rgb(80 160 100 / 0.09));
+}
+.eliteRow.refusedRow:hover,
+.standardRow.refusedRow:hover {
+  background: linear-gradient(135deg, rgb(180 70 70 / 0.2), rgb(180 70 70 / 0.09));
+}
 :global(.dark) .podiumCard {
+  --medal-edge: rgb(217 242 229 / 0.24);
+  --medal-sheen: rgb(232 255 242 / 0.16);
+  --medal-ambient: rgb(35 75 61 / 0.24);
   background:
-    radial-gradient(circle at 18% 18%, rgb(255 255 255 / 0.12), transparent 34%),
-    radial-gradient(circle at 86% 80%, rgb(126 145 166 / 0.16), transparent 42%),
-    linear-gradient(135deg, #31393d 0%, #293238 38%, #20282c 72%, #354047 100%);
+    radial-gradient(circle at 78% 13%, rgb(255 255 255 / 0.14), transparent 31%),
+    radial-gradient(circle at 18% 84%, rgb(126 145 166 / 0.14), transparent 42%),
+    linear-gradient(145deg, #31393d 0%, #293238 38%, #20282c 72%, #354047 100%);
   box-shadow:
-    0 12px 30px rgb(0 0 0 / 0.18),
-    inset 0 1px 0 rgb(255 255 255 / 0.12);
+    0 4px 10px rgb(0 0 0 / 0.22),
+    0 20px 50px rgb(0 0 0 / 0.2),
+    inset 0 2px 0 rgb(255 255 255 / 0.16),
+    inset 0 -14px 24px rgb(0 0 0 / 0.16);
+}
+:global(.dark) .podiumActions {
+  --jade-control: rgb(126 180 157 / 0.22);
+  --jade-warm: rgb(187 157 89 / 0.2);
+  --jade-cool: rgb(92 151 139 / 0.22);
+  border-color: rgb(227 247 237 / 0.16);
+  background:
+    radial-gradient(circle at 50% 0%, rgb(234 255 245 / 0.13), transparent 58%),
+    linear-gradient(145deg, rgb(57 83 73 / 0.58), rgb(34 52 48 / 0.56));
+  box-shadow:
+    0 10px 26px rgb(0 0 0 / 0.22),
+    0 24px 44px color-mix(in srgb, var(--jade-control) 46%, transparent),
+    inset 0 1px 0 rgb(238 255 247 / 0.18),
+    inset 0 -10px 18px rgb(0 0 0 / 0.08);
 }
 :global(.dark) .podiumRank1 {
+  --medal-edge: rgb(245 227 166 / 0.42);
+  --medal-sheen: rgb(255 248 216 / 0.24);
+  --medal-ambient: rgb(153 131 72 / 0.22);
   --podium-hover-glow: rgb(232 187 96 / 0.32);
   background:
-    radial-gradient(circle at 18% 20%, rgb(255 248 218 / 0.18), transparent 34%),
-    radial-gradient(circle at 86% 80%, rgb(211 154 47 / 0.24), transparent 42%),
-    linear-gradient(135deg, #4a4030 0%, #594d32 38%, #3d3428 72%, #695738 100%);
+    radial-gradient(circle at 78% 13%, rgb(255 248 218 / 0.24), transparent 32%),
+    radial-gradient(circle at 18% 84%, rgb(211 154 47 / 0.24), transparent 44%),
+    linear-gradient(145deg, #584a31 0%, #594d32 38%, #3d3428 72%, #695738 100%);
 }
 :global(.dark) .podiumRank2 {
+  --medal-edge: rgb(207 239 229 / 0.38);
+  --medal-sheen: rgb(220 250 239 / 0.22);
+  --medal-ambient: rgb(80 135 122 / 0.2);
   --podium-hover-glow: rgb(197 211 220 / 0.3);
   background:
-    radial-gradient(circle at 20% 18%, rgb(255 255 255 / 0.16), transparent 32%),
-    radial-gradient(circle at 88% 78%, rgb(126 145 166 / 0.22), transparent 42%),
-    linear-gradient(135deg, #3b454b 0%, #313c43 38%, #263137 72%, #46535a 100%);
+    radial-gradient(circle at 78% 13%, rgb(255 255 255 / 0.18), transparent 31%),
+    radial-gradient(circle at 18% 84%, rgb(126 145 166 / 0.22), transparent 44%),
+    linear-gradient(145deg, #43515a 0%, #313c43 38%, #263137 72%, #46535a 100%);
 }
 :global(.dark) .podiumRank3 {
+  --medal-edge: rgb(248 202 188 / 0.4);
+  --medal-sheen: rgb(255 218 207 / 0.24);
+  --medal-ambient: rgb(143 75 66 / 0.22);
   --podium-hover-glow: rgb(205 132 91 / 0.3);
   background:
-    radial-gradient(circle at 20% 16%, rgb(255 239 224 / 0.16), transparent 34%),
-    radial-gradient(circle at 86% 82%, rgb(151 76 43 / 0.24), transparent 42%),
-    linear-gradient(135deg, #4d3931 0%, #60483b 40%, #493229 74%, #6c4d3d 100%);
+    radial-gradient(circle at 78% 13%, rgb(255 239 224 / 0.2), transparent 32%),
+    radial-gradient(circle at 18% 84%, rgb(151 76 43 / 0.24), transparent 44%),
+    linear-gradient(145deg, #5a4036 0%, #60483b 40%, #493229 74%, #6c4d3d 100%);
 }
 :global(.dark) .eliteRow::before {
   background:
@@ -1769,6 +2120,12 @@
   color: #9bd9cf;
   background: rgb(45 111 108 / 0.24);
 }
+:global(.dark) .apInline {
+  color: rgb(143 213 164 / 0.92);
+}
+:global(.dark) .refusedText {
+  color: rgb(232 157 157 / 0.9);
+}
 @media (hover: hover) and (pointer: fine) {
   :global(.dark) .eliteRow:hover {
     background: rgb(255 228 190 / 0.045);
@@ -1779,6 +2136,14 @@
   :global(.dark) .standardRow:hover {
     background: rgb(255 228 190 / 0.025);
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.1);
+  }
+  :global(.dark) .eliteRow.completedRow:hover,
+  :global(.dark) .standardRow.completedRow:hover {
+    background: linear-gradient(135deg, rgb(80 160 100 / 0.22), rgb(80 160 100 / 0.1));
+  }
+  :global(.dark) .eliteRow.refusedRow:hover,
+  :global(.dark) .standardRow.refusedRow:hover {
+    background: linear-gradient(135deg, rgb(180 70 70 / 0.22), rgb(180 70 70 / 0.1));
   }
 }
 .secondaryButton,
@@ -2025,6 +2390,10 @@
   .submitDialogPanel {
     max-height: calc(100dvh - 1.5rem);
     border-radius: 50%;
+  }
+
+  .contactDialogPanel {
+    border-radius: 24px;
   }
 
   .submitFormGrid {
@@ -2276,8 +2645,20 @@
     margin-top: 0;
   }
   .podiumActions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    grid-template-rows: auto auto;
+    width: 100%;
     gap: 0.35rem;
+    transform: none;
+  }
+  .podiumActionButtons {
+    grid-template-columns: 1fr;
+    width: 100%;
+    gap: 0.5rem;
   }
   .podiumCard {
     aspect-ratio: 1 / 1;
@@ -2306,9 +2687,30 @@
   .podiumContent .standardNote {
     font-size: 0.82rem;
   }
+  .podiumContent {
+    gap: 0.22rem;
+    width: calc(100% - 0.6rem);
+    padding: 0.55rem 0.55rem 0.48rem;
+  }
+  .podiumLocation {
+    font-size: 1rem;
+  }
+  .podiumDegreeMajor {
+    font-size: 0.76rem;
+  }
+  .podiumSchool,
+  .podiumDate {
+    font-size: 0.7rem;
+  }
+  .podiumContent .standardNote {
+    font-size: 0.68rem;
+  }
   .podiumDuration {
     bottom: 0.9rem;
     font-size: clamp(2.25rem, 11vw, 3.35rem);
+  }
+  .podiumDuration .hallWaitValue {
+    font-size: clamp(2.15rem, 10vw, 3.1rem);
   }
   .podiumRank2 .hallDates,
   .podiumRank3 .hallDates {
@@ -2325,9 +2727,22 @@
   .eliteRow {
     grid-template-columns: 2.8rem minmax(0, 1fr) auto;
     gap: 0.45rem 0.65rem;
-    min-height: 6.45rem;
-    border-radius: 14px;
-    padding: 0.72rem 0.75rem;
+    min-height: 6.75rem;
+    border-radius: 16px;
+    padding: 0.82rem 0.78rem;
+  }
+  .eliteRow .standardLocationDegree {
+    font-size: 0.92rem;
+  }
+  .eliteRow .standardMajor {
+    font-size: 0.88rem;
+  }
+  .eliteRow .standardSchool,
+  .eliteRow .standardDates,
+  .eliteRow .standardEndDate,
+  .eliteRow .standardNote,
+  .eliteRow .standardNoteButton {
+    font-size: 0.8rem;
   }
   .eliteIdentity {
     gap: 0.45rem;
@@ -2396,6 +2811,11 @@
   .standardEndDate,
   .standardNotePopover {
     min-width: 0;
+  }
+  .eliteRow .standardEndDate,
+  .standardRow .standardEndDate {
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
   .standardNotePanel {
     right: 0;

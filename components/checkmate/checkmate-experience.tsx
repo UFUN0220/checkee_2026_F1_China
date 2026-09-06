@@ -17,6 +17,7 @@ import {
   type CheckmatePageKey,
 } from '~/data/checkmate/config'
 import { DataDescription } from './data-description'
+import { ContactCaseDialogButton } from './contact-case-dialog'
 import { SubmitCaseButton } from './submit-case-dialog'
 import styles from './checkmate-experience.module.css'
 
@@ -38,6 +39,10 @@ function formatDays(value: number | null) {
 
 function formatDate(value: string | null) {
   return value ? value.replace(/^2026-/, '').replace('-', '.') : '—'
+}
+
+function formatHallDegree(value: string) {
+  return value.trim().toLowerCase() === 'master' ? 'Ms' : value
 }
 
 export function CheckmateExperience({
@@ -345,11 +350,13 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null)
   const cases = useMemo(
     () =>
-      [...dataset.records].sort(
-        (left, right) =>
-          right.waitingDays - left.waitingDays ||
-          String(left.startDate ?? '').localeCompare(String(right.startDate ?? ''))
-      ),
+      dataset.records
+        .filter((item) => item.visibility === 'published')
+        .sort(
+          (left, right) =>
+            (right.waitingDays ?? -1) - (left.waitingDays ?? -1) ||
+            String(left.startDate ?? '').localeCompare(String(right.startDate ?? ''))
+        ),
     [dataset.records]
   )
   const podiumCases = [cases[1], cases[0], cases[2]].filter(Boolean)
@@ -386,8 +393,11 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
                     }
                   />
                   <div className={styles.podiumActions}>
-                    <SubmitCaseButton />
                     <DataDescription notice={notice} updatedAt={dataset.snapshotDate} />
+                    <div className={styles.podiumActionButtons}>
+                      <SubmitCaseButton />
+                      <ContactCaseDialogButton />
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -449,13 +459,15 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
 function HallFields({ item }: { item: CheckeeRecord }) {
   return (
     <>
-      <span className={styles.standardLocationDegree}>
-        <span>{item.location || '\u00a0'}</span>
-        <span>{item.degree || '\u00a0'}</span>
+      <span className={styles.podiumIdentity}>
+        <span className={styles.podiumLocation}>{item.location || '\u00a0'}</span>
+        <span className={styles.podiumDegreeMajor}>
+          <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
+          <span>{item.major || '\u00a0'}</span>
+        </span>
       </span>
-      <span className={styles.standardMajor}>{item.major || '\u00a0'}</span>
-      <span className={styles.standardSchool}>{item.school || '\u00a0'}</span>
-      <span className={styles.standardDates}>{formatDate(item.startDate)}</span>
+      <span className={styles.podiumSchool}>{item.school || '\u00a0'}</span>
+      <span className={styles.podiumDate}>{formatDate(item.startDate)}</span>
     </>
   )
 }
@@ -467,17 +479,18 @@ function HallNote({ note, expanded }: { note: string; expanded: boolean }) {
 function HallWait({
   item,
   className,
+  showApBadge = true,
 }: {
   item: CheckeeRecord
   className: string
+  showApBadge?: boolean
 }) {
   return (
     <strong className={`${className} ${styles.hallWait}`}>
       <span className={styles.hallWaitValue}>
-        {item.waitingDays}
-        <small>天</small>
+        {item.waitingDays === null ? '—' : <>{item.waitingDays}<small>天</small></>}
       </span>
-      {item.endDate ? <span className={styles.apBadge}>AP</span> : null}
+      {showApBadge && item.endDate ? <span className={styles.apBadge}>AP</span> : null}
     </strong>
   )
 }
@@ -536,20 +549,33 @@ function HallRowContent({
   const rowClass = variant === 'elite' ? styles.eliteRow : styles.standardRow
   const rankClass = variant === 'elite' ? styles.eliteRank : styles.standardRank
   const waitClass = variant === 'elite' ? styles.eliteDuration : styles.standardDuration
+  const normalizedStatus = item.status.trim().toLowerCase()
+  const normalizedEndDate = item.endDate?.trim().toLowerCase()
+  const hasEndDate = Boolean(item.endDate?.trim())
+  const isAp = normalizedStatus === 'ap' || normalizedStatus === 'approved'
+  const isRefused = normalizedStatus === 'refused' || normalizedEndDate === 'refused'
+  const stateClass = isRefused
+    ? styles.refusedRow
+    : hasEndDate
+      ? styles.completedRow
+      : ''
 
   return (
-    <article className={rowClass}>
+    <article className={`${rowClass} ${stateClass}`}>
       <strong className={rankClass}>{String(rank).padStart(2, '0')}</strong>
       <span className={styles.standardLocationDegree}>
         <span>{item.location || '\u00a0'}</span>
-        <span>{item.degree || '\u00a0'}</span>
+        <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
       </span>
       <span className={styles.standardMajor}>{item.major || '\u00a0'}</span>
       <span className={styles.standardSchool}>{item.school || '\u00a0'}</span>
       <span className={styles.standardDates}>{formatDate(item.startDate)}</span>
-      <span className={styles.standardEndDate}>{item.endDate ? formatDate(item.endDate) : '\u00a0'}</span>
+      <span className={`${styles.standardEndDate} ${isRefused ? styles.refusedText : ''}`}>
+        {hasEndDate ? formatDate(item.endDate) : '\u00a0'}
+        {hasEndDate && isAp ? <span className={styles.apInline}>AP</span> : null}
+      </span>
       <HallNotePopover item={item} />
-      <HallWait item={item} className={waitClass} />
+      <HallWait item={item} className={waitClass} showApBadge={false} />
     </article>
   )
 }

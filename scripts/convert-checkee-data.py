@@ -29,7 +29,23 @@ SOURCE_HEADERS = {
     "waitingDays": ("等待天数", "waiting days", "waitingDays"),
 }
 
+HALL_SCHEMA_VERSION = 1
+SOURCE_DESCRIPTION = "UFUN Hall curated visa cases"
 COMPACT_NOTE_LIMIT = 28
+DEFAULT_GENERATED_AT = "2026-09-06"
+DEFAULT_PUBLISHED_AT = "2026-09-06"
+LEGACY_SOURCE = "legacy_excel"
+STATUS_MAP = {
+    "check": "Check",
+    "approved": "Approved",
+    "approve": "Approved",
+    "issued": "Issued",
+    "issue": "Issued",
+    "refused": "Refused",
+    "refuse": "Refused",
+    "rejected": "Refused",
+    "reject": "Refused",
+}
 
 
 def local_name(tag: str) -> str:
@@ -97,6 +113,12 @@ def number_value(value):
     return int(number) if number.is_integer() else number
 
 
+def days_between(start_date, end_date):
+    start = datetime.fromisoformat(start_date)
+    end = datetime.fromisoformat(end_date)
+    return (end - start).days
+
+
 def header_columns(header_values):
     columns = {}
     for cell_reference, value in header_values.items():
@@ -132,7 +154,17 @@ def compact_note(value):
     return candidate[: COMPACT_NOTE_LIMIT - 1].rstrip() + "…"
 
 
-def convert(input_path: Path, output_path: Path, snapshot_date: str):
+def canonical_status(value):
+    status = normalize(value)
+    if not status:
+        return None
+    try:
+        return STATUS_MAP[status.casefold()]
+    except KeyError as error:
+        raise ValueError(f"Unsupported status value: {status}") from error
+
+
+def convert_records(input_path: Path, snapshot_date: str, published_at: str):
     records = []
     rows = read_xlsx(input_path)
     header_row, header_values = next(rows)
@@ -142,13 +174,19 @@ def convert(input_path: Path, output_path: Path, snapshot_date: str):
         row = {name: values.get(f"{column}{excel_row}") for name, column in columns.items()}
         location = normalize(row["location"])
         interview_date = date_value(row["interviewDate"])
-        status = normalize(row["status"])
+        status = canonical_status(row["status"])
         if not location or not interview_date or not status:
             continue
         detail_note = normalize(row["note"])
+        end_date = date_value(row["endDate"])
+        if end_date and end_date < interview_date:
+            raise ValueError(f"End date is earlier than interview date at Excel row {excel_row}")
         waiting_days = number_value(row["waitingDays"])
         if waiting_days is None:
-            raise ValueError(f"Missing waiting days at Excel row {excel_row}")
+            if end_date:
+                waiting_days = days_between(interview_date, end_date)
+            elif status == "Check":
+                waiting_days = days_between(interview_date, snapshot_date)
         records.append(
             {
                 "id": f"ufun-checkee-{int(excel_row):03d}",
@@ -157,21 +195,47 @@ def convert(input_path: Path, output_path: Path, snapshot_date: str):
                 "major": normalize(row["major"]) or "",
                 "school": normalize(row["school"]),
                 "startDate": interview_date,
-                "endDate": date_value(row["endDate"]),
+                "endDate": end_date,
+                "waitingDays": waiting_days,
+                "status": status,
+                "note": detail_note,
+                "publishedAt": published_at,
+                "source": LEGACY_SOURCE,
+                "visibility": "published",
                 "compactNote": compact_note(detail_note),
                 "detailNote": detail_note,
-                "waitingDays": waiting_days,
             }
         )
 
-    dataset = {
+    return records
+
+
+def build_dataset(records, snapshot_date: str, generated_at: str):
+    return {
+        "schemaVersion": HALL_SCHEMA_VERSION,
+        "generatedAt": generated_at,
+        "sourceDescription": SOURCE_DESCRIPTION,
         "sourceName": SOURCE_NAME,
         "snapshotDate": snapshot_date,
         "recordCount": len(records),
         "records": records,
     }
+
+
+def write_dataset(dataset, output_path: Path):
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(dataset, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def convert(
+    input_path: Path,
+    output_path: Path,
+    snapshot_date: str,
+    generated_at: str = DEFAULT_GENERATED_AT,
+    published_at: str = DEFAULT_PUBLISHED_AT,
+):
+    records = convert_records(input_path, snapshot_date, published_at)
+    write_dataset(build_dataset(records, snapshot_date, generated_at), output_path)
     print(f"Converted {len(records)} records to {output_path}")
 
 
@@ -180,10 +244,13 @@ def main():
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--snapshot-date", default="2026-09-04")
+    parser.add_argument("--generated-at", default=DEFAULT_GENERATED_AT)
+    parser.add_argument("--published-at", default=DEFAULT_PUBLISHED_AT)
     args = parser.parse_args()
-    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", args.snapshot_date):
-        raise SystemExit("snapshot date must be YYYY-MM-DD")
-    convert(args.input, args.output, args.snapshot_date)
+    for field in ("snapshot_date", "generated_at", "published_at"):
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", getattr(args, field)):
+            raise SystemExit(f"{field.replace('_', ' ')} must be YYYY-MM-DD")
+    convert(args.input, args.output, args.snapshot_date, args.generated_at, args.published_at)
 
 
 if __name__ == "__main__":

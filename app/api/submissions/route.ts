@@ -107,8 +107,12 @@ async function parseBody(request: Request) {
   if (normalizedEndDate && interviewDate && normalizedEndDate < interviewDate) {
     throw new BadRequestError('End date cannot be earlier than interview date')
   }
-  const waitingDays = daysBetween(interviewDate, normalizedEndDate || currentDate())
-  if (waitingDays < 0) throw new BadRequestError('Invalid waiting days')
+  const waitingDays = normalizedEndDate
+    ? daysBetween(interviewDate, normalizedEndDate)
+    : status === 'Check'
+      ? daysBetween(interviewDate, currentDate())
+      : null
+  if (waitingDays !== null && waitingDays < 0) throw new BadRequestError('Invalid waiting days')
   const detailNote = optionalString(body.note, 'note')
 
   return {
@@ -124,6 +128,9 @@ async function parseBody(request: Request) {
     compact_note: buildCompactNote(detailNote),
     detail_note: detailNote,
     waiting_days: waitingDays,
+    source: 'submission_user',
+    visibility: 'pending',
+    published_at: null,
   }
 }
 

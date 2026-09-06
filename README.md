@@ -6,7 +6,7 @@
 
 ## 功能一览
 
-- **名人堂（`/`）**：按等待时长展示 2026 年公开案例，包含 Top 3、后续排名、备注展开与分页。
+- **名人堂（`/`）**：从精选案例主数据中仅展示已发布记录，按等待时长展示 2026 年公开案例，包含 Top 3、后续排名、备注展开与分页。
 - **五城数据统计（`/view`）**：展示北京、上海、广州、沈阳、武汉的样本量与 Q1 / Median / Q3；可切换城市，查看月度趋势和最新案例。
 - **个人主页（`/about`）**：个人资料与联系入口。
 - **案例提交**：在名人堂打开表单后，可提交面签地点、学位、专业、状态、日期和可选备注；前端与服务端都会校验必填项、状态和日期先后关系。
@@ -61,18 +61,21 @@ pnpm dev
 
 `SUPABASE_SECRET_KEY` 具备高权限：不要使用 `NEXT_PUBLIC_` 前缀，不要提交到仓库，也不要在浏览器端使用。当前提交接口会把记录写入 `case_submissions` 表；该表需要支持以下字段：
 
-`location`、`degree`、`major`、`interview_date`、`start_date`、`status`、`end_date`、`school`、`note`、`compact_note`、`detail_note`、`waiting_days`。
+`location`、`degree`、`major`、`interview_date`、`start_date`、`status`、`end_date`、`school`、`note`、`compact_note`、`detail_note`、`waiting_days`、`source`、`visibility`、`published_at`。
 
-提交记录与页面内的静态展示样本是两条独立数据流：提交成功不代表会立即出现在名人堂或统计页面，后续应经过审核和数据更新流程。
+提交记录与页面内的静态展示样本是两条独立数据流：提交成功只会进入 Supabase 审核池，并以 `source=submission`、`visibility=pending` 保存，不会立即出现在名人堂或统计页面。审核通过后，管理员再将记录导出并发布到名人堂主数据。
+
+表中的现有 `review_status` 继续表示投稿审核记录状态；`visibility` 表示该记录是否进入 Hall 主数据的发布状态，两者不互相替代。`visibility` 从 `pending` 变为 `published` 时，数据库触发器会写入 `published_at`。
 
 ## 数据与更新
 
 网站展示使用构建时导入的 JSON 快照：
 
 - `json/checkmate/checkee-static-snapshot.json`：五城统计、月度趋势和案例明细。
-- `data/checkmate/ufun_checkee_pure_processed.json`：名人堂案例数据。
+- `data/checkmate/hall-master.json`：名人堂唯一运行时数据源；页面只读取 `visibility=published` 的精选案例。这是由导出脚本生成的产物，不建议手工编辑。
+- `data/checkmate/ufun_checkee_pure_processed.json`：历史迁移前的旧 JSON，仅作为核对和兼容参考，不再由页面读取。
 
-`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为名人堂 JSON。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。
+`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。`scripts/export-hall-master.py` 会合并历史 Excel 和 Supabase 导出的已发布投稿，生成 `hall-master.json`；历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 用于生成后检查 schema、字段、日期、来源、可见性及历史数据一致性。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。非 `Check` 且没有结束日期的记录，其 `waitingDays` 保持为空，避免用当前日期造成历史数据漂移。
 
 更新数据后，请核对快照日期、样本范围与页面的数据说明，再执行构建验证。
 

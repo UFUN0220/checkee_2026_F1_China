@@ -44,6 +44,16 @@ export type CheckmateSnapshot = {
   cases: CheckmateCase[]
 }
 
+export const HALL_STATUSES = ['Check', 'Approved', 'Issued', 'Refused'] as const
+
+export type HallStatus = (typeof HALL_STATUSES)[number]
+
+export const HALL_VISIBILITIES = ['draft', 'pending', 'published', 'rejected'] as const
+
+export type HallVisibility = (typeof HALL_VISIBILITIES)[number]
+
+export type HallSource = 'legacy_excel' | 'submission_user' | 'admin_import'
+
 export type HallRecord = {
   id: string
   location: string
@@ -52,14 +62,22 @@ export type HallRecord = {
   school: string | null
   startDate: string
   endDate: string | null
+  waitingDays: number | null
+  status: HallStatus
+  note: string | null
+  publishedAt: string | null
+  source: HallSource
+  visibility: HallVisibility
   compactNote: string | null
   detailNote: string | null
-  waitingDays: number
 }
 
 export type CheckeeRecord = HallRecord
 
 export type CheckeeDataset = {
+  schemaVersion: number
+  generatedAt: string
+  sourceDescription: string
   sourceName: string
   snapshotDate: string
   recordCount: number

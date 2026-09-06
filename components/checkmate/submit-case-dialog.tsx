@@ -144,7 +144,6 @@ export function SubmitCaseButton() {
             <div className={styles.submitDialogHeader}>
               <div>
                 <DialogTitle className={styles.submitDialogTitle}>提交案例</DialogTitle>
-                <p>分享你的面签与 Check 记录</p>
               </div>
               <button type="button" className={styles.submitDialogClose} onClick={close}>
                 关闭
