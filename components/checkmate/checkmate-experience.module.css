@@ -425,10 +425,35 @@
   color: var(--checkmate-muted);
 }
 .cityEmptyMessage {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.45rem;
+  max-width: 20rem;
+  text-align: center;
+}
+.cityEmptyMessage > svg {
+  color: color-mix(in srgb, var(--checkmate-accent) 70%, var(--checkmate-muted));
+}
+.cityEmptyMessage h2,
+.cityEmptyMessage p,
+.cityEmptyMessage small {
+  margin: 0;
+}
+.cityEmptyMessage h2 {
+  color: var(--color-ink);
+  font-size: 1rem;
+  font-weight: 800;
+}
+.cityEmptyMessage p {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+.cityEmptyMessage small {
+  display: block;
+  margin-top: 0.55rem;
+  color: var(--checkmate-muted);
+  font-size: 0.72rem;
 }
 .trendTable {
   font-size: 0.78rem;
@@ -618,11 +643,67 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+@keyframes checkmate-content-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes hall-podium-champion-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: var(--hall-resting-transform);
+  }
+}
+@keyframes hall-podium-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes hall-actions-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
 .hallView {
   --hall-gold: #b98328;
   --hall-silver: #77889a;
   --hall-bronze: #b86d45;
   padding-bottom: 1.5rem;
+}
+.citiesView .titleRow {
+  animation: checkmate-content-enter 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.citiesView .cityGrid {
+  animation: checkmate-content-enter 620ms 120ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.citiesView .citiesContent > .panel:first-child {
+  animation: checkmate-content-enter 620ms 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.citiesView .citiesContent > .panel:last-child {
+  animation: checkmate-content-enter 620ms 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .hallIntro {
   position: relative;
@@ -708,6 +789,28 @@
 .contactDialogPanel {
   width: min(100%, 34rem);
 }
+.contactDialogPanel .submitFormActions {
+  position: sticky;
+  z-index: 2;
+  bottom: -1px;
+  flex-wrap: wrap;
+  margin-top: 0.9rem;
+  padding: 0.65rem 0 0.2rem;
+  background: linear-gradient(to bottom, transparent, var(--checkmate-surface-strong) 38%);
+}
+.contactDialogPanel .submitPrimaryButton {
+  visibility: visible;
+  border: 1px solid color-mix(in srgb, rgb(97 157 142 / 0.36), var(--checkmate-border));
+  color: var(--color-ink);
+  background: color-mix(in srgb, var(--checkmate-surface-strong) 84%, rgb(97 157 142 / 0.22) 16%);
+  opacity: 1;
+}
+.contactDialogPanel .submitPrimaryButton:hover:not(:disabled),
+.contactDialogPanel .submitPrimaryButton:focus-visible {
+  color: var(--color-ink);
+  background: color-mix(in srgb, var(--checkmate-surface-strong) 74%, rgb(97 157 142 / 0.3) 26%);
+  box-shadow: 0 8px 20px rgb(97 157 142 / 0.16);
+}
 .contactDataNotice {
   margin: 0 0 1rem;
   border-left: 2px solid color-mix(in srgb, var(--checkmate-border) 68%, var(--checkmate-accent) 32%);
@@ -730,49 +833,6 @@
   margin-top: 0.35rem;
   font-size: 0.68rem;
 }
-.contactDataStatusList {
-  display: grid;
-  gap: 0.5rem;
-  margin: 0.7rem 0 0;
-}
-.contactDataStatusItem {
-  display: grid;
-  grid-template-columns: minmax(7.2rem, auto) minmax(0, 1fr);
-  gap: 0.65rem;
-  align-items: start;
-}
-.contactDataStatusItem dt {
-  width: max-content;
-  max-width: 100%;
-  border: 1px solid var(--checkmate-border);
-  border-radius: 999px;
-  padding: 0.18rem 0.42rem;
-  color: var(--checkmate-muted);
-  background: color-mix(in srgb, var(--checkmate-surface) 70%, transparent);
-  font-size: 0.65rem;
-  font-weight: 700;
-  line-height: 1.25;
-}
-.contactDataStatusApproved {
-  border-color: color-mix(in srgb, rgb(61 132 127 / 0.2) 70%, var(--checkmate-border));
-  color: rgb(46 113 78 / 0.9);
-  background: rgb(221 244 240 / 0.58);
-}
-.contactDataStatusIssue {
-  background: color-mix(in srgb, rgb(226 244 235 / 0.6) 40%, var(--checkmate-surface));
-}
-.contactDataStatusRefused {
-  border-color: color-mix(in srgb, rgb(180 70 70 / 0.2) 70%, var(--checkmate-border));
-  color: rgb(140 40 40 / 0.85);
-  background: rgb(180 70 70 / 0.08);
-}
-.contactDataStatusItem dd {
-  margin: 0;
-  padding-top: 0.2rem;
-  color: var(--checkmate-muted);
-  font-size: 0.72rem;
-  line-height: 1.45;
-}
 .contactFeedbackSection {
   border-top: 1px solid var(--checkmate-rule);
   padding-top: 1rem;
@@ -790,31 +850,110 @@
   font-size: 0.78rem;
   line-height: 1.65;
 }
-.contactDialogEmail {
-  margin-bottom: 1rem;
-  color: var(--checkmate-muted);
-  font-size: 0.78rem;
-}
-.contactDialogEmail a {
-  color: var(--checkmate-accent);
-  text-decoration: underline;
-  text-underline-offset: 0.16em;
-}
 .contactDialogForm {
   display: grid;
   gap: 0.85rem;
 }
 .contactDialogHint {
-  border-radius: 10px;
-  padding: 0.6rem 0.7rem;
+  margin: -0.15rem 0 0;
   color: var(--checkmate-muted);
-  background: color-mix(in srgb, var(--checkmate-accent) 6%, transparent);
   font-size: 0.7rem;
-  line-height: 1.5;
+  line-height: 1.55;
 }
-.contactDialogHint strong {
+.contactIntentList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+.contactIntentOption {
+  --feedback-tint: rgb(133 177 158 / 0.16);
+  display: grid;
+  min-width: 0;
+  min-height: 5.35rem;
+  align-content: center;
+  gap: 0.3rem;
+  border: 1px solid color-mix(in srgb, var(--feedback-tint) 46%, var(--checkmate-border));
+  border-radius: 14px;
+  padding: 0.75rem 0.8rem;
   color: var(--color-ink);
-  font-weight: 700;
+  background:
+    radial-gradient(circle at 90% 0%, color-mix(in srgb, var(--feedback-tint) 64%, transparent), transparent 62%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 88%, var(--feedback-tint) 12%),
+      color-mix(in srgb, var(--checkmate-surface) 94%, var(--feedback-tint) 6%)
+    );
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--feedback-tint) 15%, transparent);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    transform 180ms ease;
+}
+.contactIntentOption[data-intent='info'] {
+  --feedback-tint: rgb(132 128 119 / 0.14);
+}
+.contactIntentOption[data-intent='update'] {
+  --feedback-tint: rgb(97 157 142 / 0.18);
+}
+.contactIntentOption[data-intent='other'] {
+  --feedback-tint: rgb(110 155 169 / 0.17);
+}
+.contactIntentOption strong {
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.contactIntentOption span {
+  color: var(--checkmate-muted);
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+.contactIntentOption:hover,
+.contactIntentOption:focus-visible {
+  border-color: color-mix(in srgb, var(--feedback-tint) 72%, var(--checkmate-border));
+  background:
+    radial-gradient(circle at 90% 0%, color-mix(in srgb, var(--feedback-tint) 82%, transparent), transparent 62%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 82%, var(--feedback-tint) 18%),
+      color-mix(in srgb, var(--checkmate-surface) 90%, var(--feedback-tint) 10%)
+    );
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--feedback-tint) 28%, transparent);
+  outline: none;
+  transform: translateY(-2px);
+}
+.contactFeedbackSuccess {
+  display: grid;
+  justify-items: center;
+  gap: 0.65rem;
+  min-height: 14rem;
+  padding: 1rem 0;
+  text-align: center;
+}
+.contactFeedbackSuccess > span {
+  display: grid;
+  width: 2.3rem;
+  height: 2.3rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--checkmate-accent) 36%, transparent);
+  border-radius: 50%;
+  color: var(--checkmate-accent);
+}
+.contactFeedbackSuccess strong {
+  color: var(--color-ink);
+  font-size: 1rem;
+}
+.contactFeedbackSuccess p {
+  max-width: 20rem;
+  margin: 0;
+  color: var(--checkmate-muted);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+.contactFeedbackSuccess .submitSecondaryButton {
+  margin-top: 0.35rem;
 }
 .submitDialog {
   position: fixed;
@@ -848,6 +987,82 @@
   background: rgb(255 255 255 / 0.9);
   box-shadow: 0 24px 70px rgb(42 35 25 / 0.16);
   backdrop-filter: blur(20px);
+}
+.hallWelcomeDialogPanel {
+  width: min(100%, 31rem);
+  border-color: color-mix(in srgb, var(--checkmate-border) 72%, var(--checkmate-accent) 28%);
+  background: var(--checkmate-surface-strong);
+}
+.hallWelcomeIntro {
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 1.1rem;
+}
+.hallWelcomeIntro p {
+  margin: 0;
+  color: var(--checkmate-muted);
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+.hallWelcomeStats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-bottom: 1.2rem;
+}
+.hallWelcomeStats > div {
+  display: grid;
+  gap: 0.22rem;
+  min-width: 0;
+  border-top: 1px solid var(--checkmate-rule);
+  padding-top: 0.65rem;
+}
+.hallWelcomeStats span {
+  color: var(--checkmate-muted);
+  font-size: 0.68rem;
+}
+.hallWelcomeStats strong {
+  overflow-wrap: anywhere;
+  color: var(--color-ink);
+  font-size: 1rem;
+  font-weight: 800;
+}
+.hallWelcomeGuide {
+  border-top: 1px solid var(--checkmate-rule);
+  padding-top: 1rem;
+}
+.hallWelcomeGuide h2 {
+  margin: 0 0 0.65rem;
+  color: var(--color-ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.hallWelcomeGuide ul {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hallWelcomeGuide li {
+  display: grid;
+  gap: 0.16rem;
+  padding-left: 0.8rem;
+  border-left: 2px solid color-mix(in srgb, var(--checkmate-accent) 40%, transparent);
+}
+.hallWelcomeGuide li strong {
+  color: var(--color-ink);
+  font-size: 0.76rem;
+}
+.hallWelcomeGuide li span {
+  color: var(--checkmate-muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.hallWelcomeActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
 }
 .submitCaseDialogPanel {
   --checkmate-surface: rgb(255 255 255 / 0.7);
@@ -918,6 +1133,12 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.72rem 0.9rem;
+}
+.submitPrivacyHint {
+  margin: 0 0 0.85rem;
+  color: var(--checkmate-muted);
+  font-size: 0.68rem;
+  line-height: 1.5;
 }
 .submitField {
   display: grid;
@@ -1086,9 +1307,65 @@
   border: 1px solid color-mix(in srgb, var(--checkmate-accent) 36%, transparent);
   border-radius: 50%;
 }
+.submitSuccess strong {
+  color: var(--color-ink);
+  font-size: 1.05rem;
+}
+.submitSuccess p {
+  max-width: 18rem;
+  margin: -0.15rem 0 0;
+  color: var(--checkmate-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.6;
+  text-align: center;
+}
+.submitSuccessActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.55rem;
+  margin-top: 0.45rem;
+}
+.submitSuccessActions .submitSecondaryButton,
+.submitSuccessActions .submitPrimaryButton {
+  min-height: 2.6rem;
+}
 :global(.dark) .submitDialogPanel {
   background: rgb(42 42 36 / 0.94);
   box-shadow: 0 24px 70px rgb(0 0 0 / 0.3);
+}
+.hallEmpty {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  width: min(100%, 34rem);
+  margin: clamp(3rem, 9vw, 6rem) auto;
+  padding: clamp(2rem, 5vw, 3.25rem) 1.5rem;
+  border: 1px solid color-mix(in srgb, var(--checkmate-border) 78%, var(--checkmate-accent) 22%);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--checkmate-accent) 12%, transparent), transparent 58%),
+    var(--checkmate-surface-strong);
+  box-shadow: 0 16px 36px rgb(42 35 25 / 0.055);
+  text-align: center;
+}
+.hallEmpty p,
+.hallEmpty strong {
+  margin: 0;
+}
+.hallEmpty p {
+  color: var(--checkmate-muted);
+  font-size: 0.82rem;
+}
+.hallEmpty strong {
+  color: var(--color-ink);
+  font-family: 'heishenhua', var(--font-nunito), sans-serif;
+  font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+  font-weight: 400;
+}
+.hallEmpty .submitCaseButton {
+  margin-top: 0.55rem;
 }
 .podiumSection {
   position: relative;
@@ -1127,6 +1404,17 @@
   align-content: start;
   gap: 0.5rem;
   margin-top: calc(-1 * var(--podium-lift));
+}
+.hallView .podiumRank2,
+.hallView .podiumRank3 {
+  animation: hall-podium-enter 780ms 80ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.hallView .podiumRank1 {
+  --hall-resting-transform: translateY(-10px);
+  animation: hall-podium-champion-enter 820ms 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.hallView .podiumChampion .podiumActions {
+  animation: hall-actions-enter 620ms 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .podiumActions {
   --jade-control: rgb(133 177 158 / 0.16);
@@ -1354,12 +1642,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.28rem;
+  gap: 0.36rem;
   width: calc(100% - 1rem);
   margin: 0;
   padding: clamp(0.75rem, 1.4vw, 1rem) 0.75rem 0.62rem;
   text-align: center;
-  font-family: 'FangSong', '仿宋', 'FangSong_GB2312', 'STFangsong', serif;
+  font-family: "Kaiti SC", "STKaiti", KaiTi, serif;
   font-weight: 400;
   letter-spacing: 0.01em;
 }
@@ -1370,16 +1658,17 @@
 }
 .podiumLocation {
   color: color-mix(in srgb, var(--color-ink) 88%, var(--checkmate-muted));
-  font-size: clamp(1.08rem, 1.7vw, 1.28rem);
-  font-weight: 500;
-  line-height: 1.1;
+  font-size: clamp(1.18rem, 1.95vw, 1.45rem);
+  font-weight: 400;
+  line-height: 1.12;
 }
 .podiumDegreeMajor {
   display: inline-flex;
   align-items: baseline;
   color: color-mix(in srgb, var(--color-ink) 78%, var(--checkmate-muted));
-  font-size: clamp(0.82rem, 1.2vw, 0.94rem);
-  line-height: 1.2;
+  font-size: clamp(0.9rem, 1.32vw, 1.04rem);
+  font-weight: 400;
+  line-height: 1.24;
 }
 .podiumDegreeMajor > span + span::before {
   margin: 0 0.3rem;
@@ -1389,8 +1678,9 @@
 .podiumSchool,
 .podiumDate {
   color: var(--checkmate-muted);
-  font-size: clamp(0.76rem, 1.08vw, 0.86rem);
-  line-height: 1.2;
+  font-size: clamp(0.84rem, 1.14vw, 0.96rem);
+  font-weight: 400;
+  line-height: 1.24;
   white-space: nowrap;
 }
 .podiumDate {
@@ -1514,8 +1804,8 @@
   justify-content: center;
   gap: 0.45rem;
   width: fit-content;
-  font-family: 'FangSong', '仿宋', 'FangSong_GB2312', 'STFangsong', serif;
-  font-size: clamp(2.45rem, 4.4vw, 3.8rem);
+  font-family: "Kaiti SC", "STKaiti", KaiTi, serif;
+  font-size: clamp(2.7rem, 4.8vw, 4.15rem);
   font-weight: 400;
   line-height: 0.82;
   letter-spacing: -0.06em;
@@ -1560,15 +1850,15 @@
 .podiumDuration .hallWaitValue {
   gap: 0.1rem;
   color: inherit;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(2.55rem, 4.6vw, 3.85rem);
-  font-weight: 500;
+  font-family: "Kaiti SC", "STKaiti", KaiTi, serif;
+  font-size: clamp(2.8rem, 5vw, 4.15rem);
+  font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 0.86;
 }
 .podiumDuration .hallWaitValue small {
   color: color-mix(in srgb, currentColor 62%, var(--checkmate-muted));
-  font-family: 'FangSong', '仿宋', 'FangSong_GB2312', 'STFangsong', serif;
+  font-family: "Kaiti SC", "STKaiti", KaiTi, serif;
   font-size: 0.66rem;
   letter-spacing: 0.05em;
 }
@@ -1731,16 +2021,19 @@
   letter-spacing: 0.01em;
 }
 .eliteRow {
+  --elite-material-glow: rgb(226 244 235 / 0.28);
+  --elite-material-edge: rgb(248 255 250 / 0.4);
   display: grid;
   grid-template-columns:
     3rem minmax(5rem, 0.65fr) minmax(6rem, 0.8fr) minmax(5.5rem, 0.72fr) 4rem 4rem
     minmax(12rem, 2.4fr) 4.5rem;
-  gap: clamp(0.75rem, 1.5vw, 1.15rem);
+  font-family: "Kaiti SC", "STKaiti", KaiTi, serif;
+  gap: clamp(1rem, 1.7vw, 1.3rem);
   align-items: center;
-  min-height: 4.7rem;
+  min-height: 5.05rem;
   border-radius: 18px;
   border-color: color-mix(in srgb, var(--checkmate-rule) 72%, var(--checkmate-border));
-  padding: 0.88rem 1rem;
+  padding: 0.98rem 1.05rem;
   background:
     radial-gradient(circle at 92% 16%, rgb(226 244 235 / 0.16), transparent 46%),
     linear-gradient(
@@ -1749,9 +2042,10 @@
       color-mix(in srgb, var(--checkmate-surface) 90%, rgb(102 150 143 / 0.12))
     );
   box-shadow:
-    0 8px 24px rgb(61 94 86 / 0.07),
-    0 18px 36px rgb(102 150 143 / 0.07),
-    inset 0 1px 0 rgb(255 255 255 / 0.38);
+    0 10px 26px rgb(61 94 86 / 0.09),
+    0 22px 42px rgb(102 150 143 / 0.09),
+    inset 0 1px 0 rgb(255 255 255 / 0.48),
+    inset 0 -8px 16px rgb(61 94 86 / 0.025);
   transition:
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
     background 360ms ease,
@@ -1763,10 +2057,18 @@
   inset: 0.08rem 0;
   border-radius: inherit;
   background:
-    radial-gradient(circle at 88% 10%, rgb(248 255 250 / 0.3), transparent 48%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.12), transparent 62%);
+    radial-gradient(
+      circle at 88% 10%,
+      color-mix(in srgb, var(--elite-material-edge) 76%, white 24%),
+      transparent 48%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--elite-material-glow) 32%, rgb(255 255 255 / 0.14)),
+      transparent 62%
+    );
   content: '';
-  opacity: 0.3;
+  opacity: 0.52;
   pointer-events: none;
   transition: opacity 380ms ease;
 }
@@ -1787,7 +2089,7 @@
 .eliteIdentity {
   display: grid;
   min-width: 0;
-  gap: 0.65rem;
+  gap: 0.72rem;
 }
 .eliteDuration {
   display: grid;
@@ -1860,6 +2162,96 @@
 }
 .standardRow.refusedRow {
   background: linear-gradient(135deg, rgb(180 70 70 / 0.1), rgb(180 70 70 / 0.04));
+}
+.eliteList > .eliteRow:nth-child(1) {
+  --elite-material-glow: rgb(221 202 160 / 0.3);
+  --elite-material-edge: rgb(251 246 228 / 0.48);
+  background:
+    radial-gradient(circle at 92% 14%, rgb(242 237 218 / 0.25), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 81%, rgb(242 237 218 / 0.2)),
+      color-mix(in srgb, var(--checkmate-surface) 87%, rgb(224 237 231 / 0.17))
+    );
+}
+.eliteList > .eliteRow:nth-child(2) {
+  --elite-material-glow: rgb(152 190 181 / 0.28);
+  --elite-material-edge: rgb(232 249 242 / 0.46);
+  background:
+    radial-gradient(circle at 92% 14%, rgb(217 238 232 / 0.25), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 81%, rgb(217 238 232 / 0.2)),
+      color-mix(in srgb, var(--checkmate-surface) 87%, rgb(213 229 225 / 0.17))
+    );
+}
+.eliteList > .eliteRow:nth-child(3) {
+  --elite-material-glow: rgb(133 151 149 / 0.26);
+  --elite-material-edge: rgb(231 244 239 / 0.44);
+  background:
+    radial-gradient(circle at 92% 14%, rgb(229 239 234 / 0.25), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 81%, rgb(229 239 234 / 0.2)),
+      color-mix(in srgb, var(--checkmate-surface) 87%, rgb(222 233 229 / 0.17))
+    );
+}
+.eliteList > .eliteRow:nth-child(4) {
+  --elite-material-glow: rgb(198 224 233 / 0.3);
+  --elite-material-edge: rgb(240 252 255 / 0.48);
+  background:
+    radial-gradient(circle at 92% 14%, rgb(224 235 239 / 0.25), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 81%, rgb(224 235 239 / 0.2)),
+      color-mix(in srgb, var(--checkmate-surface) 87%, rgb(216 231 231 / 0.17))
+    );
+}
+.eliteList > .eliteRow:nth-child(5) {
+  --elite-material-glow: rgb(190 181 143 / 0.25);
+  --elite-material-edge: rgb(246 244 226 / 0.45);
+  background:
+    radial-gradient(circle at 92% 14%, rgb(235 234 224 / 0.25), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 81%, rgb(235 234 224 / 0.2)),
+      color-mix(in srgb, var(--checkmate-surface) 87%, rgb(224 233 227 / 0.17))
+    );
+}
+.eliteList > .eliteRow:nth-child(6) {
+  --elite-material-glow: rgb(145 187 183 / 0.28);
+  --elite-material-edge: rgb(230 249 243 / 0.46);
+  background:
+    radial-gradient(circle at 92% 14%, rgb(218 236 232 / 0.25), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 81%, rgb(218 236 232 / 0.2)),
+      color-mix(in srgb, var(--checkmate-surface) 87%, rgb(214 229 225 / 0.17))
+    );
+}
+.eliteList > .eliteRow:nth-child(7) {
+  --elite-material-glow: rgb(195 216 194 / 0.28);
+  --elite-material-edge: rgb(239 249 232 / 0.46);
+  background:
+    radial-gradient(circle at 92% 14%, rgb(231 236 228 / 0.25), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 81%, rgb(231 236 228 / 0.2)),
+      color-mix(in srgb, var(--checkmate-surface) 87%, rgb(222 231 225 / 0.17))
+    );
+}
+.eliteList > .eliteRow.completedRow {
+  background: linear-gradient(135deg, rgb(80 160 100 / 0.16), rgb(80 160 100 / 0.07));
+}
+.eliteList > .eliteRow.refusedRow {
+  background: linear-gradient(135deg, rgb(180 70 70 / 0.16), rgb(180 70 70 / 0.07));
+}
+.eliteList > .eliteRow:not(.completedRow):not(.refusedRow) {
+  box-shadow:
+    0 10px 26px color-mix(in srgb, var(--elite-material-glow) 30%, transparent),
+    0 22px 42px color-mix(in srgb, var(--elite-material-glow) 20%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--elite-material-edge) 52%, transparent),
+    inset 0 -8px 16px color-mix(in srgb, var(--elite-material-glow) 8%, transparent);
 }
 .standardRow::before {
   position: absolute;
@@ -1971,11 +2363,15 @@
 }
 .eliteRow .standardLocationDegree {
   gap: 0.4rem;
-  font-size: 1rem;
+  color: color-mix(in srgb, var(--color-ink) 82%, var(--checkmate-muted));
+  font-size: 1.04rem;
+  font-weight: 500;
   line-height: 1.35;
 }
 .eliteRow .standardMajor {
-  font-size: 0.96rem;
+  color: color-mix(in srgb, var(--color-ink) 88%, var(--checkmate-muted));
+  font-size: 1rem;
+  font-weight: 500;
   line-height: 1.35;
 }
 .eliteRow .standardSchool,
@@ -1983,14 +2379,30 @@
   .eliteRow .standardEndDate,
   .eliteRow .standardNote,
   .eliteRow .standardNoteButton {
-    font-size: 0.86rem;
+    font-size: 0.9rem;
     line-height: 1.35;
   }
-.eliteRow .eliteRank {
-  font-size: 1rem;
-}
 .eliteRow .eliteDuration {
-  font-size: 1.12rem;
+  font-size: 1.16rem;
+}
+.eliteRow .eliteRank {
+  color: color-mix(in srgb, var(--color-ink) 68%, var(--checkmate-muted));
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.eliteRow .hallWaitValue {
+  color: color-mix(in srgb, var(--checkmate-accent) 82%, var(--color-ink));
+  font-size: 1.58rem;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+.eliteRow .hallWaitValue small {
+  color: color-mix(in srgb, currentColor 48%, var(--checkmate-muted));
+  font-size: 0.52rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
 }
 .eliteRow.completedRow {
   background:
@@ -2561,8 +2973,20 @@
     border-radius: 50%;
   }
 
+  .hallWelcomeDialogPanel {
+    border-radius: 24px;
+  }
+
   .contactDialogPanel {
     border-radius: 24px;
+  }
+
+  .contactIntentList {
+    grid-template-columns: 1fr;
+  }
+
+  .contactIntentOption {
+    min-height: 4.5rem;
   }
 
   .submitFormGrid {
@@ -2841,6 +3265,9 @@
     height: auto;
     transform: none;
   }
+  .hallView .podiumRank1 {
+    --hall-resting-transform: none;
+  }
   .podiumContent {
     gap: 0.35rem 0.5rem;
   }
@@ -2858,19 +3285,19 @@
     font-size: 0.82rem;
   }
   .podiumContent {
-    gap: 0.22rem;
+    gap: 0.28rem;
     width: calc(100% - 0.6rem);
     padding: 0.55rem 0.55rem 0.48rem;
   }
   .podiumLocation {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
   .podiumDegreeMajor {
-    font-size: 0.76rem;
+    font-size: 0.82rem;
   }
   .podiumSchool,
   .podiumDate {
-    font-size: 0.7rem;
+    font-size: 0.76rem;
   }
   .podiumContent .standardNote {
     font-size: 0.68rem;
@@ -2880,7 +3307,7 @@
     font-size: clamp(2.25rem, 11vw, 3.35rem);
   }
   .podiumDuration .hallWaitValue {
-    font-size: clamp(2.15rem, 10vw, 3.1rem);
+    font-size: clamp(2.3rem, 10.5vw, 3.3rem);
   }
   .podiumRank2 .hallDates,
   .podiumRank3 .hallDates {
@@ -2919,6 +3346,12 @@
   }
   .eliteRow .eliteDuration {
     font-size: 1.08rem;
+  }
+  .eliteRow .hallWaitValue {
+    font-size: 1.28rem;
+  }
+  .eliteRow .hallWaitValue small {
+    font-size: 0.48rem;
   }
   .eliteIdentity {
     gap: 0.45rem;
@@ -3140,6 +3573,17 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .citiesView .titleRow,
+  .citiesView .cityGrid,
+  .citiesView .citiesContent > .panel,
+  .hallView .podiumRank1,
+  .hallView .podiumRank2,
+  .hallView .podiumRank3,
+  .hallView .podiumChampion .podiumActions {
+    animation: none;
+    opacity: 1;
+  }
+
   .submitCaseDialogPanel {
     animation: none;
     opacity: 1;

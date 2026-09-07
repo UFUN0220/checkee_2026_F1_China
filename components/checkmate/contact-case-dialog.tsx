@@ -6,6 +6,9 @@ import type { CheckmateDataNotice } from '~/data/checkmate/config'
 import styles from './checkmate-experience.module.css'
 
 const DEVELOPER_EMAIL = 'fyou@wustl.edu'
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u
+
+type ContactDialogView = 'menu' | 'info' | 'update' | 'other'
 
 export function ContactCaseDialogButton({
   notice,
@@ -15,47 +18,135 @@ export function ContactCaseDialogButton({
   updatedAt: string
 }) {
   const [open, setOpen] = useState(false)
-  const [message, setMessage] = useState('')
-  const [supplementalMessage, setSupplementalMessage] = useState('')
+  const [view, setView] = useState<ContactDialogView>('menu')
+  const [draftPrepared, setDraftPrepared] = useState(false)
   const [error, setError] = useState('')
+  const [updateMessage, setUpdateMessage] = useState('')
+  const [updateEmail, setUpdateEmail] = useState('')
+  const [otherMessage, setOtherMessage] = useState('')
+  const [isSubmittingUpdate, setIsSubmittingUpdate] = useState(false)
+
+  const reset = () => {
+    setView('menu')
+    setDraftPrepared(false)
+    setError('')
+    setUpdateMessage('')
+    setUpdateEmail('')
+    setOtherMessage('')
+    setIsSubmittingUpdate(false)
+  }
+
+  const openDialog = () => {
+    reset()
+    setOpen(true)
+  }
 
   const close = () => {
     setOpen(false)
-    setError('')
+    reset()
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const trimmedMessage = message.trim()
-    const trimmedSupplementalMessage = supplementalMessage.trim()
+  const returnToMenu = () => {
+    setError('')
+    setDraftPrepared(false)
+    setView('menu')
+  }
 
-    if (!trimmedMessage) {
-      setError('请先填写您的问题或修改需求')
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    if (view === 'update') {
+      if (isSubmittingUpdate) return
+
+      const trimmedUpdateMessage = updateMessage.trim()
+      if (!trimmedUpdateMessage) {
+        setError('请说明需要更新的内容')
+        return
+      }
+
+      const normalizedEmail = updateEmail.trim()
+      if (normalizedEmail && !EMAIL_PATTERN.test(normalizedEmail)) {
+        setError('请输入有效的邮箱地址')
+        return
+      }
+
+      setError('')
+      setIsSubmittingUpdate(true)
+      try {
+        const response = await fetch('/api/update-requests', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            content: trimmedUpdateMessage,
+            email: normalizedEmail || undefined,
+          }),
+        })
+
+        let result: { error?: string } = {}
+        try {
+          result = (await response.json()) as { error?: string }
+        } catch {
+          // Keep the generic error below when the response is not JSON.
+        }
+
+        if (!response.ok) {
+          setError(result.error || '提交失败，请稍后再试。')
+          return
+        }
+
+        setDraftPrepared(true)
+      } catch {
+        setError('提交失败，请稍后再试。')
+      } finally {
+        setIsSubmittingUpdate(false)
+      }
       return
     }
 
-    const body = [
-      '您好，我想申请修改榜上案例或联系开发者。',
-      '',
-      trimmedMessage,
-      ...(trimmedSupplementalMessage ? ['', '补充说明：', trimmedSupplementalMessage] : []),
-      '',
-      '（如涉及案例信息修改，我会按需补充相关凭证。）',
-    ].join('\n')
+    const trimmedMessage = otherMessage.trim()
+    if (!trimmedMessage) {
+      setError('请先填写你的建议或说明')
+      return
+    }
 
-    window.location.href = `mailto:${DEVELOPER_EMAIL}?subject=${encodeURIComponent('申请修改榜上案例')}&body=${encodeURIComponent(body)}`
+    const body = ['您好，我想提交其他反馈。', '', trimmedMessage].join('\n')
+    setDraftPrepared(true)
+    window.location.href = `mailto:${DEVELOPER_EMAIL}?subject=${encodeURIComponent('Checkee 其他反馈')}&body=${encodeURIComponent(body)}`
   }
+
+  const title = draftPrepared
+    ? view === 'update'
+      ? '反馈已收到'
+      : '邮件草稿已准备好'
+    : view === 'menu'
+      ? '更新/说明'
+      : view === 'info'
+        ? '数据说明'
+        : view === 'update'
+          ? '更新数据'
+          : '其他反馈'
+  const subtitle = draftPrepared
+    ? view === 'update'
+      ? '我们会核实相关信息'
+      : '请在邮件客户端确认并发送'
+    : view === 'menu'
+      ? '了解数据，并帮助维护时间线档案'
+      : view === 'info'
+        ? '了解数据来源与展示边界'
+        : view === 'update'
+          ? '修改已有案例中的信息'
+          : '提交建议或其他说明'
 
   return (
     <>
       <button
         type="button"
         className={styles.contactCaseButton}
-        onClick={() => setOpen(true)}
+        onClick={openDialog}
         aria-expanded={open}
         data-open={open ? 'true' : undefined}
       >
-        修改/说明
+        更新/说明
       </button>
 
       <Dialog open={open} onClose={close} className={styles.contactDialog}>
@@ -64,96 +155,165 @@ export function ContactCaseDialogButton({
           <DialogPanel className={`${styles.submitDialogPanel} ${styles.contactDialogPanel}`}>
             <div className={styles.submitDialogHeader}>
               <div>
-                <DialogTitle className={styles.submitDialogTitle}>修改/说明</DialogTitle>
-                <p>数据说明与案例反馈</p>
+                <DialogTitle className={styles.submitDialogTitle}>{title}</DialogTitle>
+                <p>{subtitle}</p>
               </div>
-              <button type="button" className={styles.submitDialogClose} onClick={close}>
-                关闭
-              </button>
             </div>
 
-            <section className={styles.contactDataNotice} aria-labelledby="contact-data-notice-title">
-              <h3 id="contact-data-notice-title">数据说明</h3>
-              <p>数据来自用户提交案例，经整理后展示，不代表官方处理时间或个人结果。</p>
-              <p>{notice.content}</p>
-              <dl className={styles.contactDataStatusList}>
-                <div className={styles.contactDataStatusItem}>
-                  <dt className={styles.contactDataStatusCheck}>Check</dt>
-                  <dd>案例正在等待更新。</dd>
-                </div>
-                <div className={styles.contactDataStatusItem}>
-                  <dt className={styles.contactDataStatusApproved}>AP / Approved</dt>
-                  <dd>已获得批准结果。</dd>
-                </div>
-                <div className={styles.contactDataStatusItem}>
-                  <dt className={styles.contactDataStatusIssue}>Issue</dt>
-                  <dd>已进入签发或完成阶段。</dd>
-                </div>
-                <div className={styles.contactDataStatusItem}>
-                  <dt className={styles.contactDataStatusRefused}>Refused</dt>
-                  <dd>拒签案例。</dd>
-                </div>
-              </dl>
-              <p>等待天数沿用当前案例记录，表示面签日期到当前状态日期之间的时间差。</p>
-              <p className={styles.contactDataNoticeUpdated}>更新时间：{updatedAt}</p>
-            </section>
-
-            <section className={styles.contactFeedbackSection} aria-labelledby="contact-feedback-title">
-              <h3 id="contact-feedback-title" className={styles.contactSectionTitle}>
-                修改反馈
-              </h3>
-              <p className={styles.contactDialogCopy}>
-                如果您发现榜上案例信息有误，或需要联系开发者，请填写您的说明。
-                <br />
-                如涉及案例信息修改，建议提供相关凭证（例如签证状态截图、官方通知、时间证明等），方便核实。
-              </p>
-
-              <div className={styles.contactDialogEmail}>
-                开发者邮箱：{' '}
-                <a href={`mailto:${DEVELOPER_EMAIL}`}>{DEVELOPER_EMAIL}</a>
-              </div>
-
-              <form className={styles.contactDialogForm} onSubmit={handleSubmit}>
-                <label className={styles.submitField}>
-                  <span>说明</span>
-                  <textarea
-                    value={message}
-                    placeholder="请输入您的问题、修改需求或想反馈的内容..."
-                    rows={6}
-                    onChange={(event) => {
-                      setMessage(event.target.value)
-                      setError('')
-                    }}
-                  />
-                </label>
-
-                <label className={styles.submitField}>
-                  <span>补充说明（可选）</span>
-                  <textarea
-                    value={supplementalMessage}
-                    placeholder="可补充更多背景、修改原因或备注信息..."
-                    rows={3}
-                    onChange={(event) => setSupplementalMessage(event.target.value)}
-                  />
-                </label>
-
-                <div className={styles.contactDialogHint}>
-                  <strong>提示：</strong>
-                  如果申请修改案例信息，请尽量提供有效凭证，方便确认信息准确性。
-                </div>
-
-                {error ? <p className={styles.submitFormError}>{error}</p> : null}
-
+            {view === 'menu' ? (
+              <>
+                <section className={styles.contactFeedbackSection} aria-labelledby="contact-menu-title">
+                  <h3 id="contact-menu-title" className={styles.contactSectionTitle}>选择你要了解或维护的内容</h3>
+                  <div className={styles.contactIntentList}>
+                    <button
+                      type="button"
+                      className={styles.contactIntentOption}
+                      data-intent="info"
+                      onClick={() => setView('info')}
+                    >
+                      <strong>数据说明</strong>
+                      <span>了解数据来源与展示边界</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.contactIntentOption}
+                      data-intent="update"
+                      onClick={() => setView('update')}
+                    >
+                      <strong>更新数据</strong>
+                      <span>修改已有案例中的信息</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.contactIntentOption}
+                      data-intent="other"
+                      onClick={() => setView('other')}
+                    >
+                      <strong>其他反馈</strong>
+                      <span>提交建议或其他说明</span>
+                    </button>
+                  </div>
+                </section>
                 <div className={styles.submitFormActions}>
                   <button type="button" className={styles.submitSecondaryButton} onClick={close}>
-                    取消
-                  </button>
-                  <button type="submit" className={styles.submitPrimaryButton}>
-                    打开邮件客户端
+                    关闭
                   </button>
                 </div>
-              </form>
-            </section>
+              </>
+            ) : view === 'info' ? (
+              <>
+                <section className={styles.contactDataNotice} aria-labelledby="contact-data-notice-title">
+                  <h3 id="contact-data-notice-title">数据说明</h3>
+                  <p>数据来自用户提交案例，经整理后展示，不代表官方处理时间或个人结果。</p>
+                  <p>{notice.content}</p>
+                  <p className={styles.contactDataNoticeUpdated}>更新时间：{updatedAt}</p>
+                </section>
+                <div className={styles.submitFormActions}>
+                  <button type="button" className={styles.submitSecondaryButton} onClick={returnToMenu}>
+                    返回
+                  </button>
+                </div>
+              </>
+            ) : draftPrepared ? (
+              <section className={styles.contactFeedbackSuccess} role="status" aria-live="polite">
+                <span aria-hidden="true">✓</span>
+                <strong>{view === 'update' ? '反馈已收到' : '感谢你愿意帮助我们完善记录'}</strong>
+                <p>
+                  {view === 'update'
+                    ? '感谢你帮助维护 Checkee 数据。我们会核实相关信息，确认后更新案例。'
+                    : '请在邮件客户端确认并发送。我们会检查相关记录，确认后才会更新。'}
+                </p>
+                {view === 'update' && updateEmail.trim() ? (
+                  <p>如需进一步确认，我们会通过邮箱联系你。</p>
+                ) : null}
+                <div className={styles.submitFormActions}>
+                  <button type="button" className={styles.submitSecondaryButton} onClick={() => setDraftPrepared(false)}>
+                    返回
+                  </button>
+                  <button type="button" className={styles.submitPrimaryButton} onClick={close}>
+                    关闭
+                  </button>
+                </div>
+              </section>
+            ) : view === 'update' ? (
+              <section className={styles.contactFeedbackSection} aria-labelledby="update-data-title">
+                <form className={styles.contactDialogForm} onSubmit={handleSubmit}>
+                  <h3 id="update-data-title" className={styles.contactSectionTitle}>更新内容</h3>
+                  <p className={styles.contactDialogCopy}>
+                    如果你的案例信息发生变化，请告诉我们需要更新的内容。我们会人工核实后进行调整。
+                  </p>
+
+                  <label className={styles.submitField}>
+                    <span>更新内容</span>
+                    <textarea
+                      value={updateMessage}
+                      placeholder="例如：我的签证状态已经更新为 Issued。建议提供地点、学校、专业或日期，帮助我们定位案例。"
+                      rows={7}
+                      onChange={(event) => {
+                        setUpdateMessage(event.target.value)
+                        setError('')
+                      }}
+                    />
+                  </label>
+
+                  <label className={styles.submitField}>
+                    <span>邮箱 <em>可选</em></span>
+                    <input
+                      type="email"
+                      autoComplete="email"
+                      value={updateEmail}
+                      placeholder="如需进一步确认，可填写邮箱"
+                      onChange={(event) => {
+                        setUpdateEmail(event.target.value)
+                        setError('')
+                      }}
+                    />
+                  </label>
+
+                  <p className={styles.contactDialogHint}>
+                    如果涉及案例信息修改，建议提供相关凭证以帮助我们确认。敏感信息可以遮挡。
+                  </p>
+
+                  {error ? <p className={styles.submitFormError} role="alert">{error}</p> : null}
+                  <div className={styles.submitFormActions}>
+                    <button type="button" className={styles.submitSecondaryButton} onClick={returnToMenu}>
+                      返回
+                    </button>
+                    <button type="submit" className={styles.submitPrimaryButton} disabled={isSubmittingUpdate}>
+                      {isSubmittingUpdate ? '正在提交...' : '提交更新'}
+                    </button>
+                  </div>
+                </form>
+              </section>
+            ) : (
+              <section className={styles.contactFeedbackSection} aria-labelledby="other-feedback-title">
+                <form className={styles.contactDialogForm} onSubmit={handleSubmit}>
+                  <h3 id="other-feedback-title" className={styles.contactSectionTitle}>反馈内容</h3>
+                  <label className={styles.submitField}>
+                    <span>反馈内容</span>
+                    <textarea
+                      value={otherMessage}
+                      placeholder="请输入你的建议或其他说明…"
+                      rows={7}
+                      onChange={(event) => {
+                        setOtherMessage(event.target.value)
+                        setError('')
+                      }}
+                    />
+                  </label>
+
+                  {error ? <p className={styles.submitFormError} role="alert">{error}</p> : null}
+                  <div className={styles.submitFormActions}>
+                    <button type="button" className={styles.submitSecondaryButton} onClick={returnToMenu}>
+                      返回
+                    </button>
+                    <button type="submit" className={styles.submitPrimaryButton}>
+                      提交反馈
+                    </button>
+                  </div>
+                </form>
+              </section>
+            )}
           </DialogPanel>
         </div>
       </Dialog>

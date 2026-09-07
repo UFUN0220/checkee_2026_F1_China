@@ -122,10 +122,6 @@ export function SubmitCaseButton() {
       await submitCase(payload)
       setForm(INITIAL_FORM)
       setStatus('success')
-      window.setTimeout(() => {
-        setOpen(false)
-        setStatus('idle')
-      }, 900)
     } catch {
       setStatus('error')
     }
@@ -159,12 +155,25 @@ export function SubmitCaseButton() {
             </div>
 
             {status === 'success' ? (
-              <div className={styles.submitSuccess} role="status">
+              <div className={styles.submitSuccess} role="status" aria-live="polite">
                 <span aria-hidden="true">✓</span>
-                提交成功
+                <strong>提交成功</strong>
+                <p>感谢你的案例贡献。</p>
+                <p>提交后会经过人工整理和审核，符合展示标准的案例会进入名人堂。</p>
+                <div className={styles.submitSuccessActions}>
+                  <button type="button" className={styles.submitSecondaryButton} onClick={() => setStatus('idle')}>
+                    返回
+                  </button>
+                  <button type="button" className={styles.submitPrimaryButton} onClick={close}>
+                    关闭
+                  </button>
+                </div>
               </div>
             ) : (
               <form className={styles.submitForm} noValidate onSubmit={handleSubmit}>
+                <p className={styles.submitPrivacyHint}>
+                  提交后，部分时间线信息将在审核整理后匿名展示于名人堂。姓名、联系方式等个人身份信息可选。
+                </p>
                 <div className={styles.submitFormGrid}>
                   <label className={styles.submitField}>
                     <span>面签地点</span>

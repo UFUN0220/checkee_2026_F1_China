@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { isAdminAuthenticated } from '~/lib/admin/auth'
+import { getAdminRecentActivities, type AdminActivity } from '~/lib/admin/activity'
 import { getAdminStats } from '~/lib/admin/submissions'
 import hallMaster from '~/data/checkmate/hall-master.json'
 import { AdminLoginForm } from '~/components/admin/admin-login-form'
@@ -19,6 +20,10 @@ function formatDate(value: string | null) {
   return new Intl.DateTimeFormat('zh-CN', { dateStyle: 'medium', timeStyle: 'short' }).format(date)
 }
 
+function activityStatusLabel(status: string) {
+  return status.charAt(0).toUpperCase() + status.slice(1)
+}
+
 export default async function AdminPage({
   searchParams,
 }: {
@@ -30,7 +35,10 @@ export default async function AdminPage({
     return <AdminLoginForm redirectTo={safeRedirectPath(params.next)} />
   }
 
-  const { stats, error } = await getAdminStats()
+  const [{ stats, error }, { activities, error: activitiesError }] = await Promise.all([
+    getAdminStats(),
+    getAdminRecentActivities(),
+  ])
   return (
     <main
       className="min-h-[100dvh] px-5 py-16 text-ink dark:text-cream sm:px-8"
@@ -63,6 +71,56 @@ export default async function AdminPage({
             ))}
           </section>
         ) : null}
+
+        {stats ? (
+          <section className="mt-8" aria-labelledby="admin-todos-title">
+            <div className="flex items-baseline justify-between gap-4">
+              <h2 id="admin-todos-title" className="text-xl font-bold">待处理事项</h2>
+              <span className="text-xs text-muted dark:text-muted-dark">需要人工核实</span>
+            </div>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <Link className="rounded-2xl border border-line bg-white/75 p-5 shadow-sm transition hover:-translate-y-0.5 hover:bg-white dark:border-line-dark dark:bg-white/5 dark:hover:bg-white/10" href="/admin/submissions">
+                <div className="flex items-baseline justify-between gap-4">
+                  <p className="text-sm text-muted dark:text-muted-dark">新案例待审核</p>
+                  <p className="text-3xl font-bold">{stats.pending}</p>
+                </div>
+                <p className="mt-3 text-sm font-semibold text-accent">进入投稿审核 →</p>
+              </Link>
+              <Link className="rounded-2xl border border-line bg-white/75 p-5 shadow-sm transition hover:-translate-y-0.5 hover:bg-white dark:border-line-dark dark:bg-white/5 dark:hover:bg-white/10" href="/admin/update-requests">
+                <div className="flex items-baseline justify-between gap-4">
+                  <p className="text-sm text-muted dark:text-muted-dark">修改请求待处理</p>
+                  <p className="text-3xl font-bold">{stats.pendingUpdateRequests ?? '—'}</p>
+                </div>
+                <p className="mt-3 text-sm font-semibold text-accent">进入修改反馈 →</p>
+              </Link>
+            </div>
+            {stats.updateRequestsError ? <p className="mt-3 text-xs text-muted dark:text-muted-dark">{stats.updateRequestsError}</p> : null}
+          </section>
+        ) : null}
+
+        <section className="mt-8 rounded-2xl border border-line bg-white/75 p-5 shadow-sm dark:border-line-dark dark:bg-white/5" aria-labelledby="admin-activity-title">
+          <div className="flex flex-wrap items-baseline justify-between gap-4">
+            <h2 id="admin-activity-title" className="text-xl font-bold">最近活动</h2>
+            <span className="text-xs text-muted dark:text-muted-dark">最近 8 条</span>
+          </div>
+          {activitiesError ? (
+            <p className="mt-4 text-sm text-muted dark:text-muted-dark">{activitiesError}</p>
+          ) : activities && activities.length > 0 ? (
+            <div className="mt-4 divide-y divide-line dark:divide-line-dark">
+              {activities.map((activity: AdminActivity) => (
+                <Link className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 hover:text-accent" href={activity.href} key={activity.id}>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold">{activity.title}</p>
+                    <p className="mt-1 text-xs text-muted dark:text-muted-dark">{formatDate(activity.timestamp)} · 状态：{activityStatusLabel(activity.status)}</p>
+                  </div>
+                  <span className="text-xs font-semibold text-accent">查看 →</span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-4 text-sm text-muted dark:text-muted-dark">暂时还没有最近活动。</p>
+          )}
+        </section>
 
         <section className="mt-8 rounded-2xl border border-line bg-white/75 p-5 shadow-sm dark:border-line-dark dark:bg-white/5">
           <div className="grid gap-5 sm:grid-cols-2">

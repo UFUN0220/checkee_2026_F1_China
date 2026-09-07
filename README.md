@@ -121,7 +121,24 @@ pnpm lint
 
 # TypeScript 类型检查
 pnpm typecheck
+
+# Hall 数据验证
+python scripts/verify-hall-data.py
 ```
+
+## CI 质量门禁
+
+GitHub Actions 会在推送到 `main` 或 Pull Request 创建、更新、重新打开时自动执行：
+
+```text
+pnpm install --frozen-lockfile
+pnpm lint
+pnpm typecheck
+pnpm build
+python scripts/verify-hall-data.py
+```
+
+CI 只负责质量检查，不会自动部署、发布 Release 或修改 Supabase 数据。Release 仍由人工审核和发布。
 
 ## 项目结构
 

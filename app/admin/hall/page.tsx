@@ -134,6 +134,9 @@ export default async function AdminHallPage() {
             <Link className="inline-flex rounded-xl border border-line px-4 py-3 text-sm font-bold transition hover:bg-black/5 dark:border-line-dark dark:hover:bg-white/10" href="/admin/submissions">
               投稿审核
             </Link>
+            <Link className="inline-flex rounded-xl border border-line px-4 py-3 text-sm font-bold transition hover:bg-black/5 dark:border-line-dark dark:hover:bg-white/10" href="/admin/hall/diff">
+              比较 Release
+            </Link>
             <Link className="inline-flex rounded-xl bg-ink px-4 py-3 text-sm font-bold text-white transition hover:opacity-90 dark:bg-cream dark:text-ink" href="/admin">
               返回 Dashboard
             </Link>

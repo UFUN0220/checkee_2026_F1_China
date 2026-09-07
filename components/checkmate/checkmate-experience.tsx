@@ -18,6 +18,7 @@ import {
 } from '~/data/checkmate/config'
 import { DataDescription } from './data-description'
 import { ContactCaseDialogButton } from './contact-case-dialog'
+import { HallWelcomeDialog } from './hall-welcome-dialog'
 import { SubmitCaseButton } from './submit-case-dialog'
 import styles from './checkmate-experience.module.css'
 
@@ -87,7 +88,7 @@ function WhiteHouseSelection({
   notice: CheckmateDataNotice
 }) {
   const [page, setPage] = useState(1)
-  const [selectedCity, setSelectedCity] = useState<CheckmateLocation | null>('beijing')
+  const [selectedCity, setSelectedCity] = useState<CheckmateLocation | null>(null)
   const selectedCases = useMemo(
     () =>
       selectedCity
@@ -133,6 +134,7 @@ function WhiteHouseSelection({
           city={selectedCity}
           cases={visibleCases}
           totalCases={selectedCases.length}
+          allCasesCount={snapshot.cases.length}
           page={page}
           totalPages={totalPages}
           notice={notice}
@@ -227,6 +229,7 @@ function CityDetail({
   city,
   cases,
   totalCases,
+  allCasesCount,
   page,
   totalPages,
   notice,
@@ -237,6 +240,7 @@ function CityDetail({
   city: CheckmateLocation | null
   cases: CheckmateSnapshot['cases']
   totalCases: number
+  allCasesCount: number
   page: number
   totalPages: number
   notice: CheckmateDataNotice
@@ -253,7 +257,28 @@ function CityDetail({
         <DataDescription notice={notice} updatedAt={updatedAt} />
         <div className={styles.cityEmptyMessage}>
           <MapPin size={18} strokeWidth={1.8} aria-hidden="true" />
-          <span>选择一个城市查看最新案例</span>
+          <div>
+            <h2>选择一个城市</h2>
+            <p>看看不同地区的签证等待情况。</p>
+            <small>当前收录：{allCasesCount} 个案例</small>
+          </div>
+        </div>
+      </section>
+    )
+  if (!cases.length)
+    return (
+      <section
+        className={`${styles.panel} ${styles.cityDetail} ${styles.cityEmpty}`}
+        aria-live="polite"
+      >
+        <DataDescription notice={notice} updatedAt={updatedAt} />
+        <div className={styles.cityEmptyMessage}>
+          <MapPin size={18} strokeWidth={1.8} aria-hidden="true" />
+          <div>
+            <h2>暂时没有符合条件的案例</h2>
+            <p>换一个城市，或提交你的经历帮助后来的人。</p>
+            <small>当前收录：{allCasesCount} 个案例</small>
+          </div>
         </div>
       </section>
     )
@@ -359,6 +384,22 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
         ),
     [dataset.records]
   )
+  if (!cases.length)
+    return (
+      <div className={`${styles.view} ${styles.hallView}`}>
+        <HallWelcomeDialog caseCount={0} updatedAt={dataset.snapshotDate} />
+        <header className={styles.hallIntro}>
+          <div className={styles.hallIntroCopy}>
+            <h1>2026年度白宫严选中国硕博</h1>
+          </div>
+        </header>
+        <section className={styles.hallEmpty} aria-live="polite">
+          <p>这里还没有新的记录</p>
+          <strong>下一位进入名人堂的人，可能就是你。</strong>
+          <SubmitCaseButton />
+        </section>
+      </div>
+    )
   const podiumCases = [cases[1], cases[0], cases[2]].filter(Boolean)
   const eliteCases = cases.slice(3, 10)
   const standardCases = cases.slice(10)
@@ -368,6 +409,7 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
 
   return (
     <div className={`${styles.view} ${styles.hallView}`}>
+      <HallWelcomeDialog caseCount={cases.length} updatedAt={dataset.snapshotDate} />
       <header className={styles.hallIntro}>
         <div className={styles.hallIntroCopy}>
           <h1>2026年度白宫严选中国硕博</h1>

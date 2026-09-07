@@ -46,6 +46,8 @@ export type AdminStats = {
   pending: number
   rejected: number
   lastPublishedAt: string | null
+  pendingUpdateRequests: number | null
+  updateRequestsError: string | null
 }
 
 export async function getAdminStats() {
@@ -69,6 +71,11 @@ export async function getAdminStats() {
     .limit(1)
     .maybeSingle()
 
+  const { count: pendingUpdateRequests, error: updateRequestsError } = await supabase
+    .from('case_update_requests')
+    .select('id', { count: 'exact', head: true })
+    .in('status', ['pending', 'reviewing'])
+
   const error = entries.find((entry) => entry.error)?.error
   if (error || lastPublishedError) return { stats: null, error: '暂时无法读取审核统计。' }
 
@@ -76,6 +83,8 @@ export async function getAdminStats() {
     stats: {
       ...Object.fromEntries(entries.map((entry) => [entry.visibility, entry.count])),
       lastPublishedAt: lastPublished?.published_at ?? null,
+      pendingUpdateRequests: updateRequestsError ? null : pendingUpdateRequests ?? 0,
+      updateRequestsError: updateRequestsError ? '暂时无法读取修改反馈待办。' : null,
     } as AdminStats,
     error: null,
   }
