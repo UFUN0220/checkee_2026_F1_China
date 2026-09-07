@@ -392,13 +392,7 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
                       setExpandedNoteId((current) => (current === item.id ? null : item.id))
                     }
                   />
-                  <div className={styles.podiumActions}>
-                    <DataDescription notice={notice} updatedAt={dataset.snapshotDate} />
-                    <div className={styles.podiumActionButtons}>
-                      <SubmitCaseButton />
-                      <ContactCaseDialogButton />
-                    </div>
-                  </div>
+                  <HallControlNav notice={notice} updatedAt={dataset.snapshotDate} />
                 </div>
               ) : (
                 <PodiumCard
@@ -469,6 +463,15 @@ function HallFields({ item }: { item: CheckeeRecord }) {
       <span className={styles.podiumSchool}>{item.school || '\u00a0'}</span>
       <span className={styles.podiumDate}>{formatDate(item.startDate)}</span>
     </>
+  )
+}
+
+function HallControlNav({ notice, updatedAt }: { notice: CheckmateDataNotice; updatedAt: string }) {
+  return (
+    <nav className={styles.podiumActions} aria-label="名人堂操作">
+      <SubmitCaseButton />
+      <ContactCaseDialogButton notice={notice} updatedAt={updatedAt} />
+    </nav>
   )
 }
 

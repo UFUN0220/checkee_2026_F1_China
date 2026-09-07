@@ -1,4 +1,4 @@
-"""Verify the generated Hall master dataset and its legacy migration."""
+"""Verify the published snapshot, generated Hall master, and legacy migration."""
 
 from __future__ import annotations
 
@@ -30,6 +30,8 @@ STATUSES = {"Check", "Approved", "Issued", "Refused"}
 SOURCES = {"legacy_excel", "submission_user", "admin_import"}
 VISIBILITIES = {"draft", "pending", "published", "rejected"}
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+RELEASE_VERSION = re.compile(r"^\d{8}-v\d{3}$")
+RELEASE_FILES = ("hall-master.json", "published-submissions.json", "release-meta.json")
 
 
 def load_json(path: Path):
@@ -56,8 +58,13 @@ def sort_records(records):
 
 
 def verify_dataset(dataset):
+    if not isinstance(dataset, dict):
+        raise ValueError("Hall dataset must be an object")
     if dataset.get("schemaVersion") != 1:
         raise ValueError("schemaVersion must be 1")
+    data_version = dataset.get("dataVersion")
+    if not isinstance(data_version, str) or not RELEASE_VERSION.fullmatch(data_version):
+        raise ValueError("dataVersion must match YYYYMMDD-vXXX")
     valid_date(dataset.get("generatedAt"), "generatedAt")
     if not dataset.get("sourceDescription"):
         raise ValueError("sourceDescription is required")
@@ -70,6 +77,8 @@ def verify_dataset(dataset):
     ids = set()
     anomalies = []
     for index, item in enumerate(records, start=1):
+        if not isinstance(item, dict):
+            raise ValueError(f"Record {index} must be an object")
         missing = REQUIRED_FIELDS - item.keys()
         if missing:
             raise ValueError(f"Record {index} is missing: {', '.join(sorted(missing))}")
@@ -90,6 +99,8 @@ def verify_dataset(dataset):
             raise ValueError(f"Record {index} has invalid source")
         if item["visibility"] not in VISIBILITIES:
             raise ValueError(f"Record {index} has invalid visibility")
+        if item["visibility"] != "published":
+            raise ValueError(f"Record {index} is not published and must not enter hall-master.json")
         if item["publishedAt"]:
             valid_date(item["publishedAt"], f"records[{index}].publishedAt")
         if item["visibility"] == "published" and not item["publishedAt"]:
@@ -99,10 +110,39 @@ def verify_dataset(dataset):
         if item["status"] == "Check" and item["endDate"] is None and item["waitingDays"] is None:
             raise ValueError(f"Check record {index} must have waitingDays when it is still open")
 
-    pending = [item for item in records if item["visibility"] == "pending"]
-    if pending:
-        raise ValueError("pending records must not be exported into hall-master.json")
     return records, anomalies
+
+
+def verify_published_snapshot(snapshot):
+    if not isinstance(snapshot, dict):
+        raise ValueError("published-submissions.json must contain an object")
+    if snapshot.get("schemaVersion") != 1:
+        raise ValueError("published-submissions.json schemaVersion must be 1")
+    valid_date(snapshot.get("generatedAt"), "published-submissions.generatedAt")
+    records = snapshot.get("records")
+    if not isinstance(records, list):
+        raise ValueError("published-submissions.records must be an array")
+
+    ids = set()
+    for index, item in enumerate(records, start=1):
+        if not isinstance(item, dict):
+            raise ValueError(f"published-submissions.records[{index}] must be an object")
+        missing = REQUIRED_FIELDS - item.keys()
+        extra = item.keys() - REQUIRED_FIELDS
+        if missing or extra:
+            details = []
+            if missing:
+                details.append("missing: " + ", ".join(sorted(missing)))
+            if extra:
+                details.append("unexpected: " + ", ".join(sorted(extra)))
+            raise ValueError(f"published-submissions.records[{index}] schema mismatch ({'; '.join(details)})")
+        if item["id"] in ids:
+            raise ValueError(f"Duplicate published submission id: {item['id']}")
+        ids.add(item["id"])
+        if item["visibility"] != "published":
+            raise ValueError(f"published-submissions.records[{index}] must be published")
+
+    return records
 
 
 def compare_legacy(old_dataset, records):
@@ -126,16 +166,146 @@ def compare_legacy(old_dataset, records):
         raise ValueError("Top 3 changed during migration")
 
 
+def compare_published_snapshot(snapshot_records, legacy_dataset, hall_records):
+    legacy_records = legacy_dataset.get("records", [])
+    legacy_ids = {item["id"] for item in legacy_records}
+    snapshot_ids = {item["id"] for item in snapshot_records}
+    if legacy_ids & snapshot_ids:
+        duplicate = sorted(legacy_ids & snapshot_ids)[0]
+        raise ValueError(f"Published snapshot id overlaps legacy record: {duplicate}")
+
+    hall_ids = {item["id"] for item in hall_records}
+    expected_ids = legacy_ids | snapshot_ids
+    missing = expected_ids - hall_ids
+    extra = hall_ids - expected_ids
+    if missing:
+        raise ValueError(f"Hall master is missing merged record: {sorted(missing)[0]}")
+    if extra:
+        raise ValueError(f"Hall master contains an unexpected record: {sorted(extra)[0]}")
+    if len(hall_records) - len(legacy_records) != len(snapshot_records):
+        raise ValueError(
+            "Hall merge count changed unexpectedly: "
+            f"legacy={len(legacy_records)}, snapshot={len(snapshot_records)}, hall={len(hall_records)}"
+        )
+
+    by_id = {item["id"]: item for item in hall_records}
+    for snapshot_record in snapshot_records:
+        if by_id[snapshot_record["id"]] != snapshot_record:
+            raise ValueError(f"Published snapshot record differs in Hall master: {snapshot_record['id']}")
+
+
+def release_sort_key(path):
+    match = RELEASE_VERSION.fullmatch(path.name)
+    if not match:
+        raise ValueError(f"Invalid release directory name: {path.name}")
+    return path.name
+
+
+def verify_release_meta(meta, release_dir, snapshot_records, hall_records):
+    if not isinstance(meta, dict):
+        raise ValueError(f"{release_dir.name}/release-meta.json must contain an object")
+    if meta.get("schemaVersion") != 1:
+        raise ValueError(f"{release_dir.name} release-meta schemaVersion must be 1")
+    if meta.get("version") != release_dir.name or not RELEASE_VERSION.fullmatch(meta.get("version", "")):
+        raise ValueError(f"{release_dir.name} release-meta version is invalid")
+    valid_date(meta.get("generatedAt"), f"{release_dir.name}.generatedAt")
+
+    legacy_count = sum(record["source"] == "legacy_excel" for record in hall_records)
+    expected_sources = [
+        source
+        for source in ("legacy_excel", "submission_user", "admin_import")
+        if any(record["source"] == source for record in hall_records)
+    ]
+    expected_counts = {
+        "legacyCount": legacy_count,
+        "submissionCount": len(snapshot_records),
+        "totalCount": len(hall_records),
+    }
+    for field, expected in expected_counts.items():
+        if meta.get(field) != expected:
+            raise ValueError(f"{release_dir.name} {field} does not match release contents")
+    if meta.get("source") != expected_sources:
+        raise ValueError(f"{release_dir.name} source does not match release contents")
+    if len(hall_records) != legacy_count + len(snapshot_records):
+        raise ValueError(f"{release_dir.name} total count does not equal legacy plus submissions")
+
+    hall_by_id = {record["id"]: record for record in hall_records}
+    for snapshot_record in snapshot_records:
+        if snapshot_record["id"] not in hall_by_id:
+            raise ValueError(f"{release_dir.name} is missing snapshot record {snapshot_record['id']}")
+        if hall_by_id[snapshot_record["id"]] != snapshot_record:
+            raise ValueError(f"{release_dir.name} snapshot record differs from Hall master")
+
+
+def verify_release_history(releases_dir, current_master, current_snapshot):
+    if not releases_dir.is_dir():
+        raise ValueError(f"Release directory does not exist: {releases_dir}")
+    release_dirs = [path for path in releases_dir.iterdir() if path.is_dir()]
+    if not release_dirs:
+        raise ValueError("No Hall releases found")
+    for path in release_dirs:
+        release_sort_key(path)
+
+    seen_versions = set()
+    for release_dir in sorted(release_dirs, key=release_sort_key):
+        missing_files = [name for name in RELEASE_FILES if not (release_dir / name).is_file()]
+        if missing_files:
+            raise ValueError(f"{release_dir.name} is missing: {', '.join(missing_files)}")
+
+        meta = load_json(release_dir / "release-meta.json")
+        version = meta.get("version") if isinstance(meta, dict) else None
+        if version in seen_versions:
+            raise ValueError(f"Duplicate release version: {version}")
+        seen_versions.add(version)
+
+        snapshot_records = verify_published_snapshot(load_json(release_dir / "published-submissions.json"))
+        hall_records, _ = verify_dataset(load_json(release_dir / "hall-master.json"))
+        verify_release_meta(meta, release_dir, snapshot_records, hall_records)
+        release_hall = load_json(release_dir / "hall-master.json")
+        if release_hall.get("dataVersion") != release_dir.name:
+            raise ValueError(f"{release_dir.name} Hall master dataVersion does not match directory")
+        if release_hall.get("generatedAt") != meta.get("generatedAt"):
+            raise ValueError(f"{release_dir.name} generatedAt does not match release-meta.json")
+
+    latest_dir = max(release_dirs, key=release_sort_key)
+    latest_hall = load_json(latest_dir / "hall-master.json")
+    latest_snapshot = load_json(latest_dir / "published-submissions.json")
+    if latest_hall != current_master:
+        raise ValueError("Latest release hall-master.json differs from current hall-master.json")
+    if latest_snapshot != current_snapshot:
+        raise ValueError("Latest release published-submissions.json differs from current snapshot")
+    return latest_dir.name
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("master", type=Path, nargs="?", default=Path("data/checkmate/hall-master.json"))
     parser.add_argument("--legacy", type=Path, default=Path("data/checkmate/ufun_checkee_pure_processed.json"))
+    parser.add_argument(
+        "--published-snapshot",
+        type=Path,
+        default=Path("data/checkmate/published-submissions.json"),
+    )
+    parser.add_argument(
+        "--releases-dir",
+        type=Path,
+        default=Path("data/checkmate/releases"),
+    )
     args = parser.parse_args()
     dataset = load_json(args.master)
     records, anomalies = verify_dataset(dataset)
-    compare_legacy(load_json(args.legacy), records)
+    legacy_dataset = load_json(args.legacy)
+    compare_legacy(legacy_dataset, records)
+    current_snapshot = load_json(args.published_snapshot)
+    snapshot_records = verify_published_snapshot(current_snapshot)
+    compare_published_snapshot(snapshot_records, legacy_dataset, records)
+    latest_version = verify_release_history(args.releases_dir, dataset, current_snapshot)
     sorted_records = sort_records(records)
-    print(f"Verified {len(records)} Hall records; published={len(records)}; pending=0")
+    print(
+        f"Verified published-submissions={len(snapshot_records)}; "
+        f"legacy={len(legacy_dataset.get('records', []))}; hall={len(records)}; "
+        f"latest-release={latest_version}; pending=0; rejected=0"
+    )
     print("Top 3: " + ", ".join(f"{item['id']} ({item['waitingDays']})" for item in sorted_records[:3]))
     if anomalies:
         print("Warnings (preserved legacy anomalies):")

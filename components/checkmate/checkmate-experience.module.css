@@ -646,9 +646,6 @@
   font-weight: 800;
   letter-spacing: 0.2em;
 }
-.hallIntro > .dataNoticePopover {
-  top: 0.15rem;
-}
 .submitCaseButton {
   display: inline-flex;
   align-items: center;
@@ -710,6 +707,82 @@
 }
 .contactDialogPanel {
   width: min(100%, 34rem);
+}
+.contactDataNotice {
+  margin: 0 0 1rem;
+  border-left: 2px solid color-mix(in srgb, var(--checkmate-border) 68%, var(--checkmate-accent) 32%);
+  padding: 0.1rem 0 0.1rem 0.85rem;
+}
+.contactDataNotice h3 {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.contactDataNotice p {
+  margin: 0.42rem 0 0;
+  color: var(--checkmate-muted);
+  font-size: 0.74rem;
+  line-height: 1.6;
+}
+.contactDataNotice .contactDataNoticeUpdated {
+  margin-top: 0.35rem;
+  font-size: 0.68rem;
+}
+.contactDataStatusList {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.7rem 0 0;
+}
+.contactDataStatusItem {
+  display: grid;
+  grid-template-columns: minmax(7.2rem, auto) minmax(0, 1fr);
+  gap: 0.65rem;
+  align-items: start;
+}
+.contactDataStatusItem dt {
+  width: max-content;
+  max-width: 100%;
+  border: 1px solid var(--checkmate-border);
+  border-radius: 999px;
+  padding: 0.18rem 0.42rem;
+  color: var(--checkmate-muted);
+  background: color-mix(in srgb, var(--checkmate-surface) 70%, transparent);
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.contactDataStatusApproved {
+  border-color: color-mix(in srgb, rgb(61 132 127 / 0.2) 70%, var(--checkmate-border));
+  color: rgb(46 113 78 / 0.9);
+  background: rgb(221 244 240 / 0.58);
+}
+.contactDataStatusIssue {
+  background: color-mix(in srgb, rgb(226 244 235 / 0.6) 40%, var(--checkmate-surface));
+}
+.contactDataStatusRefused {
+  border-color: color-mix(in srgb, rgb(180 70 70 / 0.2) 70%, var(--checkmate-border));
+  color: rgb(140 40 40 / 0.85);
+  background: rgb(180 70 70 / 0.08);
+}
+.contactDataStatusItem dd {
+  margin: 0;
+  padding-top: 0.2rem;
+  color: var(--checkmate-muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+.contactFeedbackSection {
+  border-top: 1px solid var(--checkmate-rule);
+  padding-top: 1rem;
+}
+.contactSectionTitle {
+  margin: 0 0 0.55rem;
+  color: var(--color-ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 .contactDialogCopy {
   margin: 0 0 0.85rem;
@@ -776,11 +849,40 @@
   box-shadow: 0 24px 70px rgb(42 35 25 / 0.16);
   backdrop-filter: blur(20px);
 }
+.submitCaseDialogPanel {
+  --checkmate-surface: rgb(255 255 255 / 0.7);
+  --checkmate-surface-strong: rgb(255 255 255 / 0.88);
+  --checkmate-border: rgb(69 65 55 / 0.11);
+  --checkmate-rule: rgb(69 65 55 / 0.09);
+  --checkmate-muted: #77746b;
+  --checkmate-accent: #c24a2d;
+  padding-bottom: calc(clamp(1.2rem, 3vw, 1.7rem) + env(safe-area-inset-bottom));
+  animation: submit-case-modal-enter 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes submit-case-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+:global(.dark) .submitCaseDialogPanel {
+  --checkmate-surface: rgb(36 36 31 / 0.84);
+  --checkmate-surface-strong: rgb(46 46 40 / 0.96);
+  --checkmate-border: rgb(255 255 255 / 0.11);
+  --checkmate-rule: rgb(255 255 255 / 0.08);
+  --checkmate-muted: #aaa69b;
+}
 .submitDialogHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.7rem;
   margin-bottom: 1.2rem;
 }
 .submitDialogTitle {
@@ -815,12 +917,12 @@
 .submitFormGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.85rem 0.9rem;
+  gap: 0.72rem 0.9rem;
 }
 .submitField {
   display: grid;
   min-width: 0;
-  gap: 0.35rem;
+  gap: 0.25rem;
   color: var(--color-ink);
   font-size: 0.76rem;
   font-weight: 700;
@@ -830,6 +932,9 @@
   font-size: 0.64rem;
   font-style: normal;
   font-weight: 500;
+}
+.submitStatusHint {
+  margin-left: 0.35rem;
 }
 .submitField input,
 .submitField select,
@@ -879,7 +984,11 @@
   font-weight: 500;
 }
 .submitFieldWide {
-  grid-column: 1 / -1;
+  grid-column: auto;
+}
+.submitFieldHidden {
+  visibility: hidden;
+  pointer-events: none;
 }
 .submitFormError {
   margin-top: 0.85rem;
@@ -910,6 +1019,23 @@
   color: #fffaf4;
   background: var(--checkmate-accent);
 }
+.submitCaseDialogPanel .submitFormActions {
+  align-items: center;
+  width: 100%;
+  margin-top: 0.9rem;
+  padding-bottom: 0.15rem;
+}
+.submitCaseDialogPanel .submitSecondaryButton,
+.submitCaseDialogPanel .submitPrimaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.6rem;
+  flex: 0 0 auto;
+}
+.submitCaseDialogPanel .submitPrimaryButton {
+  visibility: visible;
+}
 .submitSecondaryButton:hover:not(:disabled),
 .submitSecondaryButton:focus-visible,
 .submitPrimaryButton:hover:not(:disabled),
@@ -924,6 +1050,16 @@
 .submitPrimaryButton:disabled {
   cursor: not-allowed;
   opacity: 0.45;
+}
+.submitCaseDialogPanel .submitPrimaryButton:disabled {
+  opacity: 0.72;
+}
+.submitCaseDialogPanel .submitPrimaryButton {
+  background: var(--checkmate-accent);
+}
+.submitCaseDialogPanel .submitPrimaryButton:hover:not(:disabled),
+.submitCaseDialogPanel .submitPrimaryButton:focus-visible {
+  background: color-mix(in srgb, var(--checkmate-accent) 88%, black);
 }
 .submitDialogClose:focus-visible,
 .submitCaseButton:focus-visible,
@@ -999,30 +1135,24 @@
   position: absolute;
   z-index: 3;
   right: auto;
-  bottom: calc(-1 * var(--podium-lift));
+  bottom: calc(-1 * var(--podium-lift) + clamp(2.25rem, 3vw, 2.75rem));
   left: 50%;
-  display: grid;
-  grid-template-rows: auto auto;
+  display: flex;
   min-width: 0;
   align-items: center;
   justify-content: center;
-  justify-items: center;
+  flex-wrap: wrap;
   box-sizing: border-box;
   width: min(21.5rem, calc(100% + 3rem));
   margin: 0;
   overflow: visible;
-  gap: 0.72rem;
-  border: 1px solid rgb(255 255 255 / 0.26);
-  border-radius: 1.35rem;
+  gap: 1rem;
+  border: 0;
+  border-radius: 0;
   padding: 0.72rem 0.78rem 0.8rem;
-  background:
-    radial-gradient(circle at 50% 0%, rgb(255 255 255 / 0.36), transparent 58%),
-    linear-gradient(145deg, rgb(255 255 255 / 0.2), color-mix(in srgb, var(--jade-control) 52%, transparent));
-  box-shadow:
-    0 9px 24px rgb(49 79 68 / 0.07),
-    0 24px 44px color-mix(in srgb, var(--jade-control) 44%, transparent),
-    inset 0 1px 0 rgb(255 255 255 / 0.5),
-    inset 0 -10px 18px rgb(62 107 91 / 0.035);
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
   transform: translateX(-50%);
   isolation: isolate;
 }
@@ -1039,43 +1169,31 @@
   opacity: 0.72;
   pointer-events: none;
 }
-.podiumActionButtons {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  min-width: 0;
-  width: 100%;
-  gap: 0.7rem;
-}
 .podiumActions .submitCaseButton,
 .podiumActions .contactCaseButton {
   --jade-button-tint: var(--jade-control);
   box-sizing: border-box;
   position: relative;
-  width: 100%;
+  width: auto;
+  flex: 1 1 0;
   min-width: 0;
   min-height: 2.875rem;
-  border: 1px solid color-mix(in srgb, var(--checkmate-border) 62%, var(--jade-button-tint) 38%);
+  border: 0;
   border-radius: 0.9rem;
   padding: 0.68rem 0.72rem;
   color: color-mix(in srgb, var(--color-ink) 88%, var(--jade-button-tint) 12%);
-  background:
-    radial-gradient(circle at 18% 10%, rgb(255 255 255 / 0.6), transparent 48%),
-    linear-gradient(135deg,
-      color-mix(in srgb, var(--checkmate-surface-strong) 72%, var(--jade-button-tint) 28%),
-      color-mix(in srgb, var(--checkmate-surface) 78%, var(--jade-button-tint) 22%));
-  box-shadow:
-    0 4px 10px rgb(42 35 25 / 0.05),
-    0 12px 22px color-mix(in srgb, var(--jade-button-tint) 42%, transparent),
-    inset 0 1px 0 rgb(255 255 255 / 0.62),
-    inset 0 -5px 10px color-mix(in srgb, var(--jade-button-tint) 18%, transparent);
-  font-size: 0.75rem;
-  font-weight: 700;
+  background: transparent;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--jade-button-tint) 14%, transparent);
+  filter: drop-shadow(0 3px 8px color-mix(in srgb, var(--jade-button-tint) 9%, transparent));
+  font-family: 'heishenhua', var(--font-nunito), sans-serif;
+  font-size: 1.28rem;
+  font-weight: 400;
   line-height: 1.2;
   transition:
-    border-color 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    background 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 360ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    border-color 220ms ease,
+    background 220ms ease,
+    box-shadow 240ms ease,
+    color 180ms ease;
 }
 .podiumActions .submitCaseButton {
   --jade-button-tint: var(--jade-warm);
@@ -1089,59 +1207,28 @@
 .podiumActions .submitCaseButton:focus-visible,
 .podiumActions .contactCaseButton:hover,
 .podiumActions .contactCaseButton:focus-visible {
-  border-color: color-mix(in srgb, var(--checkmate-border) 46%, var(--jade-button-tint) 54%);
+  background: color-mix(in srgb, var(--jade-button-tint) 7%, transparent);
+  box-shadow: 0 9px 22px color-mix(in srgb, var(--jade-button-tint) 19%, transparent);
+}
+.podiumActions .submitCaseButton[data-open='true'],
+.podiumActions .contactCaseButton[data-open='true'] {
+  border: 1px solid color-mix(in srgb, var(--jade-button-tint) 32%, transparent);
   background:
-    radial-gradient(circle at 18% 10%, rgb(255 255 255 / 0.74), transparent 48%),
-    linear-gradient(135deg,
-      color-mix(in srgb, var(--checkmate-surface-strong) 64%, var(--jade-button-tint) 36%),
-      color-mix(in srgb, var(--checkmate-surface) 69%, var(--jade-button-tint) 31%));
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--jade-button-tint) 24%, transparent), transparent 72%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 82%, var(--jade-button-tint) 18%),
+      color-mix(in srgb, var(--checkmate-surface) 86%, var(--jade-button-tint) 14%)
+    );
   box-shadow:
-    0 8px 16px rgb(42 35 25 / 0.07),
-    0 16px 26px color-mix(in srgb, var(--jade-button-tint) 52%, transparent),
-    inset 0 1px 0 rgb(255 255 255 / 0.74);
-  transform: translateY(-2px);
-}
-.podiumActions .dataNoticeTrigger {
-  min-height: 0;
-  border: 1px solid color-mix(in srgb, var(--checkmate-border) 64%, var(--jade-control) 36%);
-  border-radius: 0.72rem;
-  justify-content: center;
-  padding: 0.46rem 0.82rem;
-  color: color-mix(in srgb, var(--color-ink) 68%, var(--jade-control) 32%);
-  background:
-    radial-gradient(circle at 22% 12%, rgb(255 255 255 / 0.42), transparent 52%),
-    linear-gradient(135deg, color-mix(in srgb, var(--checkmate-surface-strong) 74%, white 26%), color-mix(in srgb, var(--checkmate-surface-strong) 72%, var(--jade-control) 28%));
-  box-shadow:
-    0 4px 10px rgb(42 35 25 / 0.035),
-    0 9px 18px color-mix(in srgb, var(--jade-control) 36%, transparent),
-    inset 0 1px 0 rgb(255 255 255 / 0.46);
-  font-size: 0.74rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  transition:
-    border-color 260ms cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.podiumActions .dataNoticeTrigger:hover,
-.podiumActions .dataNoticeTrigger:focus-visible {
-  border-color: color-mix(in srgb, var(--checkmate-border) 46%, var(--jade-control) 54%);
-  box-shadow:
-    0 6px 14px rgb(42 35 25 / 0.055),
-    0 0 18px color-mix(in srgb, var(--jade-control) 46%, transparent),
-    inset 0 1px 0 rgb(255 255 255 / 0.55);
-  transform: translateY(-1px);
-}
-.podiumActions > .dataNoticePopover {
-  position: relative;
-  top: auto;
-  right: auto;
-  z-index: 1;
-  margin: 0;
+    0 8px 20px color-mix(in srgb, var(--jade-button-tint) 26%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.48),
+    inset 0 -6px 12px color-mix(in srgb, var(--jade-button-tint) 12%, transparent);
 }
 .podiumCard {
   --medal-edge: rgb(226 244 235 / 0.62);
   --medal-sheen: rgb(248 255 250 / 0.4);
+  --medal-toplight: rgb(255 255 255 / 0.16);
   --medal-ambient: rgb(91 136 120 / 0.16);
   position: relative;
   display: flex;
@@ -1174,6 +1261,7 @@
   inset: 0.42rem;
   border-radius: inherit;
   background:
+    radial-gradient(circle at 70% 7%, var(--medal-toplight), transparent 42%),
     radial-gradient(circle at 78% 14%, var(--medal-sheen), transparent 38%),
     radial-gradient(ellipse at 32% 62%, rgb(255 255 255 / 0.12), transparent 42%),
     linear-gradient(135deg, transparent 30%, rgb(255 255 255 / 0.13) 48%, transparent 66%);
@@ -1198,9 +1286,11 @@
 .podiumRank1 {
   --medal-edge: rgb(255 247 211 / 0.8);
   --medal-sheen: rgb(255 255 247 / 0.68);
+  --medal-toplight: rgb(255 246 214 / 0.2);
   --medal-ambient: rgb(193 167 91 / 0.18);
   --podium-hover-glow: rgb(255 241 196 / 0.78);
   height: auto;
+  transform: translateY(-10px);
   border-color: color-mix(in srgb, #cbb16b 42%, var(--medal-edge));
   background:
     radial-gradient(circle at 78% 13%, rgb(255 255 249 / 0.9), transparent 32%),
@@ -1210,12 +1300,13 @@
     0 4px 10px rgb(117 96 43 / 0.1),
     0 20px 50px rgb(193 167 91 / 0.16),
     inset 0 2px 0 rgb(255 255 255 / 0.92),
-    inset 0 -16px 26px rgb(126 101 43 / 0.1);
+    inset 0 -16px 26px rgb(126 101 43 / 0.12);
 }
 .podiumRank2 {
   grid-area: second;
   --medal-edge: rgb(231 247 242 / 0.78);
   --medal-sheen: rgb(239 255 250 / 0.68);
+  --medal-toplight: rgb(224 249 239 / 0.18);
   --medal-ambient: rgb(102 150 143 / 0.17);
   --podium-hover-glow: rgb(235 244 250 / 0.62);
   border-color: color-mix(in srgb, #9dbdb5 42%, var(--medal-edge));
@@ -1227,12 +1318,13 @@
     0 4px 10px rgb(61 94 86 / 0.1),
     0 20px 50px rgb(102 150 143 / 0.15),
     inset 0 2px 0 rgb(255 255 255 / 0.94),
-    inset 0 -16px 26px rgb(61 103 95 / 0.1);
+    inset 0 -16px 26px rgb(61 103 95 / 0.12);
 }
 .podiumRank3 {
   grid-area: third;
   --medal-edge: rgb(255 231 224 / 0.78);
   --medal-sheen: rgb(255 242 235 / 0.7);
+  --medal-toplight: rgb(255 220 207 / 0.18);
   --medal-ambient: rgb(160 94 83 / 0.17);
   --podium-hover-glow: rgb(255 228 207 / 0.66);
   border-color: color-mix(in srgb, #c78f83 42%, var(--medal-edge));
@@ -1244,7 +1336,7 @@
     0 4px 10px rgb(105 63 55 / 0.1),
     0 20px 50px rgb(160 94 83 / 0.15),
     inset 0 2px 0 rgb(255 255 255 / 0.9),
-    inset 0 -16px 26px rgb(111 58 50 / 0.1);
+    inset 0 -16px 26px rgb(111 58 50 / 0.12);
 }
 .podiumRank1::after {
   background: var(--medal-ambient);
@@ -1265,14 +1357,7 @@
   gap: 0.28rem;
   width: calc(100% - 1rem);
   margin: 0;
-  border: 1px solid rgb(255 255 255 / 0.2);
-  border-radius: 1.25rem;
   padding: clamp(0.75rem, 1.4vw, 1rem) 0.75rem 0.62rem;
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.14), rgb(255 255 255 / 0.035));
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.24),
-    inset 0 -8px 16px rgb(62 107 91 / 0.045);
-  backdrop-filter: blur(3px);
   text-align: center;
   font-family: 'FangSong', '仿宋', 'FangSong_GB2312', 'STFangsong', serif;
   font-weight: 400;
@@ -1434,7 +1519,7 @@
   font-weight: 400;
   line-height: 0.82;
   letter-spacing: -0.06em;
-  transform: translateX(-50%);
+  transform: translate(-50%, -9px);
 }
 .podiumCard .hallProfile {
   gap: 0.12rem;
@@ -1465,19 +1550,15 @@
   letter-spacing: 0.22em;
 }
 .podiumDuration.hallWait {
-  display: grid;
-  grid-template-areas:
-    'value'
-    'label';
-  align-items: center;
-  justify-items: center;
-  gap: 0.24rem;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.45rem;
   width: max-content;
   min-width: 0;
 }
 .podiumDuration .hallWaitValue {
-  grid-area: value;
-  gap: 0.16rem;
+  gap: 0.1rem;
   color: inherit;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: clamp(2.55rem, 4.6vw, 3.85rem);
@@ -1488,18 +1569,8 @@
 .podiumDuration .hallWaitValue small {
   color: color-mix(in srgb, currentColor 62%, var(--checkmate-muted));
   font-family: 'FangSong', '仿宋', 'FangSong_GB2312', 'STFangsong', serif;
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-}
-.podiumDuration::after {
-  grid-area: label;
-  color: color-mix(in srgb, var(--color-ink) 46%, transparent);
-  content: 'WAIT DAYS';
-  font-family: var(--font-mono, monospace);
-  font-size: 0.47rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  line-height: 1;
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
 }
 .podiumDuration .apBadge {
   position: absolute;
@@ -1584,33 +1655,55 @@
   padding-bottom: 0.85rem;
 }
 .hallSectionDivider {
+  --hall-divider-space: clamp(1rem, 2vw, 1.5rem);
   display: flex;
   align-items: center;
   gap: clamp(0.7rem, 1.8vw, 1.2rem);
   width: 100%;
-  margin: clamp(1rem, 2vw, 1.5rem) auto;
+  margin: var(--hall-divider-space) auto;
 }
 .hallSectionDividerLine {
   flex: 1 1 auto;
   min-width: 0;
   height: 1px;
+}
+.hallSectionDividerLine:first-child {
   background: linear-gradient(
     to right,
-    transparent,
-    color-mix(in srgb, var(--checkmate-accent) 20%, var(--checkmate-rule)),
-    transparent
+    transparent 0%,
+    color-mix(in srgb, var(--checkmate-rule) 54%, var(--checkmate-border)) 66%,
+    color-mix(in srgb, var(--checkmate-muted) 42%, var(--checkmate-rule)) 100%
+  );
+}
+.hallSectionDividerLine:last-child {
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--checkmate-muted) 42%, var(--checkmate-rule)) 0%,
+    color-mix(in srgb, var(--checkmate-rule) 54%, var(--checkmate-border)) 34%,
+    transparent 100%
   );
 }
 .hallSectionDividerText {
   flex: 0 1 auto;
   min-width: 0;
-  color: color-mix(in srgb, var(--color-ink) 72%, var(--checkmate-muted));
+  color: var(--color-ink);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-ink) 94%, var(--checkmate-muted)) 0%,
+    color-mix(in srgb, var(--color-ink) 34%, var(--checkmate-muted) 66%) 56%,
+    color-mix(in srgb, var(--checkmate-muted) 80%, rgb(226 244 235 / 0.36) 20%) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-family: 'heishenhua', var(--font-nunito), sans-serif;
   font-size: clamp(1.7rem, 2.7vw, 2rem);
   line-height: 1.5;
   letter-spacing: 0.02em;
   text-align: center;
   white-space: nowrap;
+  overflow-wrap: anywhere;
+  text-shadow: 0 1px 1px color-mix(in srgb, var(--checkmate-muted) 16%, transparent);
 }
 .hallSectionHeading h2 {
   margin: 0;
@@ -1624,7 +1717,7 @@
 }
 .eliteList {
   display: grid;
-  gap: 0.7rem;
+  gap: 0.9rem;
 }
 .eliteRow,
 .standardRow {
@@ -1642,14 +1735,23 @@
   grid-template-columns:
     3rem minmax(5rem, 0.65fr) minmax(6rem, 0.8fr) minmax(5.5rem, 0.72fr) 4rem 4rem
     minmax(12rem, 2.4fr) 4.5rem;
-  gap: clamp(0.6rem, 1.35vw, 1rem);
+  gap: clamp(0.75rem, 1.5vw, 1.15rem);
   align-items: center;
-  min-height: 4.55rem;
+  min-height: 4.7rem;
   border-radius: 18px;
-  padding: 0.82rem 0.9rem;
+  border-color: color-mix(in srgb, var(--checkmate-rule) 72%, var(--checkmate-border));
+  padding: 0.88rem 1rem;
+  background:
+    radial-gradient(circle at 92% 16%, rgb(226 244 235 / 0.16), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 86%, rgb(226 244 235 / 0.14)),
+      color-mix(in srgb, var(--checkmate-surface) 90%, rgb(102 150 143 / 0.12))
+    );
   box-shadow:
-    0 8px 24px rgb(89 69 44 / 0.045),
-    inset 0 1px 0 rgb(255 255 255 / 0.32);
+    0 8px 24px rgb(61 94 86 / 0.07),
+    0 18px 36px rgb(102 150 143 / 0.07),
+    inset 0 1px 0 rgb(255 255 255 / 0.38);
   transition:
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
     background 360ms ease,
@@ -1661,10 +1763,10 @@
   inset: 0.08rem 0;
   border-radius: inherit;
   background:
-    radial-gradient(circle at 82% 12%, rgb(255 244 214 / 0.42), transparent 48%),
+    radial-gradient(circle at 88% 10%, rgb(248 255 250 / 0.3), transparent 48%),
     linear-gradient(180deg, rgb(255 255 255 / 0.12), transparent 62%);
   content: '';
-  opacity: 0;
+  opacity: 0.3;
   pointer-events: none;
   transition: opacity 380ms ease;
 }
@@ -1685,7 +1787,7 @@
 .eliteIdentity {
   display: grid;
   min-width: 0;
-  gap: 0.55rem;
+  gap: 0.65rem;
 }
 .eliteDuration {
   display: grid;
@@ -1729,12 +1831,17 @@
 }
 .standardList {
   display: grid;
-  gap: 0.55rem;
+  gap: 0.5rem;
   border: 0;
 }
 .standardRow {
   min-height: 3.35rem;
-  padding: 0.58rem 0.75rem;
+  border-color: color-mix(in srgb, var(--checkmate-rule) 68%, transparent);
+  padding: 0.54rem 0.7rem;
+  background: color-mix(in srgb, var(--checkmate-surface) 30%, transparent);
+  box-shadow:
+    0 3px 12px rgb(89 69 44 / 0.025),
+    inset 0 1px 0 rgb(255 255 255 / 0.16);
   transition:
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
     background 360ms ease,
@@ -1747,6 +1854,12 @@
 .eliteRow.refusedRow,
 .standardRow.refusedRow {
   background: linear-gradient(135deg, rgb(180 70 70 / 0.16), rgb(180 70 70 / 0.07));
+}
+.standardRow.completedRow {
+  background: linear-gradient(135deg, rgb(80 160 100 / 0.1), rgb(80 160 100 / 0.04));
+}
+.standardRow.refusedRow {
+  background: linear-gradient(135deg, rgb(180 70 70 / 0.1), rgb(180 70 70 / 0.04));
 }
 .standardRow::before {
   position: absolute;
@@ -1858,23 +1971,44 @@
 }
 .eliteRow .standardLocationDegree {
   gap: 0.4rem;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  line-height: 1.35;
 }
 .eliteRow .standardMajor {
-  font-size: 0.92rem;
+  font-size: 0.96rem;
+  line-height: 1.35;
 }
 .eliteRow .standardSchool,
 .eliteRow .standardDates,
-.eliteRow .standardEndDate,
-.eliteRow .standardNote,
-.eliteRow .standardNoteButton {
-  font-size: 0.84rem;
-}
+  .eliteRow .standardEndDate,
+  .eliteRow .standardNote,
+  .eliteRow .standardNoteButton {
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
 .eliteRow .eliteRank {
-  font-size: 0.98rem;
+  font-size: 1rem;
 }
 .eliteRow .eliteDuration {
-  font-size: 1.08rem;
+  font-size: 1.12rem;
+}
+.eliteRow.completedRow {
+  background:
+    radial-gradient(circle at 90% 15%, rgb(80 160 100 / 0.14), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 84%, rgb(80 160 100 / 0.18)),
+      color-mix(in srgb, var(--checkmate-surface) 91%, rgb(80 160 100 / 0.08))
+    );
+}
+.eliteRow.refusedRow {
+  background:
+    radial-gradient(circle at 90% 15%, rgb(180 70 70 / 0.12), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 84%, rgb(180 70 70 / 0.18)),
+      color-mix(in srgb, var(--checkmate-surface) 91%, rgb(180 70 70 / 0.08))
+    );
 }
 .standardNote {
   min-width: 0;
@@ -1941,7 +2075,7 @@
     transform 140ms ease;
 }
 .standardNotePanel[data-closed] {
-  opacity: 0;
+  opacity: 0.24;
   transform: translateY(-0.25rem) scale(0.98);
 }
 .standardNotePanel strong {
@@ -1976,7 +2110,7 @@
 }
 @media (hover: hover) and (pointer: fine) {
   .podiumRank1:hover {
-    transform: translateY(-2px);
+    transform: translateY(-12px);
     box-shadow:
       0 5px 12px rgb(117 96 43 / 0.12),
       0 24px 50px rgb(193 167 91 / 0.2),
@@ -2018,11 +2152,17 @@
 
   .eliteRow:hover {
     z-index: 1;
-    background: rgb(255 251 240 / 0.28);
+    background:
+      radial-gradient(circle at 92% 14%, rgb(226 244 235 / 0.2), transparent 46%),
+      linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--checkmate-surface-strong) 82%, rgb(255 255 255 / 0.18)),
+        color-mix(in srgb, var(--checkmate-surface) 87%, rgb(102 150 143 / 0.14))
+      );
     box-shadow:
-      0 3px 9px rgb(89 69 44 / 0.045),
-      0 10px 22px rgb(174 139 79 / 0.05);
-    transform: translateY(-1px);
+      0 5px 12px rgb(89 69 44 / 0.06),
+      0 14px 28px rgb(102 150 143 / 0.1);
+    transform: translateY(-2px);
   }
   .eliteRow:hover::before {
     opacity: 0.62;
@@ -2034,8 +2174,8 @@
     transform: translateY(-1px);
   }
 .standardRow:hover::before {
-    opacity: 0.42;
-  }
+  opacity: 0.42;
+}
 }
 .eliteRow.completedRow:hover,
 .standardRow.completedRow:hover {
@@ -2044,6 +2184,36 @@
 .eliteRow.refusedRow:hover,
 .standardRow.refusedRow:hover {
   background: linear-gradient(135deg, rgb(180 70 70 / 0.2), rgb(180 70 70 / 0.09));
+}
+.eliteRow.completedRow:hover {
+  background:
+    radial-gradient(circle at 90% 15%, rgb(80 160 100 / 0.18), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 78%, rgb(80 160 100 / 0.22)),
+      color-mix(in srgb, var(--checkmate-surface) 89%, rgb(80 160 100 / 0.1))
+    );
+}
+.eliteRow.refusedRow:hover {
+  background:
+    radial-gradient(circle at 90% 15%, rgb(180 70 70 / 0.16), transparent 46%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 78%, rgb(180 70 70 / 0.22)),
+      color-mix(in srgb, var(--checkmate-surface) 89%, rgb(180 70 70 / 0.1))
+    );
+}
+.standardRow:hover {
+  background: color-mix(in srgb, var(--checkmate-surface) 46%, transparent);
+  box-shadow:
+    0 2px 8px rgb(89 69 44 / 0.022),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+.standardRow.completedRow:hover {
+  background: linear-gradient(135deg, rgb(80 160 100 / 0.14), rgb(80 160 100 / 0.06));
+}
+.standardRow.refusedRow:hover {
+  background: linear-gradient(135deg, rgb(180 70 70 / 0.14), rgb(180 70 70 / 0.06));
 }
 :global(.dark) .podiumCard {
   --medal-edge: rgb(217 242 229 / 0.24);
@@ -2063,15 +2233,10 @@
   --jade-control: rgb(126 180 157 / 0.22);
   --jade-warm: rgb(187 157 89 / 0.2);
   --jade-cool: rgb(92 151 139 / 0.22);
-  border-color: rgb(227 247 237 / 0.16);
-  background:
-    radial-gradient(circle at 50% 0%, rgb(234 255 245 / 0.13), transparent 58%),
-    linear-gradient(145deg, rgb(57 83 73 / 0.58), rgb(34 52 48 / 0.56));
-  box-shadow:
-    0 10px 26px rgb(0 0 0 / 0.22),
-    0 24px 44px color-mix(in srgb, var(--jade-control) 46%, transparent),
-    inset 0 1px 0 rgb(238 255 247 / 0.18),
-    inset 0 -10px 18px rgb(0 0 0 / 0.08);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 :global(.dark) .podiumRank1 {
   --medal-edge: rgb(245 227 166 / 0.42);
@@ -2105,7 +2270,7 @@
 }
 :global(.dark) .eliteRow::before {
   background:
-    radial-gradient(circle at 82% 12%, rgb(225 172 92 / 0.16), transparent 48%),
+    radial-gradient(circle at 88% 10%, rgb(232 255 242 / 0.12), transparent 48%),
     linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent 62%);
 }
 :global(.dark) .standardRow::before {
@@ -2137,13 +2302,17 @@
     background: rgb(255 228 190 / 0.025);
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.1);
   }
-  :global(.dark) .eliteRow.completedRow:hover,
-  :global(.dark) .standardRow.completedRow:hover {
+  :global(.dark) .eliteRow.completedRow:hover {
     background: linear-gradient(135deg, rgb(80 160 100 / 0.22), rgb(80 160 100 / 0.1));
   }
-  :global(.dark) .eliteRow.refusedRow:hover,
-  :global(.dark) .standardRow.refusedRow:hover {
+  :global(.dark) .standardRow.completedRow:hover {
+    background: linear-gradient(135deg, rgb(80 160 100 / 0.14), rgb(80 160 100 / 0.06));
+  }
+  :global(.dark) .eliteRow.refusedRow:hover {
     background: linear-gradient(135deg, rgb(180 70 70 / 0.22), rgb(180 70 70 / 0.1));
+  }
+  :global(.dark) .standardRow.refusedRow:hover {
+    background: linear-gradient(135deg, rgb(180 70 70 / 0.14), rgb(180 70 70 / 0.06));
   }
 }
 .secondaryButton,
@@ -2403,6 +2572,12 @@
   .submitFieldWide {
     grid-column: auto;
   }
+  .submitFieldHidden {
+    height: 0;
+    min-height: 0;
+    overflow: hidden;
+    gap: 0;
+  }
 
   .feature {
     padding-top: 1.8rem;
@@ -2599,22 +2774,18 @@
     padding-bottom: 0.2rem;
   }
   .hallIntro {
-    min-height: 6.2rem;
+    min-height: 5.8rem;
+    margin-bottom: 0.25rem;
   }
   .hallSectionDivider {
     gap: 0.45rem;
-    margin: 1rem auto;
+    --hall-divider-space: 0.65rem;
+    margin: var(--hall-divider-space) auto;
   }
   .hallSectionDividerText {
     max-width: 70%;
     font-size: clamp(1.35rem, 5.5vw, 1.55rem);
     white-space: normal;
-  }
-  .hallIntro > .dataNoticePopover {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 0;
   }
   .hallTransition {
     flex-direction: column;
@@ -2635,14 +2806,17 @@
       'first first'
       'second third';
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.65rem;
+    gap: 0.5rem;
     padding: 0;
   }
   .podiumChampion {
-    width: calc((100% - 0.65rem) / 2);
+    width: calc((100% - 0.5rem) / 2);
     justify-self: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
     margin-top: 0;
+  }
+  .podiumSection {
+    padding: 0.1rem 0 1.1rem;
   }
   .podiumActions {
     position: relative;
@@ -2650,15 +2824,10 @@
     right: auto;
     bottom: auto;
     left: auto;
-    grid-template-rows: auto auto;
     width: 100%;
-    gap: 0.35rem;
+    gap: 0.65rem;
+    padding: 0.35rem 0.4rem 0.45rem;
     transform: none;
-  }
-  .podiumActionButtons {
-    grid-template-columns: 1fr;
-    width: 100%;
-    gap: 0.5rem;
   }
   .podiumCard {
     aspect-ratio: 1 / 1;
@@ -2670,6 +2839,7 @@
     width: 100%;
     justify-self: stretch;
     height: auto;
+    transform: none;
   }
   .podiumContent {
     gap: 0.35rem 0.5rem;
@@ -2727,22 +2897,28 @@
   .eliteRow {
     grid-template-columns: 2.8rem minmax(0, 1fr) auto;
     gap: 0.45rem 0.65rem;
-    min-height: 6.75rem;
+    min-height: 6.9rem;
     border-radius: 16px;
-    padding: 0.82rem 0.78rem;
+    padding: 0.78rem 0.72rem;
   }
   .eliteRow .standardLocationDegree {
-    font-size: 0.92rem;
+    font-size: 0.96rem;
   }
   .eliteRow .standardMajor {
-    font-size: 0.88rem;
+    font-size: 0.92rem;
   }
   .eliteRow .standardSchool,
   .eliteRow .standardDates,
-  .eliteRow .standardEndDate,
-  .eliteRow .standardNote,
-  .eliteRow .standardNoteButton {
-    font-size: 0.8rem;
+    .eliteRow .standardEndDate,
+    .eliteRow .standardNote,
+    .eliteRow .standardNoteButton {
+    font-size: 0.82rem;
+  }
+  .eliteRow .eliteRank {
+    font-size: 0.98rem;
+  }
+  .eliteRow .eliteDuration {
+    font-size: 1.08rem;
   }
   .eliteIdentity {
     gap: 0.45rem;
@@ -2752,20 +2928,20 @@
     grid-row: 1 / span 2;
   }
   .eliteList {
-    gap: 0.45rem;
+    gap: 0.55rem;
   }
   .standardHeader {
     display: none;
   }
   .standardList {
-    gap: 0.45rem;
+    gap: 0.4rem;
   }
   .standardRow {
     grid-template-columns: 2.8rem minmax(0, 1fr) auto;
     gap: 0.45rem 0.65rem;
-    min-height: 6.45rem;
+    min-height: 6.3rem;
     border-radius: 14px;
-    padding: 0.72rem 0.75rem;
+    padding: 0.68rem 0.7rem;
   }
   .eliteRow .standardLocationDegree,
   .standardRow .standardLocationDegree {
@@ -2911,14 +3087,74 @@
     content: '平均';
   }
 }
+
+@media (max-width: 390px) {
+  .hallIntro {
+    min-height: 5.25rem;
+    margin-bottom: 0;
+  }
+
+  .podiumSection {
+    padding-bottom: 0.65rem;
+  }
+
+  .podiumGrid {
+    gap: 0.35rem;
+  }
+
+  .podiumChampion {
+    width: min(100%, 13.5rem);
+    gap: 0.18rem;
+  }
+
+  .podiumActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
+    padding: 0.18rem 0.2rem 0.25rem;
+  }
+
+  .podiumActions .submitCaseButton,
+  .podiumActions .contactCaseButton {
+    min-height: 2.35rem;
+    padding: 0.45rem 0.55rem;
+    font-size: 1.05rem;
+  }
+
+  .hallSectionDivider {
+    gap: 0.35rem;
+    --hall-divider-space: 0.45rem;
+    margin: var(--hall-divider-space) auto;
+  }
+
+  .hallSectionDividerText {
+    max-width: 72%;
+    font-size: clamp(1.25rem, 5.2vw, 1.45rem);
+    line-height: 1.35;
+  }
+
+  .podiumActions .submitCaseButton,
+  .podiumActions .contactCaseButton {
+    flex: 0 0 auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .submitCaseDialogPanel {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
   .cityCard,
   .cityCardActive,
   .podiumCard,
   .eliteRow,
   .standardRow,
   .secondaryButton,
-  .pagination button {
+  .pagination button,
+  .podiumActions .submitCaseButton,
+  .podiumActions .contactCaseButton {
     transition: none;
   }
 

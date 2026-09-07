@@ -58,8 +58,12 @@ pnpm dev
 | `BASE_PATH` | 否 | 部署在子路径时使用。 |
 | `EXPORT` | 否 | 按部署需求启用静态导出。 |
 | `UNOPTIMIZED` | 否 | 按部署需求关闭图片优化。 |
+| `ADMIN_PASSWORD` | 使用 Admin 时必需 | `/admin` 管理员登录密码，仅由服务端读取。 |
+| `ADMIN_SESSION_SECRET` | 否 | Admin session cookie 签名密钥；未设置时使用 `ADMIN_PASSWORD`，建议在线上单独设置。 |
 
 `SUPABASE_SECRET_KEY` 具备高权限：不要使用 `NEXT_PUBLIC_` 前缀，不要提交到仓库，也不要在浏览器端使用。当前提交接口会把记录写入 `case_submissions` 表；该表需要支持以下字段：
+
+`/admin` 是内部投稿审核入口，不加入公开导航或 sitemap。管理员通过 `ADMIN_PASSWORD` 登录后，可在 `/admin/submissions` 将 `pending` 投稿改为 `published` 或 `rejected`。审核操作只更新 Supabase 的 `visibility`，不直接编辑 `hall-master.json`；数据库 trigger 会在发布时写入 `published_at`。
 
 `location`、`degree`、`major`、`interview_date`、`start_date`、`status`、`end_date`、`school`、`note`、`compact_note`、`detail_note`、`waiting_days`、`source`、`visibility`、`published_at`。
 
@@ -72,10 +76,31 @@ pnpm dev
 网站展示使用构建时导入的 JSON 快照：
 
 - `json/checkmate/checkee-static-snapshot.json`：五城统计、月度趋势和案例明细。
-- `data/checkmate/hall-master.json`：名人堂唯一运行时数据源；页面只读取 `visibility=published` 的精选案例。这是由导出脚本生成的产物，不建议手工编辑。
+- `data/checkmate/published-submissions.json`：从 Supabase 导出的已审核发布投稿冻结快照，只包含 `visibility=published` 的记录。
+- `data/checkmate/releases/`：每次正式发布的不可覆盖版本目录，保存 Hall、投稿快照和 `release-meta.json`，用于追踪、比较和恢复。
+- `data/checkmate/hall-master.json`：名人堂唯一运行时数据源；页面只读取 `visibility=published` 的精选案例。这是由导出脚本生成的产物，不建议手工编辑，`dataVersion` 标识当前发布版本。
 - `data/checkmate/ufun_checkee_pure_processed.json`：历史迁移前的旧 JSON，仅作为核对和兼容参考，不再由页面读取。
 
-`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。`scripts/export-hall-master.py` 会合并历史 Excel 和 Supabase 导出的已发布投稿，生成 `hall-master.json`；历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 用于生成后检查 schema、字段、日期、来源、可见性及历史数据一致性。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。非 `Check` 且没有结束日期的记录，其 `waitingDays` 保持为空，避免用当前日期造成历史数据漂移。
+`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。`scripts/export-hall-master.py --submissions <supabase-export.json>` 会先筛选并冻结 Supabase 中已发布的投稿到 `published-submissions.json`，再将历史 Excel 与该快照合并生成 `hall-master.json`；不传 `--submissions` 时只读取已有快照，不重新读取 Supabase。历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 用于生成后检查两个 JSON 的 schema、字段、日期、来源、可见性、重复 ID、合并数量及历史数据一致性。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。非 `Check` 且没有结束日期的记录，其 `waitingDays` 保持为空，避免用当前日期造成历史数据漂移。
+
+当前正式发布链路为：
+
+```text
+Source Layer
+legacy Excel + Supabase published submissions
+
+Transform Layer
+scripts/export-hall-master.py
+
+Release Layer
+data/checkmate/releases/YYYYMMDD-vXXX/
+
+Serving Layer
+data/checkmate/hall-master.json
+
+Frontend
+/
+```
 
 更新数据后，请核对快照日期、样本范围与页面的数据说明，再执行构建验证。
 

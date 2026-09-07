@@ -430,7 +430,8 @@ body:has(.hall-of-fame-page) > main {
   transition:
     transform 260ms ease,
     background 320ms ease,
-    box-shadow 320ms ease;
+    box-shadow 320ms ease,
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -441,27 +442,32 @@ body:has(.hall-of-fame-page) > main {
   }
 }
 
+.home-copy-action button[data-github='true'] {
+  width: max-content;
+  padding-inline: 1.15rem;
+  gap: 7px;
+}
+
 .home-copy-action button[data-github='true'],
-.home-copy-action button[data-github='true']:hover {
-  gap: 0.45rem;
+.home-copy-action button[data-github-transitioning='true'] {
   color: #fff;
-  background: linear-gradient(135deg, #111 0%, #2a2a2a 52%, #171717 100%);
+  background:
+    radial-gradient(circle at 82% 14%, rgb(255 255 255 / 0.11), transparent 34%),
+    linear-gradient(155deg, #080808 0%, #1b1b1b 50%, #0f0f0f 100%);
   box-shadow:
-    0 8px 18px rgb(0 0 0 / 0.2),
-    inset 0 1px 0 rgb(255 255 255 / 0.08);
+    0 10px 24px rgb(0 0 0 / 0.18),
+    0 2px 6px rgb(0 0 0 / 0.12),
+    inset 0 1px 0 rgb(255 255 255 / 0.09),
+    inset 0 -8px 14px rgb(0 0 0 / 0.28);
   transform: none;
 }
 
 .home-copy-action button[data-github-transitioning='true'] {
-  color: #fff;
-  background: linear-gradient(135deg, #111 0%, #2a2a2a 52%, #171717 100%);
-  box-shadow:
-    0 8px 18px rgb(0 0 0 / 0.2),
-    inset 0 1px 0 rgb(255 255 255 / 0.08);
   transition:
     transform 380ms ease,
-    background 560ms cubic-bezier(0.22, 1, 0.36, 1) 180ms,
-    box-shadow 620ms cubic-bezier(0.22, 1, 0.36, 1) 220ms;
+    background 500ms cubic-bezier(0.22, 1, 0.36, 1) 180ms,
+    box-shadow 560ms cubic-bezier(0.22, 1, 0.36, 1) 220ms,
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .home-github-icon {
@@ -471,7 +477,6 @@ body:has(.hall-of-fame-page) > main {
   flex: 0 0 auto;
   color: currentColor;
   pointer-events: none;
-  animation: home-github-icon-in 320ms ease-out forwards;
 }
 
 .home-copy-label {
@@ -479,15 +484,17 @@ body:has(.hall-of-fame-page) > main {
   white-space: nowrap;
 }
 
-@keyframes home-github-icon-in {
-  from {
-    opacity: 0;
-    transform: translateX(-3px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
+@media (hover: hover) and (pointer: fine) {
+  .home-copy-action button[data-github='true']:hover {
+    background:
+      radial-gradient(circle at 82% 14%, rgb(255 255 255 / 0.15), transparent 36%),
+      linear-gradient(155deg, #0a0a0a 0%, #222 50%, #111 100%);
+    box-shadow:
+      0 14px 30px rgb(0 0 0 / 0.22),
+      0 3px 8px rgb(0 0 0 / 0.14),
+      inset 0 1px 0 rgb(255 255 255 / 0.12),
+      inset 0 -8px 14px rgb(0 0 0 / 0.3);
+    transform: translateY(-2px);
   }
 }
 

@@ -133,14 +133,22 @@ export function SubmitCaseButton() {
 
   return (
     <>
-      <button type="button" className={styles.submitCaseButton} onClick={handleOpen}>
+      <button
+        type="button"
+        className={styles.submitCaseButton}
+        onClick={handleOpen}
+        aria-expanded={open}
+        aria-label="提交你的 F-1 时间线案例，审核后加入名人堂"
+        title="提交你的 F-1 时间线案例，审核后加入名人堂"
+        data-open={open ? 'true' : undefined}
+      >
         <span aria-hidden="true">＋</span>
         提交案例
       </button>
       <Dialog open={open} onClose={close} className={styles.submitDialog}>
         <div className={styles.submitDialogBackdrop} aria-hidden="true" />
         <div className={styles.submitDialogViewport}>
-          <DialogPanel className={styles.submitDialogPanel}>
+          <DialogPanel className={`${styles.submitDialogPanel} ${styles.submitCaseDialogPanel}`}>
             <div className={styles.submitDialogHeader}>
               <div>
                 <DialogTitle className={styles.submitDialogTitle}>提交案例</DialogTitle>
@@ -230,7 +238,12 @@ export function SubmitCaseButton() {
                   </label>
 
                   <label className={styles.submitField}>
-                    <span>状态</span>
+                    <span>
+                      状态
+                      {form.status === 'Check' ? (
+                        <em className={styles.submitStatusHint}>Check 状态暂不需要填写结束日期</em>
+                      ) : null}
+                    </span>
                     <select
                       name="status"
                       value={form.status}
@@ -249,24 +262,25 @@ export function SubmitCaseButton() {
                     {touched.status && errors.status ? <small id="submit-status-error">{errors.status}</small> : null}
                   </label>
 
-                  {form.status !== 'Check' ? (
-                    <label className={styles.submitField}>
-                      <span>结束日期 <em>选填</em></span>
-                      <input
-                        name="endDate"
-                        type="date"
-                        value={form.endDate}
-                        min={form.interviewDate || undefined}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        aria-invalid={Boolean(touched.endDate && errors.endDate)}
-                        aria-describedby={touched.endDate && errors.endDate ? 'submit-end-date-error' : undefined}
-                      />
-                      {touched.endDate && errors.endDate ? (
-                        <small id="submit-end-date-error">{errors.endDate}</small>
-                      ) : null}
-                    </label>
-                  ) : null}
+                  <label
+                    className={`${styles.submitField} ${form.status === 'Check' ? styles.submitFieldHidden : ''}`}
+                    aria-hidden={form.status === 'Check' ? true : undefined}
+                  >
+                    <span>结束日期 <em>选填</em></span>
+                    <input
+                      name="endDate"
+                      type="date"
+                      value={form.endDate}
+                      min={form.interviewDate || undefined}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      aria-invalid={Boolean(touched.endDate && errors.endDate)}
+                      aria-describedby={touched.endDate && errors.endDate ? 'submit-end-date-error' : undefined}
+                    />
+                    {touched.endDate && errors.endDate ? (
+                      <small id="submit-end-date-error">{errors.endDate}</small>
+                    ) : null}
+                  </label>
 
                   <label className={styles.submitField}>
                     <span>学校 <em>选填</em></span>
@@ -308,7 +322,7 @@ export function SubmitCaseButton() {
                     disabled={isSubmitting}
                     aria-busy={isSubmitting}
                   >
-                    {isSubmitting ? '提交中…' : '提交'}
+                    {isSubmitting ? '提交中…' : '提交案例'}
                   </button>
                 </div>
               </form>
