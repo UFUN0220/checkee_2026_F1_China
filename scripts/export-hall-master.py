@@ -17,7 +17,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_LEGACY_INPUT = ROOT / "data/checkmate/ufun_checkee_pure_processed.xlsx"
+DEFAULT_LEGACY_INPUT = ROOT / "data/checkmate/hall_fame.xlsx"
 DEFAULT_PUBLISHED_SNAPSHOT = ROOT / "data/checkmate/published-submissions.json"
 DEFAULT_RELEASES_DIR = ROOT / "data/checkmate/releases"
 DEFAULT_OUTPUT = ROOT / "data/checkmate/hall-master.json"
@@ -188,11 +188,11 @@ def submission_record(row, index, generated_at, converter):
         raise ValueError(f"Published submission row {index} has an end date before its start date")
 
     waiting_days = converter.number_value(value(row, "waitingDays", "waiting_days"))
-    if waiting_days is None:
+    if status == "Check" and end_date is None:
+        waiting_days = converter.days_between(start_date, generated_at)
+    elif waiting_days is None:
         if end_date:
             waiting_days = converter.days_between(start_date, end_date)
-        elif status == "Check":
-            waiting_days = converter.days_between(start_date, generated_at)
 
     raw_id = converter.normalize(value(row, "id")) or str(index)
     record_id = raw_id if raw_id.startswith("submission-") else f"submission-{raw_id}"
@@ -232,7 +232,7 @@ def export_hall_master(
     releases_dir=DEFAULT_RELEASES_DIR,
 ):
     converter = load_converter()
-    records = converter.convert_records(legacy_input, snapshot_date, published_at)
+    records = converter.convert_records(legacy_input, snapshot_date, published_at, require_case_id=True)
     existing_ids = {record["id"] for record in records}
 
     if submissions_input:
@@ -260,7 +260,12 @@ def export_hall_master(
         records.append(record)
 
     version = next_release_version(releases_dir, generated_at)
-    dataset_without_version = converter.build_dataset(records, snapshot_date, generated_at)
+    dataset_without_version = converter.build_dataset(
+        records,
+        snapshot_date,
+        generated_at,
+        source_name=legacy_input.name,
+    )
     dataset = {
         "schemaVersion": dataset_without_version["schemaVersion"],
         "dataVersion": version,
@@ -301,7 +306,7 @@ def main():
     )
     parser.add_argument("--releases-dir", type=Path, default=DEFAULT_RELEASES_DIR)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
-    parser.add_argument("--snapshot-date", default="2026-09-04")
+    parser.add_argument("--snapshot-date", default="2026-09-07")
     parser.add_argument("--generated-at", default="2026-09-07")
     parser.add_argument("--published-at", default="2026-09-06")
     args = parser.parse_args()

@@ -3,10 +3,16 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import re
 from datetime import date
 from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_LEGACY_INPUT = Path("data/checkmate/hall_fame.xlsx")
+DEFAULT_PREVIOUS_LEGACY = Path("data/checkmate/ufun_checkee_pure_processed.json")
 
 
 REQUIRED_FIELDS = {
@@ -32,6 +38,28 @@ VISIBILITIES = {"draft", "pending", "published", "rejected"}
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RELEASE_VERSION = re.compile(r"^\d{8}-v\d{3}$")
 RELEASE_FILES = ("hall-master.json", "published-submissions.json", "release-meta.json")
+COMPARISON_FIELDS = (
+    "id",
+    "location",
+    "degree",
+    "major",
+    "school",
+    "startDate",
+    "endDate",
+    "waitingDays",
+    "compactNote",
+    "detailNote",
+)
+
+
+def load_converter():
+    path = ROOT / "scripts" / "convert-checkee-data.py"
+    spec = importlib.util.spec_from_file_location("convert_checkee_data", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Unable to load converter: {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def load_json(path: Path):
@@ -145,29 +173,59 @@ def verify_published_snapshot(snapshot):
     return records
 
 
-def compare_legacy(old_dataset, records):
-    old_records = old_dataset.get("records", [])
-    if len(old_records) != 97:
-        raise ValueError(f"Expected 97 legacy records, found {len(old_records)}")
-    by_id = {item["id"]: item for item in records}
-    fields = ["id", "location", "degree", "major", "school", "startDate", "endDate", "compactNote", "detailNote", "waitingDays"]
-    for old in old_records:
-        current = by_id.get(old["id"])
+def compare_legacy(expected_records, records):
+    current_legacy = [item for item in records if item["source"] == "legacy_excel"]
+    if len(current_legacy) != len(expected_records):
+        raise ValueError(
+            f"Legacy record count mismatch: expected {len(expected_records)}, found {len(current_legacy)}"
+        )
+    by_id = {item["id"]: item for item in current_legacy}
+    for expected in expected_records:
+        current = by_id.get(expected["id"])
         if current is None:
-            raise ValueError(f"Legacy record missing from Hall master: {old['id']}")
-        for field in fields:
-            if current[field] != old[field]:
-                raise ValueError(f"Legacy field mismatch: {old['id']}.{field}")
+            raise ValueError(f"Legacy record missing from Hall master: {expected['id']}")
+        for field in COMPARISON_FIELDS:
+            if current[field] != expected[field]:
+                raise ValueError(f"Legacy field mismatch: {expected['id']}.{field}")
 
     def top_three(items):
         return [item["id"] for item in sort_records(items)[:3]]
 
-    if top_three(old_records) != top_three(records):
-        raise ValueError("Top 3 changed during migration")
+    if top_three(expected_records) != top_three(current_legacy):
+        raise ValueError("Top 3 changed while exporting the new legacy source")
 
 
-def compare_published_snapshot(snapshot_records, legacy_dataset, hall_records):
-    legacy_records = legacy_dataset.get("records", [])
+def report_legacy_changes(previous_dataset, current_records):
+    previous_records = previous_dataset.get("records", [])
+    previous_by_id = {item["id"]: item for item in previous_records}
+    current_by_id = {item["id"]: item for item in current_records}
+    added = sorted(set(current_by_id) - set(previous_by_id))
+    removed = sorted(set(previous_by_id) - set(current_by_id))
+    changed = sorted(
+        record_id
+        for record_id in set(previous_by_id) & set(current_by_id)
+        if any(
+            previous_by_id[record_id].get(field) != current_by_id[record_id].get(field)
+            for field in COMPARISON_FIELDS
+        )
+    )
+
+    def top_three(items):
+        return [item["id"] for item in sort_records(items)[:3]]
+
+    print(f"Legacy source comparison: previous={len(previous_records)} current={len(current_records)}")
+    print(f"Added: {len(added)}; Removed: {len(removed)}; Changed: {len(changed)}")
+    print("Previous Top 3: " + ", ".join(top_three(previous_records)))
+    print("Current Top 3: " + ", ".join(top_three(current_records)))
+    if added:
+        print("Added IDs: " + ", ".join(added))
+    if removed:
+        print("Removed IDs: " + ", ".join(removed))
+    if changed:
+        print("Changed IDs: " + ", ".join(changed))
+
+
+def compare_published_snapshot(snapshot_records, legacy_records, hall_records):
     legacy_ids = {item["id"] for item in legacy_records}
     snapshot_ids = {item["id"] for item in snapshot_records}
     if legacy_ids & snapshot_ids:
@@ -280,7 +338,8 @@ def verify_release_history(releases_dir, current_master, current_snapshot):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("master", type=Path, nargs="?", default=Path("data/checkmate/hall-master.json"))
-    parser.add_argument("--legacy", type=Path, default=Path("data/checkmate/ufun_checkee_pure_processed.json"))
+    parser.add_argument("--legacy-input", type=Path, default=DEFAULT_LEGACY_INPUT)
+    parser.add_argument("--previous-legacy", type=Path, default=DEFAULT_PREVIOUS_LEGACY)
     parser.add_argument(
         "--published-snapshot",
         type=Path,
@@ -294,16 +353,35 @@ def main():
     args = parser.parse_args()
     dataset = load_json(args.master)
     records, anomalies = verify_dataset(dataset)
-    legacy_dataset = load_json(args.legacy)
-    compare_legacy(legacy_dataset, records)
+    converter = load_converter()
+    legacy_records = converter.convert_records(
+        args.legacy_input,
+        dataset.get("snapshotDate", "2026-09-07"),
+        next(
+            (
+                record["publishedAt"]
+                for record in records
+                if record["source"] == "legacy_excel" and record["publishedAt"]
+            ),
+            dataset.get("generatedAt", "2026-09-07"),
+        ),
+        require_case_id=True,
+    )
+    if dataset.get("sourceName") != args.legacy_input.name:
+        raise ValueError(
+            f"Hall master sourceName must match legacy input: {dataset.get('sourceName')} != {args.legacy_input.name}"
+        )
+    compare_legacy(legacy_records, records)
+    previous_dataset = load_json(args.previous_legacy)
+    report_legacy_changes(previous_dataset, legacy_records)
     current_snapshot = load_json(args.published_snapshot)
     snapshot_records = verify_published_snapshot(current_snapshot)
-    compare_published_snapshot(snapshot_records, legacy_dataset, records)
+    compare_published_snapshot(snapshot_records, legacy_records, records)
     latest_version = verify_release_history(args.releases_dir, dataset, current_snapshot)
     sorted_records = sort_records(records)
     print(
         f"Verified published-submissions={len(snapshot_records)}; "
-        f"legacy={len(legacy_dataset.get('records', []))}; hall={len(records)}; "
+        f"legacy={len(legacy_records)}; hall={len(records)}; "
         f"latest-release={latest_version}; pending=0; rejected=0"
     )
     print("Top 3: " + ", ".join(f"{item['id']} ({item['waitingDays']})" for item in sorted_records[:3]))

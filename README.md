@@ -79,9 +79,9 @@ pnpm dev
 - `data/checkmate/published-submissions.json`：从 Supabase 导出的已审核发布投稿冻结快照，只包含 `visibility=published` 的记录。
 - `data/checkmate/releases/`：每次正式发布的不可覆盖版本目录，保存 Hall、投稿快照和 `release-meta.json`，用于追踪、比较和恢复。
 - `data/checkmate/hall-master.json`：名人堂唯一运行时数据源；页面只读取 `visibility=published` 的精选案例。这是由导出脚本生成的产物，不建议手工编辑，`dataVersion` 标识当前发布版本。
-- `data/checkmate/ufun_checkee_pure_processed.json`：历史迁移前的旧 JSON，仅作为核对和兼容参考，不再由页面读取。
+- `data/checkmate/hall_fame.xlsx`：当前 Hall legacy 生产输入源；旧的 `ufun_checkee_pure_processed.xlsx` 与对应 JSON 保留为历史核对参考。
 
-`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。`scripts/export-hall-master.py --submissions <supabase-export.json>` 会先筛选并冻结 Supabase 中已发布的投稿到 `published-submissions.json`，再将历史 Excel 与该快照合并生成 `hall-master.json`；不传 `--submissions` 时只读取已有快照，不重新读取 Supabase。历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 用于生成后检查两个 JSON 的 schema、字段、日期、来源、可见性、重复 ID、合并数量及历史数据一致性。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。非 `Check` 且没有结束日期的记录，其 `waitingDays` 保持为空，避免用当前日期造成历史数据漂移。
+`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。`scripts/export-hall-master.py --submissions <supabase-export.json>` 会先筛选并冻结 Supabase 中已发布的投稿到 `published-submissions.json`，再将当前 legacy Excel 与该快照合并生成 `hall-master.json`；不传 `--submissions` 时只读取已有快照，不重新读取 Supabase。历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 用于生成后检查新 Excel、JSON schema、字段、日期、来源、可见性、重复 ID、合并数量、release 完整性及与上一版 legacy 数据的 Added/Removed/Changed。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。非 `Check` 且没有结束日期的记录，其 `waitingDays` 保持为空，避免用当前日期造成历史数据漂移。
 
 当前正式发布链路为：
 

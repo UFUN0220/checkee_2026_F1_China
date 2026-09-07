@@ -109,14 +109,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         color="#5bbad5"
       />
       <meta name="msapplication-TileColor" content="#000000" />
-      <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
-      <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#171714" />
+      <meta name="theme-color" content="#fff" />
       <body
         className={clsx([
           'font-sans antialiased',
           'relative min-h-screen pl-[calc(100vw-100%)]',
           'flex flex-col',
-          'bg-paper text-ink dark:bg-paper-dark dark:text-cream transition-colors',
+          'bg-paper text-ink transition-colors',
         ])}
       >
         <ThemeProviders>

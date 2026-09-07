@@ -4,11 +4,6 @@ import { usePathname } from 'next/navigation'
 import { Link } from '~/components/ui/link'
 import { HEADER_NAV_LINKS } from '~/data/navigation'
 
-const MOBILE_NAV_TITLES: Record<string, string> = {
-  '/': '名人堂',
-  '/view': '白宫严选',
-}
-
 export function MobileNav() {
   const pathname = usePathname()
   const activeHref = HEADER_NAV_LINKS.find(({ href }) => pathname === href)?.href
@@ -24,7 +19,7 @@ export function MobileNav() {
           data-umami-event={`nav-${href.replace('/', '')}`}
           aria-current={href === activeHref ? 'page' : undefined}
         >
-          {MOBILE_NAV_TITLES[href] ?? title}
+          {title}
         </Link>
       ))}
     </nav>

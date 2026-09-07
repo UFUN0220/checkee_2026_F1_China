@@ -32,6 +32,12 @@ const LOCATION_NAMES: Record<CheckmateLocation, string> = {
   wuhan: '武汉',
 }
 
+const PODIUM_NICKNAMES = [
+  '碎碎念慈悲喜',
+  '第二名昵称',
+  '第三名昵称',
+] as const
+
 function formatDays(value: number | null) {
   if (value === null) return '—'
   const rounded = Math.round(value * 10) / 10
@@ -69,7 +75,7 @@ export function CheckmateExperience({
   )
 }
 
-function FeatureTitle({ children, trailing }: { children: string; trailing?: ReactNode }) {
+function FeatureTitle({ children, trailing }: { children: ReactNode; trailing?: ReactNode }) {
   return (
     <div className={styles.titleRow}>
       <header className={styles.titleBlock}>
@@ -103,7 +109,10 @@ function WhiteHouseSelection({
   useEffect(() => setPage(1), [selectedCity])
   return (
     <div className={`${styles.view} ${styles.citiesView}`}>
-      <FeatureTitle>2026 F-1 数据统计( Checkee.info )</FeatureTitle>
+      <FeatureTitle>
+        <span>2026 F-1 数据统计</span>
+        <span className={styles.viewTitleQualifier}>( Checkee.info )</span>
+      </FeatureTitle>
       <div className={styles.cityGrid} aria-label="五个城市的等待时长统计">
         {CHECKMATE_LOCATIONS.map((city) => {
           const metrics = snapshot.locations[city]
@@ -492,18 +501,19 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
   )
 }
 
-function HallFields({ item }: { item: CheckeeRecord }) {
+function HallFields({ item, rank }: { item: CheckeeRecord; rank: number }) {
   return (
     <>
-      <span className={styles.podiumIdentity}>
-        <span className={styles.podiumLocation}>{item.location || '\u00a0'}</span>
-        <span className={styles.podiumDegreeMajor}>
-          <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
-          <span>{item.major || '\u00a0'}</span>
-        </span>
+      <span className={styles.podiumLocation}>{item.location || '\u00a0'}</span>
+      <span className={styles.podiumRecord}>
+        <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
+        <span>{item.major || '\u00a0'}</span>
+        {item.school ? <span>{item.school}</span> : null}
+        <span>{formatDate(item.startDate)}</span>
       </span>
-      <span className={styles.podiumSchool}>{item.school || '\u00a0'}</span>
-      <span className={styles.podiumDate}>{formatDate(item.startDate)}</span>
+      <span className={styles.podiumNickname}>
+        {PODIUM_NICKNAMES[rank - 1] ?? PODIUM_NICKNAMES[0]}
+      </span>
     </>
   )
 }
@@ -530,14 +540,28 @@ function HallWait({
   className: string
   showApBadge?: boolean
 }) {
+  const outcomeLabel = getOutcomeLabel(item)
+
   return (
     <strong className={`${className} ${styles.hallWait}`}>
       <span className={styles.hallWaitValue}>
         {item.waitingDays === null ? '—' : <>{item.waitingDays}<small>天</small></>}
       </span>
-      {showApBadge && item.endDate ? <span className={styles.apBadge}>AP</span> : null}
+      {showApBadge && outcomeLabel ? <span className={styles.apBadge}>{outcomeLabel}</span> : null}
     </strong>
   )
+}
+
+function getOutcomeLabel(item: CheckeeRecord): 'AP' | 'IS' | null {
+  const normalizedStatus = item.status.trim().toLowerCase()
+  const normalizedEndDate = item.endDate?.trim().toLowerCase()
+  const hasEndDate = Boolean(item.endDate?.trim())
+  const isRefused = normalizedStatus === 'refused' || normalizedEndDate === 'refused'
+
+  if (isRefused || !hasEndDate) return null
+  if (normalizedStatus === 'ap' || normalizedStatus === 'approved') return 'AP'
+  if (normalizedStatus === 'issue' || normalizedStatus === 'issued') return 'IS'
+  return null
 }
 
 function PodiumCard({
@@ -574,7 +598,7 @@ function PodiumCard({
       }
     >
       <div className={styles.podiumContent}>
-        <HallFields item={item} />
+        <HallFields item={item} rank={rank} />
         <HallNote note={note} expanded={expanded} />
       </div>
       <HallWait item={item} className={styles.podiumDuration} />
@@ -597,8 +621,8 @@ function HallRowContent({
   const normalizedStatus = item.status.trim().toLowerCase()
   const normalizedEndDate = item.endDate?.trim().toLowerCase()
   const hasEndDate = Boolean(item.endDate?.trim())
-  const isAp = normalizedStatus === 'ap' || normalizedStatus === 'approved'
   const isRefused = normalizedStatus === 'refused' || normalizedEndDate === 'refused'
+  const outcomeLabel = getOutcomeLabel(item)
   const stateClass = isRefused
     ? styles.refusedRow
     : hasEndDate
@@ -608,18 +632,39 @@ function HallRowContent({
   return (
     <article className={`${rowClass} ${stateClass}`}>
       <strong className={rankClass}>{String(rank).padStart(2, '0')}</strong>
-      <span className={styles.standardLocationDegree}>
-        <span>{item.location || '\u00a0'}</span>
-        <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
-      </span>
-      <span className={styles.standardMajor}>{item.major || '\u00a0'}</span>
-      <span className={styles.standardSchool}>{item.school || '\u00a0'}</span>
-      <span className={styles.standardDates}>{formatDate(item.startDate)}</span>
-      <span className={`${styles.standardEndDate} ${isRefused ? styles.refusedText : ''}`}>
-        {hasEndDate ? formatDate(item.endDate) : '\u00a0'}
-        {hasEndDate && isAp ? <span className={styles.apInline}>AP</span> : null}
-      </span>
-      <HallNotePopover item={item} />
+      <div className={styles.standardDesktopFields}>
+        <span className={styles.standardLocationDegree}>
+          <span>{item.location || '\u00a0'}</span>
+          <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
+        </span>
+        <span className={styles.standardMajor}>{item.major || '\u00a0'}</span>
+        <span className={styles.standardSchool}>{item.school || '\u00a0'}</span>
+        <span className={styles.standardDates}>{formatDate(item.startDate)}</span>
+        <span className={`${styles.standardEndDate} ${isRefused ? styles.refusedText : ''}`}>
+          {hasEndDate ? formatDate(item.endDate) : '\u00a0'}
+          {outcomeLabel ? <span className={styles.apInline}>{outcomeLabel}</span> : null}
+        </span>
+        <HallNotePopover item={item} />
+      </div>
+      <div className={styles.standardMobileFields} data-variant={variant}>
+        <span className={styles.mobileLocationDegree}>
+          <span>{item.location || '\u00a0'}</span>
+          <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
+        </span>
+        <span className={styles.mobileMajor}>{item.major || '\u00a0'}</span>
+        <span className={styles.mobileSecondary} data-has-school={item.school ? 'true' : 'false'}>
+          {item.school ? <span className={styles.mobileSchool}>{item.school}</span> : null}
+          <span className={styles.mobileDate}>
+            {formatDate(item.startDate)}
+            {hasEndDate ? (
+              <span className={`${styles.mobileEndDate} ${isRefused ? styles.refusedText : ''}`}>
+                {formatDate(item.endDate)}
+                {outcomeLabel ? <span className={styles.apInline}>{outcomeLabel}</span> : null}
+              </span>
+            ) : null}
+          </span>
+        </span>
+      </div>
       <HallWait item={item} className={waitClass} showApBadge={false} />
     </article>
   )

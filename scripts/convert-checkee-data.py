@@ -18,6 +18,7 @@ from xml.etree import ElementTree
 SOURCE_NAME = "ufun_checkee_pure_processed.xlsx"
 
 SOURCE_HEADERS = {
+    "caseId": ("case_id", "case id", "caseId"),
     "location": ("地点", "location"),
     "degree": ("学位", "degree"),
     "major": ("专业", "major"),
@@ -135,7 +136,7 @@ def header_columns(header_values):
             if matches:
                 resolved[field] = matches[0]
                 break
-        if field not in resolved:
+        if field not in resolved and field != "caseId":
             raise ValueError(f"Missing Excel header for {field}: {aliases}")
     return resolved
 
@@ -164,8 +165,9 @@ def canonical_status(value):
         raise ValueError(f"Unsupported status value: {status}") from error
 
 
-def convert_records(input_path: Path, snapshot_date: str, published_at: str):
+def convert_records(input_path: Path, snapshot_date: str, published_at: str, require_case_id=False):
     records = []
+    record_ids = set()
     rows = read_xlsx(input_path)
     header_row, header_values = next(rows)
     columns = header_columns(header_values)
@@ -182,14 +184,21 @@ def convert_records(input_path: Path, snapshot_date: str, published_at: str):
         if end_date and end_date < interview_date:
             raise ValueError(f"End date is earlier than interview date at Excel row {excel_row}")
         waiting_days = number_value(row["waitingDays"])
-        if waiting_days is None:
+        if status == "Check" and end_date is None:
+            waiting_days = days_between(interview_date, snapshot_date)
+        elif waiting_days is None:
             if end_date:
                 waiting_days = days_between(interview_date, end_date)
-            elif status == "Check":
-                waiting_days = days_between(interview_date, snapshot_date)
+        case_id = normalize(row.get("caseId"))
+        if require_case_id and not case_id:
+            raise ValueError(f"Missing case_id at Excel row {excel_row}")
+        record_id = case_id or f"ufun-checkee-{int(excel_row):03d}"
+        if record_id in record_ids:
+            raise ValueError(f"Duplicate case_id at Excel row {excel_row}: {record_id}")
+        record_ids.add(record_id)
         records.append(
             {
-                "id": f"ufun-checkee-{int(excel_row):03d}",
+                "id": record_id,
                 "location": location,
                 "degree": normalize(row["degree"]) or "",
                 "major": normalize(row["major"]) or "",
@@ -210,12 +219,12 @@ def convert_records(input_path: Path, snapshot_date: str, published_at: str):
     return records
 
 
-def build_dataset(records, snapshot_date: str, generated_at: str):
+def build_dataset(records, snapshot_date: str, generated_at: str, source_name: str = SOURCE_NAME):
     return {
         "schemaVersion": HALL_SCHEMA_VERSION,
         "generatedAt": generated_at,
         "sourceDescription": SOURCE_DESCRIPTION,
-        "sourceName": SOURCE_NAME,
+        "sourceName": source_name,
         "snapshotDate": snapshot_date,
         "recordCount": len(records),
         "records": records,
@@ -235,7 +244,7 @@ def convert(
     published_at: str = DEFAULT_PUBLISHED_AT,
 ):
     records = convert_records(input_path, snapshot_date, published_at)
-    write_dataset(build_dataset(records, snapshot_date, generated_at), output_path)
+    write_dataset(build_dataset(records, snapshot_date, generated_at, source_name=input_path.name), output_path)
     print(f"Converted {len(records)} records to {output_path}")
 
 
@@ -243,7 +252,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--snapshot-date", default="2026-09-04")
+    parser.add_argument("--snapshot-date", default="2026-09-07")
     parser.add_argument("--generated-at", default=DEFAULT_GENERATED_AT)
     parser.add_argument("--published-at", default=DEFAULT_PUBLISHED_AT)
     args = parser.parse_args()
