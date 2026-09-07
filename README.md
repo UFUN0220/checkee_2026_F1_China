@@ -76,6 +76,7 @@ pnpm dev
 网站展示使用构建时导入的 JSON 快照：
 
 - `json/checkmate/checkee-static-snapshot.json`：五城统计、月度趋势和案例明细。
+- `/view` 数据生产链路：将 Checkee HTML 快照归档到 `data/checkmate/view/raw/`，运行 `scripts/view/import-checkee-html.py` 生成上述 JSON，再用 `scripts/view/verify-view-data.py` 校验。该链路与 Hall 的 Excel/Release 链路独立。
 - `data/checkmate/published-submissions.json`：从 Supabase 导出的已审核发布投稿冻结快照，只包含 `visibility=published` 的记录。
 - `data/checkmate/releases/`：每次正式发布的不可覆盖版本目录，保存 Hall、投稿快照和 `release-meta.json`，用于追踪、比较和恢复。
 - `data/checkmate/hall-master.json`：名人堂唯一运行时数据源；页面只读取 `visibility=published` 的精选案例。这是由导出脚本生成的产物，不建议手工编辑，`dataVersion` 标识当前发布版本。

@@ -3127,9 +3127,21 @@
   }
   .citiesView .cityCard,
   .citiesView .cityCardActive {
-    min-height: 7.7rem;
+    aspect-ratio: 1 / 0.8;
     border-radius: 20px;
-    padding: 0.75rem;
+    padding: 0.62rem 0.72rem;
+    justify-content: flex-start;
+  }
+  .citiesView .cityHeader {
+    align-items: center;
+    padding-inline: 0;
+  }
+  .citiesView .quartiles {
+    margin-top: 0.52rem;
+    padding-top: 0.48rem;
+  }
+  .citiesView .quartiles > span {
+    gap: 0.04rem;
   }
   .citiesView .cityName {
     font-size: clamp(1.25rem, 6vw, 1.6rem);
