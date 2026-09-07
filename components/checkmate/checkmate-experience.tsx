@@ -33,9 +33,9 @@ const LOCATION_NAMES: Record<CheckmateLocation, string> = {
 }
 
 const PODIUM_NICKNAMES = [
+  '影',
   '碎碎念慈悲喜',
-  '第二名昵称',
-  '第三名昵称',
+  '？',
 ] as const
 
 function formatDays(value: number | null) {
