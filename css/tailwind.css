@@ -765,32 +765,32 @@ body:has(.hall-of-fame-page) > main {
 
   .personal-home-page > .home-profile-card {
     box-sizing: border-box;
-    width: min(420px, 100%) !important;
+    width: min(344px, calc(100% - 1rem)) !important;
     max-width: 100% !important;
     min-height: 0;
-    padding: 1.25rem 1rem;
+    padding: 1rem 0.85rem;
     border-radius: 32px;
   }
 
   .home-ufun-heading h1 {
-    font-size: clamp(2.75rem, 13vw, 3.5rem);
+    font-size: clamp(2.45rem, 12vw, 3.2rem);
   }
 
   .home-avatar {
-    width: clamp(132px, 42vw, 172px);
-    height: clamp(132px, 42vw, 172px);
-    margin-top: 1rem;
+    width: clamp(124px, 38vw, 154px);
+    height: clamp(124px, 38vw, 154px);
+    margin-top: 0.85rem;
     border-radius: 28px;
   }
 
   .home-copy-action {
-    margin-top: 1rem;
+    margin-top: 0.85rem;
   }
 
   .home-copy-action button {
-    min-height: 44px;
+    min-height: 42px;
     height: auto;
-    padding-inline: 1.35rem;
+    padding-inline: 1.15rem;
   }
 
   .home-copy-action button:active {
@@ -799,8 +799,63 @@ body:has(.hall-of-fame-page) > main {
 
   .home-support-copy {
     max-width: 100%;
-    margin-top: 1rem;
+    margin-top: 0.85rem;
     overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 768px) {
+  main[data-mobile-page-transition='forward'] > .page-theme-shell > .about-page,
+  main[data-mobile-page-transition='forward'] > .personal-home-page {
+    animation: mobile-page-enter-forward 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  main[data-mobile-page-transition='backward'] > .page-theme-shell > .about-page,
+  main[data-mobile-page-transition='backward'] > .personal-home-page {
+    animation: mobile-page-enter-backward 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes mobile-page-enter-forward {
+    from {
+      opacity: 0.78;
+      transform: translateX(1.25rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes mobile-page-enter-backward {
+    from {
+      opacity: 0.78;
+      transform: translateX(-1.25rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    main[data-mobile-page-transition='forward'] > .page-theme-shell > .about-page,
+    main[data-mobile-page-transition='forward'] > .personal-home-page,
+    main[data-mobile-page-transition='backward'] > .page-theme-shell > .about-page,
+    main[data-mobile-page-transition='backward'] > .personal-home-page {
+      animation-name: mobile-page-enter-fade;
+    }
+
+    @keyframes mobile-page-enter-fade {
+      from {
+        opacity: 0.78;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
   }
 }
 

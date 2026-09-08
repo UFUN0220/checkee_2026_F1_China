@@ -9,6 +9,7 @@ import type { Metadata } from 'next'
 import { JetBrains_Mono, Nunito, Playpen_Sans } from 'next/font/google'
 import { UmamiAnalytics } from '~/components/analytics/umami'
 import { Header } from '~/components/header'
+import { MobilePageGesture } from '~/components/navigation/mobile-page-gesture'
 
 import { SITE_METADATA } from '~/data/site-metadata'
 import { ThemeProviders } from './theme-providers'
@@ -121,6 +122,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProviders>
           <UmamiAnalytics websiteId={SITE_METADATA.analytics.umamiAnalytics.websiteId} />
           <Header />
+          <MobilePageGesture />
           <main className="mb-auto grow">{children}</main>
         </ThemeProviders>
         <Analytics />

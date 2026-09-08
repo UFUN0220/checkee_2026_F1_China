@@ -110,7 +110,9 @@ function WhiteHouseSelection({
   return (
     <div className={`${styles.view} ${styles.citiesView}`}>
       <FeatureTitle>
-        <span>2026 F-1 数据统计</span>
+        <span>
+          <span className={styles.viewTitleMain}>2026 F-1 数据统计</span>
+        </span>
         <span className={styles.viewTitleQualifier}>( Checkee.info )</span>
       </FeatureTitle>
       <div className={styles.cityGrid} aria-label="五个城市的等待时长统计">
@@ -257,6 +259,15 @@ function CityDetail({
   onPageChange: (page: number) => void
   onClose: () => void
 }) {
+  const mobileCases = useMemo(
+    () =>
+      [...cases].sort(
+        (left, right) =>
+          left.checkDate.localeCompare(right.checkDate) || left.publicId.localeCompare(right.publicId)
+      ),
+    [cases]
+  )
+
   if (!city)
     return (
       <section
@@ -306,7 +317,10 @@ function CityDetail({
         </button>
       </div>
       <DataDescription notice={notice} updatedAt={updatedAt} />
-      <div className={styles.caseList} aria-label={`${LOCATION_NAMES[city]} 案例列表`}>
+      <div
+        className={`${styles.caseList} ${styles.caseListDesktop}`}
+        aria-label={`${LOCATION_NAMES[city]} 案例列表`}
+      >
         <div className={styles.caseColumn}>
           {recentCases.map((item) => (
             <CityCaseRow item={item} key={item.publicId} />
@@ -317,6 +331,14 @@ function CityDetail({
             <CityCaseRow item={item} key={item.publicId} />
           ))}
         </div>
+      </div>
+      <div
+        className={`${styles.caseList} ${styles.caseListMobile}`}
+        aria-label={`${LOCATION_NAMES[city]} 移动端案例列表`}
+      >
+        {mobileCases.map((item) => (
+          <CityCaseRow item={item} compact key={item.publicId} />
+        ))}
       </div>
       <Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
     </section>
@@ -338,13 +360,13 @@ function HallSectionDivider({ children }: { children: string }) {
   )
 }
 
-function CityCaseRow({ item }: { item: CheckmateSnapshot['cases'][number] }) {
+function CityCaseRow({ item, compact = false }: { item: CheckmateSnapshot['cases'][number]; compact?: boolean }) {
   const category = item.majorCategory.trim()
   const firstCategoryWord = category.split(/\s+/)[0] ?? ''
   const hasMultipleCategoryWords = firstCategoryWord !== category
 
   return (
-    <article className={styles.caseRow}>
+    <article className={`${styles.caseRow} ${compact ? styles.compactCaseRow : ''}`}>
       <div>
         <span className={`${styles.status} ${styles[`status${item.status}`]}`}>
           {item.status === 'pending' ? 'Pending' : item.status === 'clear' ? 'Clear' : 'Reject'}
@@ -399,7 +421,9 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
         <HallWelcomeDialog caseCount={0} updatedAt={dataset.snapshotDate} />
         <header className={styles.hallIntro}>
           <div className={styles.hallIntroCopy}>
-            <h1>2026年度白宫严选中国硕博</h1>
+            <h1>
+              2026年度<span className={styles.hallMobileTitleBreak} aria-hidden="true"><br /></span>白宫严选中国硕博
+            </h1>
           </div>
         </header>
         <section className={styles.hallEmpty} aria-live="polite">
@@ -421,7 +445,9 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
       <HallWelcomeDialog caseCount={cases.length} updatedAt={dataset.snapshotDate} />
       <header className={styles.hallIntro}>
         <div className={styles.hallIntroCopy}>
-          <h1>2026年度白宫严选中国硕博</h1>
+          <h1>
+            2026年度<span className={styles.hallMobileTitleBreak} aria-hidden="true"><br /></span>白宫严选中国硕博
+          </h1>
         </div>
       </header>
 

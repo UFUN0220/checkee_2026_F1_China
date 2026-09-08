@@ -29,20 +29,20 @@ export function Header() {
       as="header"
       className={clsx(
         'site-header',
-        'dark:bg-dark/50 bg-white/50 px-1 py-1 backdrop-blur',
+        'dark:bg-dark/50 bg-white/50 px-1 py-1 sm:!px-1 xl:!px-1 backdrop-blur',
         'shadow-sm saturate-100 md:rounded-full',
         'mx-auto !w-fit !max-w-[calc(100vw-1rem)]',
         SITE_METADATA.stickyNav && 'sticky top-2 z-50 lg:top-8'
       )}
     >
       <div className="flex items-center justify-center">
-        <div className="flex w-full items-center justify-between sm:w-auto sm:gap-8">
+        <div className="flex w-full items-center justify-between sm:w-auto sm:gap-1">
           <Logo
-            className={clsx('shrink-0', pathname === '/about' && 'site-header-logo-active')}
+            className={clsx('shrink-0 sm:ml-4', pathname === '/about' && 'site-header-logo-active')}
           />
-          <nav className="hidden items-center gap-3 sm:flex" aria-label="Primary navigation">
+          <nav className="hidden items-center gap-2 sm:flex" aria-label="Primary navigation">
             {HEADER_NAV_LINKS.map(({ title, href }) => (
-              <Link key={href} href={href} className="px-1 py-1 font-medium sm:translate-x-1">
+              <Link key={href} href={href} className="px-1 py-1 font-medium sm:px-0.5 sm:translate-x-0">
                 <span
                   className="nav-interactive"
                   data-active={href === activeHref}
