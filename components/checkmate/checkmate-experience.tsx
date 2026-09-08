@@ -43,6 +43,14 @@ function formatDays(value: number | null) {
   return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
 }
 
+function ceilWaitStats(stats: WaitStats): WaitStats {
+  return {
+    q1: stats.q1 === null ? null : Math.ceil(stats.q1),
+    median: stats.median === null ? null : Math.ceil(stats.median),
+    q3: stats.q3 === null ? null : Math.ceil(stats.q3),
+  }
+}
+
 function formatDate(value: string | null) {
   return value ? value.replace(/^2026-/, '').replace('-', '.') : '—'
 }
@@ -115,6 +123,7 @@ function WhiteHouseSelection({
       <div className={styles.cityGrid} aria-label="五个城市的等待时长统计">
         {CHECKMATE_LOCATIONS.map((city) => {
           const metrics = snapshot.locations[city]
+          const cardStats = ceilWaitStats(metrics.waitStats)
           const active = city === selectedCity
           return (
             <button
@@ -128,7 +137,7 @@ function WhiteHouseSelection({
                 <span className={styles.cityName}>{LOCATION_NAMES[city]}</span>
                 <span className={styles.cityCount}>{metrics.sampleCount} cases</span>
               </span>
-              <Quartiles stats={metrics.waitStats} />
+              <Quartiles stats={cardStats} />
             </button>
           )
         })}

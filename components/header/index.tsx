@@ -117,7 +117,7 @@ export function Header() {
         onMouseLeave={handleNavbarMouseLeave}
         onTouchStart={handleNavbarTouchStart}
       >
-        <div className="flex w-full items-center justify-between sm:w-auto sm:gap-1">
+        <div className="flex w-full items-center justify-between sm:w-auto sm:gap-3">
           <Logo
             className={clsx(
               'mr-1 shrink-0 sm:ml-3',
