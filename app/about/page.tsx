@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { genPageMetadata } from '~/app/seo'
 import { ProfileCard } from '~/components/home/profile-card'
 
-export const metadata = genPageMetadata({ title: '个人主页' })
+export const metadata = genPageMetadata({ title: 'UFUN' })
 
 export default async function AboutPage({
   searchParams,

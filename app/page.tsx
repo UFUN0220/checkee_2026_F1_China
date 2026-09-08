@@ -1,9 +1,11 @@
 import { Suspense } from 'react'
-import { genPageMetadata } from '~/app/seo'
+import type { Metadata } from 'next'
 import { CheckmatePage } from '~/components/checkmate/checkmate-page'
 import { PageTheme } from '~/components/ui/page-theme'
 
-export const metadata = genPageMetadata({ title: '名人堂' })
+export const metadata: Metadata = {
+  title: '名人堂',
+}
 
 export default function HomePage() {
   return (

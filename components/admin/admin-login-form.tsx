@@ -35,7 +35,7 @@ export function AdminLoginForm({ redirectTo }: { redirectTo: string }) {
   return (
     <main
       className="flex min-h-[100dvh] items-center justify-center px-5 py-16 text-ink dark:text-cream"
-      style={{ background: 'var(--page-background-about)' }}
+      style={{ background: 'var(--page-background-hall)' }}
     >
       <section className="w-full max-w-sm rounded-2xl border border-line bg-white/80 p-7 shadow-sm backdrop-blur dark:border-line-dark dark:bg-white/5">
         <p className="font-mono text-xs uppercase tracking-[0.24em] text-muted dark:text-muted-dark">

@@ -1,8 +1,22 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
-import { useMemo, useState, type ChangeEvent, type FocusEvent, type FormEvent } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
+import { useState } from 'react'
 import { CHECKMATE_LOCATIONS, type CheckmateLocation } from '~/data/checkmate/types'
+import { FieldError, FormWrapper, SubmitButton } from '~/components/forms'
+import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
+import { Select } from '~/components/ui/select'
+import { Textarea } from '~/components/ui/textarea'
+import {
+  caseSubmissionSchema,
+  type CaseSubmissionFormValues,
+  type CaseSubmissionValues,
+  DEGREES,
+  STATUSES,
+} from '~/lib/validations/case-submission'
 import { submitCase, type SubmissionPayload } from './submit-case'
 import styles from './checkmate-experience.module.css'
 
@@ -14,21 +28,7 @@ const LOCATION_NAMES: Record<CheckmateLocation, string> = {
   wuhan: '武汉',
 }
 
-const DEGREE_OPTIONS = ['Bachelor', 'Master', 'PhD'] as const
-const STATUS_OPTIONS = ['Check', 'Approved', 'Issued', 'Refused'] as const
-
-type FormState = {
-  location: '' | CheckmateLocation
-  degree: '' | (typeof DEGREE_OPTIONS)[number]
-  major: string
-  interviewDate: string
-  status: '' | (typeof STATUS_OPTIONS)[number]
-  endDate: string
-  school: string
-  note: string
-}
-
-const INITIAL_FORM: FormState = {
+const INITIAL_FORM: CaseSubmissionFormValues = {
   location: '',
   degree: '',
   major: '',
@@ -39,46 +39,23 @@ const INITIAL_FORM: FormState = {
   note: '',
 }
 
-type FieldName = keyof FormState
-
-function fieldError(field: FieldName, form: FormState) {
-  if (field === 'location' && !form.location) return '请选择面签地点'
-  if (field === 'degree' && !form.degree) return '请选择学位'
-  if (field === 'major' && !form.major.trim()) return '请输入专业'
-  if (field === 'interviewDate' && !form.interviewDate) return '请选择面签日期'
-  if (field === 'status' && !form.status) return '请选择状态'
-  if (
-    field === 'endDate' &&
-    form.status !== 'Check' &&
-    form.endDate &&
-    form.interviewDate &&
-    form.endDate < form.interviewDate
-  ) {
-    return '结束日期不能早于面签日期'
-  }
-  return ''
-}
-
 export function SubmitCaseButton() {
   const [open, setOpen] = useState(false)
-  const [form, setForm] = useState<FormState>(INITIAL_FORM)
-  const [touched, setTouched] = useState<Partial<Record<FieldName, boolean>>>({})
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
-
-  const errors = useMemo(
-    () => Object.fromEntries(Object.keys(form).map((field) => [field, fieldError(field as FieldName, form)])),
-    [form]
-  ) as Record<FieldName, string>
-  const isValid = Object.values(errors).every((error) => !error)
-  const isSubmitting = status === 'submitting'
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const form = useForm<CaseSubmissionFormValues, unknown, CaseSubmissionValues>({
+    resolver: zodResolver(caseSubmissionSchema),
+    defaultValues: INITIAL_FORM,
+  })
+  const selectedStatus = useWatch({ control: form.control, name: 'status' })
+  const interviewDate = useWatch({ control: form.control, name: 'interviewDate' })
+  const isSubmitting = form.formState.isSubmitting
 
   const close = () => {
     if (!isSubmitting) setOpen(false)
   }
 
   const reset = () => {
-    setForm(INITIAL_FORM)
-    setTouched({})
+    form.reset(INITIAL_FORM)
     setStatus('idle')
   }
 
@@ -87,40 +64,23 @@ export function SubmitCaseButton() {
     setOpen(true)
   }
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = event.target
-    setForm((current) => ({
-      ...current,
-      [name]: value,
-      ...(name === 'status' && value === 'Check' ? { endDate: '' } : {}),
-    }))
+  const handleChange = () => {
     setStatus('idle')
   }
 
-  const handleBlur = (event: FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setTouched((current) => ({ ...current, [event.target.name as FieldName]: true }))
+  const handleStatusChange = (event: { target: { value: string } }) => {
+    handleChange()
+    if (event.target.value === 'Check') {
+      form.setValue('endDate', '', { shouldDirty: true, shouldValidate: false })
+    }
   }
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setTouched(Object.fromEntries(Object.keys(form).map((field) => [field, true])))
-    if (!isValid || isSubmitting) return
+  const handleSubmit = async (values: CaseSubmissionValues) => {
+    setStatus('idle')
 
-    const payload: SubmissionPayload = {
-      location: form.location as CheckmateLocation,
-      degree: form.degree,
-      major: form.major.trim(),
-      interviewDate: form.interviewDate,
-      status: form.status as SubmissionPayload['status'],
-      endDate: form.status === 'Check' ? null : form.endDate || null,
-      school: form.school.trim() || null,
-      note: form.note.trim() || null,
-    }
-
-    setStatus('submitting')
     try {
-      await submitCase(payload)
-      setForm(INITIAL_FORM)
+      await submitCase(values as SubmissionPayload)
+      form.reset(INITIAL_FORM)
       setStatus('success')
     } catch {
       setStatus('error')
@@ -170,20 +130,24 @@ export function SubmitCaseButton() {
                 </div>
               </div>
             ) : (
-              <form className={styles.submitForm} noValidate onSubmit={handleSubmit}>
+              <FormWrapper
+                form={form}
+                onSubmit={handleSubmit}
+                className={styles.submitForm}
+                noValidate
+              >
                 <p className={styles.submitPrivacyHint}>
-                  提交后，部分时间线信息将在审核整理后匿名展示于名人堂。姓名、联系方式等个人身份信息可选。
+                  提交后，部分信息将在审核整理后展示于名人堂。姓名、联系方式等个人身份信息可选。
+                  可以提交个人昵称，有一定信息量，唯一且有趣。
                 </p>
                 <div className={styles.submitFormGrid}>
-                  <label className={styles.submitField}>
+                  <Label className={styles.submitField} htmlFor="submit-location">
                     <span>面签地点</span>
-                    <select
-                      name="location"
-                      value={form.location}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      aria-invalid={Boolean(touched.location && errors.location)}
-                      aria-describedby={touched.location && errors.location ? 'submit-location-error' : undefined}
+                    <Select
+                      id="submit-location"
+                      aria-invalid={Boolean(form.formState.errors.location)}
+                      aria-describedby={form.formState.errors.location ? 'submit-location-error' : undefined}
+                      {...form.register('location', { onChange: handleChange })}
                     >
                       <option value="">选择面签地点</option>
                       {CHECKMATE_LOCATIONS.map((location) => (
@@ -191,129 +155,128 @@ export function SubmitCaseButton() {
                           {LOCATION_NAMES[location]}
                         </option>
                       ))}
-                    </select>
-                    {touched.location && errors.location ? <small id="submit-location-error">{errors.location}</small> : null}
-                  </label>
+                    </Select>
+                    <FieldError<CaseSubmissionFormValues> id="submit-location-error" name="location" />
+                  </Label>
 
-                  <label className={styles.submitField}>
+                  <Label className={styles.submitField} htmlFor="submit-degree">
                     <span>学位</span>
-                    <select
-                      name="degree"
-                      value={form.degree}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      aria-invalid={Boolean(touched.degree && errors.degree)}
-                      aria-describedby={touched.degree && errors.degree ? 'submit-degree-error' : undefined}
+                    <Select
+                      id="submit-degree"
+                      aria-invalid={Boolean(form.formState.errors.degree)}
+                      aria-describedby={form.formState.errors.degree ? 'submit-degree-error' : undefined}
+                      {...form.register('degree', { onChange: handleChange })}
                     >
                       <option value="">选择学位</option>
-                      {DEGREE_OPTIONS.map((degree) => (
+                      {DEGREES.map((degree) => (
                         <option key={degree} value={degree}>
                           {degree}
                         </option>
                       ))}
-                    </select>
-                    {touched.degree && errors.degree ? <small id="submit-degree-error">{errors.degree}</small> : null}
-                  </label>
+                    </Select>
+                    <FieldError<CaseSubmissionFormValues> id="submit-degree-error" name="degree" />
+                  </Label>
 
-                  <label className={styles.submitField}>
+                  <Label className={styles.submitField} htmlFor="submit-major">
                     <span>专业</span>
-                    <input
-                      name="major"
+                    <Input
+                      id="submit-major"
                       type="text"
-                      value={form.major}
                       placeholder="例如：Computer Science"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      aria-invalid={Boolean(touched.major && errors.major)}
-                      aria-describedby={touched.major && errors.major ? 'submit-major-error' : undefined}
+                      aria-invalid={Boolean(form.formState.errors.major)}
+                      aria-describedby={form.formState.errors.major ? 'submit-major-error' : undefined}
+                      {...form.register('major', { onChange: handleChange })}
                     />
-                    {touched.major && errors.major ? <small id="submit-major-error">{errors.major}</small> : null}
-                  </label>
+                    <FieldError<CaseSubmissionFormValues> id="submit-major-error" name="major" />
+                  </Label>
 
-                  <label className={styles.submitField}>
+                  <Label className={styles.submitField} htmlFor="submit-interview-date">
                     <span>面签日期</span>
-                    <input
-                      name="interviewDate"
+                    <Input
+                      id="submit-interview-date"
                       type="date"
-                      value={form.interviewDate}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      aria-invalid={Boolean(touched.interviewDate && errors.interviewDate)}
-                      aria-describedby={touched.interviewDate && errors.interviewDate ? 'submit-interview-date-error' : undefined}
+                      aria-invalid={Boolean(form.formState.errors.interviewDate)}
+                      aria-describedby={form.formState.errors.interviewDate ? 'submit-interview-date-error' : undefined}
+                      {...form.register('interviewDate', { onChange: handleChange })}
                     />
-                    {touched.interviewDate && errors.interviewDate ? (
-                      <small id="submit-interview-date-error">{errors.interviewDate}</small>
-                    ) : null}
-                  </label>
+                    <FieldError<CaseSubmissionFormValues>
+                      id="submit-interview-date-error"
+                      name="interviewDate"
+                    />
+                  </Label>
 
-                  <label className={styles.submitField}>
+                  <Label className={styles.submitField} htmlFor="submit-status">
                     <span>
                       状态
-                      {form.status === 'Check' ? (
+                      {selectedStatus === 'Check' ? (
                         <em className={styles.submitStatusHint}>Check 状态暂不需要填写结束日期</em>
                       ) : null}
                     </span>
-                    <select
-                      name="status"
-                      value={form.status}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      aria-invalid={Boolean(touched.status && errors.status)}
-                      aria-describedby={touched.status && errors.status ? 'submit-status-error' : undefined}
+                    <Select
+                      id="submit-status"
+                      aria-invalid={Boolean(form.formState.errors.status)}
+                      aria-describedby={form.formState.errors.status ? 'submit-status-error' : undefined}
+                      {...form.register('status', { onChange: handleStatusChange })}
                     >
                       <option value="">选择状态</option>
-                      {STATUS_OPTIONS.map((option) => (
+                      {STATUSES.map((option) => (
                         <option key={option} value={option}>
                           {option}
                         </option>
                       ))}
-                    </select>
-                    {touched.status && errors.status ? <small id="submit-status-error">{errors.status}</small> : null}
-                  </label>
+                    </Select>
+                    <FieldError<CaseSubmissionFormValues> id="submit-status-error" name="status" />
+                  </Label>
 
-                  <label
-                    className={`${styles.submitField} ${form.status === 'Check' ? styles.submitFieldHidden : ''}`}
-                    aria-hidden={form.status === 'Check' ? true : undefined}
-                  >
-                    <span>结束日期 <em>选填</em></span>
-                    <input
-                      name="endDate"
-                      type="date"
-                      value={form.endDate}
-                      min={form.interviewDate || undefined}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      aria-invalid={Boolean(touched.endDate && errors.endDate)}
-                      aria-describedby={touched.endDate && errors.endDate ? 'submit-end-date-error' : undefined}
-                    />
-                    {touched.endDate && errors.endDate ? (
-                      <small id="submit-end-date-error">{errors.endDate}</small>
-                    ) : null}
-                  </label>
+                  {selectedStatus === 'Check' ? null : (
+                    <Label className={styles.submitField} htmlFor="submit-end-date">
+                      <span>
+                        结束日期 <em>选填</em>
+                      </span>
+                      <Input
+                        id="submit-end-date"
+                        type="date"
+                        min={interviewDate || undefined}
+                        aria-invalid={Boolean(form.formState.errors.endDate)}
+                        aria-describedby={form.formState.errors.endDate ? 'submit-end-date-error' : undefined}
+                        {...form.register('endDate', { onChange: handleChange })}
+                      />
+                      <FieldError<CaseSubmissionFormValues>
+                        id="submit-end-date-error"
+                        name="endDate"
+                      />
+                    </Label>
+                  )}
 
-                  <label className={styles.submitField}>
-                    <span>学校 <em>选填</em></span>
-                    <input
-                      name="school"
+                  <Label className={styles.submitField} htmlFor="submit-school">
+                    <span>
+                      学校 <em>选填</em>
+                    </span>
+                    <Input
+                      id="submit-school"
                       type="text"
-                      value={form.school}
                       placeholder="学校（可选）"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
+                      aria-invalid={Boolean(form.formState.errors.school)}
+                      aria-describedby={form.formState.errors.school ? 'submit-school-error' : undefined}
+                      {...form.register('school', { onChange: handleChange })}
                     />
-                  </label>
+                    <FieldError<CaseSubmissionFormValues> id="submit-school-error" name="school" />
+                  </Label>
 
-                  <label className={`${styles.submitField} ${styles.submitFieldWide}`}>
-                    <span>备注 <em>选填</em></span>
-                    <textarea
-                      name="note"
+                  <Label className={`${styles.submitField} ${styles.submitFieldWide}`} htmlFor="submit-note">
+                    <span>
+                      备注 <em>选填</em>
+                    </span>
+                    <Textarea
+                      id="submit-note"
                       rows={3}
-                      value={form.note}
                       placeholder="想写什么都可以"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
+                      aria-invalid={Boolean(form.formState.errors.note)}
+                      aria-describedby={form.formState.errors.note ? 'submit-note-error' : undefined}
+                      {...form.register('note', { onChange: handleChange })}
                     />
-                  </label>
+                    <FieldError<CaseSubmissionFormValues> id="submit-note-error" name="note" />
+                  </Label>
                 </div>
 
                 {status === 'error' ? (
@@ -322,19 +285,23 @@ export function SubmitCaseButton() {
                   </p>
                 ) : null}
                 <div className={styles.submitFormActions}>
-                  <button type="button" className={styles.submitSecondaryButton} onClick={close} disabled={isSubmitting}>
+                  <button
+                    type="button"
+                    className={styles.submitSecondaryButton}
+                    onClick={close}
+                    disabled={isSubmitting}
+                  >
                     取消
                   </button>
-                  <button
-                    type="submit"
+                  <SubmitButton
                     className={styles.submitPrimaryButton}
-                    disabled={isSubmitting}
+                    loadingText="提交中…"
                     aria-busy={isSubmitting}
                   >
-                    {isSubmitting ? '提交中…' : '提交案例'}
-                  </button>
+                    提交案例
+                  </SubmitButton>
                 </div>
-              </form>
+              </FormWrapper>
             )}
           </DialogPanel>
         </div>

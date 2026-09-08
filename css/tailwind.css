@@ -86,6 +86,23 @@
     radial-gradient(ellipse at -8% 102%, rgb(117 131 148 / 0.1), transparent 40%),
     radial-gradient(circle at 94% 96%, rgb(169 198 210 / 0.12), transparent 34%),
     linear-gradient(138deg, #f3f5f8 0%, #f5f8f8 30%, #faf9f5 56%, #f3f6f8 82%, #f6f8f9 100%);
+  /* Shared jade material tokens. Feature-specific surfaces stay in their CSS module. */
+  --jade-ink: #46574d;
+  --jade-deep: #35584d;
+  --jade-surface-soft: rgb(220 230 220 / 35%);
+  --jade-surface-selected: rgb(210 225 215 / 55%);
+  --jade-control-ring: rgb(100 145 125 / 22%);
+  --jade-control-bg: rgb(255 255 255 / 62%);
+  --jade-control-border: rgb(70 87 77 / 20%);
+  --jade-control-highlight: rgb(255 255 255 / 62%);
+  --jade-error: #8d6670;
+  --jade-error-border: rgb(141 102 112 / 46%);
+  --jade-interaction-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --jade-interaction-border: rgb(97 157 142 / 0.42);
+  --jade-interaction-ring: rgb(97 157 142 / 0.22);
+  --jade-interaction-shadow: 0 8px 20px rgb(73 110 96 / 0.14);
+  --jade-interaction-inset: inset 0 1px 0 rgb(255 255 255 / 0.58);
+  --jade-interaction-pressed: inset 0 2px 6px rgb(50 77 68 / 0.18);
 }
 
 html.dark {
@@ -131,6 +148,16 @@ html.dark {
     radial-gradient(ellipse at 16% 104%, rgb(71 90 110 / 0.14), transparent 40%),
     radial-gradient(circle at 96% 92%, rgb(132 151 166 / 0.06), transparent 32%),
     linear-gradient(138deg, #111820 0%, #19232d 30%, #1d262d 54%, #182427 80%, #141b22 100%);
+  --jade-ink: #c4d3c8;
+  --jade-deep: #a8c1b1;
+  --jade-surface-soft: rgb(120 155 135 / 20%);
+  --jade-surface-selected: rgb(110 150 125 / 28%);
+  --jade-control-ring: rgb(150 190 165 / 28%);
+  --jade-control-bg: rgb(30 43 36 / 72%);
+  --jade-control-border: rgb(190 215 198 / 20%);
+  --jade-control-highlight: rgb(220 240 226 / 18%);
+  --jade-error: #cda8b1;
+  --jade-error-border: rgb(205 168 177 / 52%);
 }
 
 .site-container {
@@ -617,24 +644,22 @@ body:has(.hall-of-fame-page) > main {
 }
 
 .nav-interactive:hover {
-  color: #46574d;
-  background: rgb(220 230 220 / 0.35);
-  box-shadow: 0 6px 16px rgb(73 110 96 / 0.1);
+  color: var(--jade-ink);
+  background: var(--jade-surface-soft);
+  box-shadow: inset 0 1px 2px rgb(255 255 255 / 0.55);
 }
 
 .nav-interactive[data-active='true'] {
-  color: #46574d;
-  background: rgb(210 225 215 / 0.55);
+  color: var(--jade-ink);
+  background: var(--jade-surface-selected);
   box-shadow:
-    0 8px 20px rgb(73 110 96 / 0.12),
-    inset 0 1px 0 rgb(255 255 255 / 0.68),
-    inset 0 -1px 0 rgb(50 77 68 / 0.05);
+    inset 0 1px 2px rgb(255 255 255 / 0.68),
+    inset 0 -1px 2px rgb(50 77 68 / 0.08);
 }
 
 .nav-interactive:active {
   transform: translateY(1px);
   box-shadow:
-    0 3px 8px rgb(73 110 96 / 0.08),
     inset 0 2px 6px rgb(50 77 68 / 0.18),
     inset 0 1px 0 rgb(255 255 255 / 0.38);
 }
@@ -652,21 +677,19 @@ body:has(.hall-of-fame-page) > main {
 .dark .nav-interactive:hover {
   color: rgb(196 216 205 / 0.94);
   background: rgb(92 126 112 / 0.28);
-  box-shadow: 0 7px 18px rgb(0 0 0 / 0.16);
+  box-shadow: inset 0 1px 2px rgb(222 240 229 / 0.14);
 }
 
 .dark .nav-interactive[data-active='true'] {
   color: rgb(196 216 205 / 0.98);
   background: rgb(84 118 103 / 0.44);
   box-shadow:
-    0 8px 20px rgb(0 0 0 / 0.2),
-    inset 0 1px 0 rgb(222 240 229 / 0.2),
-    inset 0 -1px 0 rgb(0 0 0 / 0.12);
+    inset 0 1px 2px rgb(222 240 229 / 0.2),
+    inset 0 -1px 2px rgb(0 0 0 / 0.14);
 }
 
 .dark .nav-interactive:active {
   box-shadow:
-    0 3px 8px rgb(0 0 0 / 0.18),
     inset 0 2px 6px rgb(0 0 0 / 0.26),
     inset 0 1px 0 rgb(222 240 229 / 0.12);
 }
@@ -793,8 +816,8 @@ body:has(.hall-of-fame-page) > main {
 
   @media (hover: hover) and (pointer: fine) {
     .mobile-nav-link:hover {
-      color: #46574d;
-      background: rgb(220 230 220 / 0.35);
+      color: var(--jade-ink);
+      background: var(--jade-surface-soft);
       box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.55);
       transform: translateY(-1px);
     }
@@ -806,8 +829,8 @@ body:has(.hall-of-fame-page) > main {
     backdrop-filter: blur(10px) saturate(112%);
     -webkit-backdrop-filter: blur(10px) saturate(112%);
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.68),
-      inset 0 -1px 0 rgb(50 77 68 / 0.05);
+      inset 0 1px 2px rgb(255 255 255 / 0.68),
+      inset 0 -1px 2px rgb(50 77 68 / 0.08);
   }
 
   .site-header-logo-active {
@@ -852,8 +875,8 @@ body:has(.hall-of-fame-page) > main {
     backdrop-filter: blur(10px) saturate(112%);
     -webkit-backdrop-filter: blur(10px) saturate(112%);
     box-shadow:
-      inset 0 1px 0 rgb(222 240 229 / 0.2),
-      inset 0 -1px 0 rgb(0 0 0 / 0.12);
+      inset 0 1px 2px rgb(222 240 229 / 0.2),
+      inset 0 -1px 2px rgb(0 0 0 / 0.14);
   }
 
   .dark .mobile-nav-link:hover {
@@ -887,6 +910,8 @@ body:has(.hall-of-fame-page) > main {
     width: min(344px, calc(100% - 1rem)) !important;
     max-width: 100% !important;
     min-height: 0;
+    scale: 0.84;
+    transform-origin: center;
     padding: 1rem 0.85rem;
     border-radius: 32px;
   }
@@ -923,21 +948,13 @@ body:has(.hall-of-fame-page) > main {
   }
 }
 
-:root {
-  --jade-interaction-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --jade-interaction-border: rgb(97 157 142 / 0.42);
-  --jade-interaction-ring: rgb(97 157 142 / 0.22);
-  --jade-interaction-shadow: 0 8px 20px rgb(73 110 96 / 0.14);
-  --jade-interaction-inset: inset 0 1px 0 rgb(255 255 255 / 0.58);
-  --jade-interaction-pressed: inset 0 2px 6px rgb(50 77 68 / 0.18);
-}
-
-button:not(:disabled),
-[role='button'],
-summary,
-a[class~='rounded-lg'],
-a[class~='rounded-xl'],
-a[class~='rounded-2xl'] {
+/* Generic app controls only; Navbar and Checkmate controls own their interaction states. */
+button:not(:disabled):not(.form-button):not(.feature button),
+[role='button']:not(.feature [role='button']),
+summary:not(.feature summary),
+a[class~='rounded-lg']:not(.site-header a):not(.feature a),
+a[class~='rounded-xl']:not(.site-header a):not(.feature a),
+a[class~='rounded-2xl']:not(.site-header a):not(.feature a) {
   transition-property:
     transform, box-shadow, border-color, background, background-color, color, outline-color, width;
   transition-duration: 220ms;
@@ -945,35 +962,35 @@ a[class~='rounded-2xl'] {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  button:not(:disabled):hover,
-  [role='button']:hover,
-  summary:hover,
-  a[class~='rounded-lg']:hover,
-  a[class~='rounded-xl']:hover,
-  a[class~='rounded-2xl']:hover {
+  button:not(:disabled):not(.form-button):not(.feature button):hover,
+  [role='button']:not(.feature [role='button']):hover,
+  summary:not(.feature summary):hover,
+  a[class~='rounded-lg']:not(.site-header a):not(.feature a):hover,
+  a[class~='rounded-xl']:not(.site-header a):not(.feature a):hover,
+  a[class~='rounded-2xl']:not(.site-header a):not(.feature a):hover {
     border-color: var(--jade-interaction-border);
     box-shadow: var(--jade-interaction-shadow), var(--jade-interaction-inset);
     transform: translateY(-2px);
   }
 }
 
-button:not(:disabled):active,
-[role='button']:active,
-summary:active,
-a[class~='rounded-lg']:active,
-a[class~='rounded-xl']:active,
-a[class~='rounded-2xl']:active {
+button:not(:disabled):not(.form-button):not(.feature button):active,
+[role='button']:not(.feature [role='button']):active,
+summary:not(.feature summary):active,
+a[class~='rounded-lg']:not(.site-header a):not(.feature a):active,
+a[class~='rounded-xl']:not(.site-header a):not(.feature a):active,
+a[class~='rounded-2xl']:not(.site-header a):not(.feature a):active {
   box-shadow: var(--jade-interaction-pressed), var(--jade-interaction-inset);
   transform: translateY(0);
 }
 
-button:focus-visible,
-a:focus-visible,
-[role='button']:focus-visible,
-summary:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
+button:focus-visible:not(.form-button):not(.feature button),
+a:focus-visible:not(.site-header a):not(.feature a),
+[role='button']:focus-visible:not(.feature [role='button']),
+summary:focus-visible:not(.feature summary),
+input:focus-visible:not(.form-control):not(.feature input),
+select:focus-visible:not(.form-control):not(.feature select),
+textarea:focus-visible:not(.form-control):not(.feature textarea) {
   outline: 2px solid var(--jade-interaction-border);
   outline-offset: 3px;
   box-shadow:
@@ -988,22 +1005,22 @@ textarea:focus-visible {
   box-shadow: none;
 }
 
-button[class~='bg-ink'],
-button[class~='bg-blue-600'],
-a[class~='bg-ink'],
-a[class~='bg-blue-600'] {
+button[class~='bg-ink']:not(.feature button),
+button[class~='bg-blue-600']:not(.feature button),
+a[class~='bg-ink']:not(.site-header a):not(.feature a),
+a[class~='bg-blue-600']:not(.site-header a):not(.feature a) {
   border-color: rgb(97 157 142 / 0.48) !important;
   color: #f7fffb !important;
-  background: linear-gradient(145deg, #5e8e7d, #35584d) !important;
+  background: linear-gradient(145deg, #5e8e7d, var(--jade-deep)) !important;
   box-shadow:
     0 5px 15px rgb(73 110 96 / 0.16),
     inset 0 1px 0 rgb(255 255 255 / 0.34);
 }
 
-button[class~='border-line'],
-button[class~='border-line-dark'],
-a[class~='border-line'],
-a[class~='border-line-dark'] {
+button[class~='border-line']:not(.feature button),
+button[class~='border-line-dark']:not(.feature button),
+a[class~='border-line']:not(.site-header a):not(.feature a),
+a[class~='border-line-dark']:not(.site-header a):not(.feature a) {
   border-color: var(--jade-interaction-border) !important;
   color: var(--color-ink);
   background: rgb(255 255 255 / 0.48);

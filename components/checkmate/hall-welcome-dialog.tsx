@@ -41,8 +41,8 @@ export function HallWelcomeDialog({
           </div>
 
           <div className={styles.hallWelcomeIntro}>
-            <p>这里收录用户提交的 F-1 案例，经整理后匿名展示。</p>
-            <p>它帮助大家观察真实样本，不代表官方处理时间预测或个人结果。</p>
+            <p>收录42天（6周）以上 F-1 案例。</p>
+            <p>帮助大家观察真实样本，不代表官方处理时间预测或个人结果。</p>
           </div>
 
           <div className={styles.hallWelcomeStats} aria-label="名人堂数据概览">

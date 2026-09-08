@@ -1,5 +1,6 @@
 import '../css/tailwind.css'
 import '../css/twemoji.css'
+import '../styles/forms.css'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -39,10 +40,7 @@ const FONT_JETBRAINS_MONO = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_METADATA.siteUrl),
-  title: {
-    default: SITE_METADATA.title,
-    template: `%s | ${SITE_METADATA.title}`,
-  },
+  title: '名人堂',
   description: SITE_METADATA.description,
   openGraph: {
     title: SITE_METADATA.title,

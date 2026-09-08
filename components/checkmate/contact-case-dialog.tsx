@@ -1,12 +1,27 @@
 'use client'
 
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
-import { useState, type FormEvent } from 'react'
+import { useForm } from 'react-hook-form'
+import { useState } from 'react'
 import type { CheckmateDataNotice } from '~/data/checkmate/config'
+import { FieldError, FormWrapper, SubmitButton } from '~/components/forms'
+import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
+import { Textarea } from '~/components/ui/textarea'
+import {
+  updateRequestSchema,
+  type UpdateRequestFormValues,
+  type UpdateRequestValues,
+} from '~/lib/validations/update-request'
+import {
+  otherFeedbackSchema,
+  type OtherFeedbackFormValues,
+  type OtherFeedbackValues,
+} from '~/lib/validations/other-feedback'
 import styles from './checkmate-experience.module.css'
 
 const DEVELOPER_EMAIL = 'fyou@wustl.edu'
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u
 
 type ContactDialogView = 'menu' | 'info' | 'update' | 'other'
 
@@ -21,19 +36,26 @@ export function ContactCaseDialogButton({
   const [view, setView] = useState<ContactDialogView>('menu')
   const [draftPrepared, setDraftPrepared] = useState(false)
   const [error, setError] = useState('')
-  const [updateMessage, setUpdateMessage] = useState('')
-  const [updateEmail, setUpdateEmail] = useState('')
-  const [otherMessage, setOtherMessage] = useState('')
-  const [isSubmittingUpdate, setIsSubmittingUpdate] = useState(false)
+  const updateForm = useForm<UpdateRequestFormValues, unknown, UpdateRequestValues>({
+    resolver: zodResolver(updateRequestSchema),
+    defaultValues: {
+      content: '',
+      email: '',
+    },
+  })
+  const otherForm = useForm<OtherFeedbackFormValues, unknown, OtherFeedbackValues>({
+    resolver: zodResolver(otherFeedbackSchema),
+    defaultValues: {
+      otherMessage: '',
+    },
+  })
 
   const reset = () => {
     setView('menu')
     setDraftPrepared(false)
     setError('')
-    setUpdateMessage('')
-    setUpdateEmail('')
-    setOtherMessage('')
-    setIsSubmittingUpdate(false)
+    updateForm.reset()
+    otherForm.reset()
   }
 
   const openDialog = () => {
@@ -52,64 +74,38 @@ export function ContactCaseDialogButton({
     setView('menu')
   }
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleUpdateSubmit = async (values: UpdateRequestValues) => {
+    setError('')
+    try {
+      const response = await fetch('/api/update-requests', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          content: values.content,
+          email: values.email,
+        }),
+      })
 
-    if (view === 'update') {
-      if (isSubmittingUpdate) return
-
-      const trimmedUpdateMessage = updateMessage.trim()
-      if (!trimmedUpdateMessage) {
-        setError('请说明需要更新的内容')
-        return
-      }
-
-      const normalizedEmail = updateEmail.trim()
-      if (normalizedEmail && !EMAIL_PATTERN.test(normalizedEmail)) {
-        setError('请输入有效的邮箱地址')
-        return
-      }
-
-      setError('')
-      setIsSubmittingUpdate(true)
+      let result: { error?: string } = {}
       try {
-        const response = await fetch('/api/update-requests', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({
-            content: trimmedUpdateMessage,
-            email: normalizedEmail || undefined,
-          }),
-        })
-
-        let result: { error?: string } = {}
-        try {
-          result = (await response.json()) as { error?: string }
-        } catch {
-          // Keep the generic error below when the response is not JSON.
-        }
-
-        if (!response.ok) {
-          setError(result.error || '提交失败，请稍后再试。')
-          return
-        }
-
-        setDraftPrepared(true)
+        result = (await response.json()) as { error?: string }
       } catch {
-        setError('提交失败，请稍后再试。')
-      } finally {
-        setIsSubmittingUpdate(false)
+        // Keep the generic error below when the response is not JSON.
       }
-      return
-    }
 
-    const trimmedMessage = otherMessage.trim()
-    if (!trimmedMessage) {
-      setError('请先填写你的建议或说明')
-      return
-    }
+      if (!response.ok) {
+        setError(result.error || '提交失败，请稍后再试。')
+        return
+      }
 
-    const body = ['您好，我想提交其他反馈。', '', trimmedMessage].join('\n')
+      setDraftPrepared(true)
+    } catch {
+      setError('提交失败，请稍后再试。')
+    }
+  }
+
+  const handleOtherSubmit = (values: OtherFeedbackValues) => {
+    const body = ['您好，我想提交其他反馈。', '', values.otherMessage].join('\n')
     setDraftPrepared(true)
     window.location.href = `mailto:${DEVELOPER_EMAIL}?subject=${encodeURIComponent('Checkee 其他反馈')}&body=${encodeURIComponent(body)}`
   }
@@ -123,20 +119,13 @@ export function ContactCaseDialogButton({
       : view === 'info'
         ? '数据说明'
         : view === 'update'
-          ? '更新数据'
-          : '其他反馈'
+        ? '更新数据'
+        : '其他反馈'
   const subtitle = draftPrepared
     ? view === 'update'
       ? '我们会核实相关信息'
       : '请在邮件客户端确认并发送'
-    : view === 'menu'
-      ? '了解数据，并帮助维护时间线档案'
-      : view === 'info'
-        ? '了解数据来源与展示边界'
-        : view === 'update'
-          ? '修改已有案例中的信息'
-          : '提交建议或其他说明'
-
+    : undefined
   return (
     <>
       <button
@@ -156,7 +145,7 @@ export function ContactCaseDialogButton({
             <div className={styles.submitDialogHeader}>
               <div>
                 <DialogTitle className={styles.submitDialogTitle}>{title}</DialogTitle>
-                <p>{subtitle}</p>
+                {subtitle ? <p>{subtitle}</p> : null}
               </div>
             </div>
 
@@ -177,6 +166,7 @@ export function ContactCaseDialogButton({
                       onClick={() => setView('info')}
                     >
                       <strong>数据说明</strong>
+                      <span>查看数据来源与展示边界</span>
                     </button>
                     <button
                       type="button"
@@ -211,7 +201,6 @@ export function ContactCaseDialogButton({
                   aria-labelledby="contact-data-notice-title"
                 >
                   <h3 id="contact-data-notice-title">数据说明</h3>
-                  <p>数据来自用户提交案例，经整理后展示，不代表官方处理时间或个人结果。</p>
                   <p>{notice.content}</p>
                   <p className={styles.contactDataNoticeUpdated}>更新时间：{updatedAt}</p>
                 </section>
@@ -234,7 +223,7 @@ export function ContactCaseDialogButton({
                     ? '感谢你帮助维护 Checkee 数据。我们会核实相关信息，确认后更新案例。'
                     : '请在邮件客户端确认并发送。我们会检查相关记录，确认后才会更新。'}
                 </p>
-                {view === 'update' && updateEmail.trim() ? (
+                {view === 'update' && updateForm.getValues('email')?.trim() ? (
                   <p>如需进一步确认，我们会通过邮箱联系你。</p>
                 ) : null}
                 <div className={styles.submitFormActions}>
@@ -252,39 +241,56 @@ export function ContactCaseDialogButton({
               </section>
             ) : view === 'update' ? (
               <section className={styles.contactFeedbackSection} aria-label="更新数据">
-                <form className={styles.contactDialogForm} onSubmit={handleSubmit}>
+                <FormWrapper
+                  form={updateForm}
+                  onSubmit={handleUpdateSubmit}
+                  className={styles.contactDialogForm}
+                  noValidate
+                >
                   <p className={styles.contactDialogCopy}>
                     如果你的案例信息发生变化，请告诉我们需要更新的内容。我们会人工核实后进行调整。
                   </p>
 
-                  <label className={styles.submitField}>
+                  <Label className={styles.submitField} htmlFor="update-content">
                     <span>更新内容</span>
-                    <textarea
-                      value={updateMessage}
+                    <Textarea
+                      id="update-content"
                       placeholder="例如：我的签证状态已经更新为 Issued。建议提供地点、学校、专业或日期，帮助我们定位案例。"
                       rows={7}
-                      onChange={(event) => {
-                        setUpdateMessage(event.target.value)
-                        setError('')
-                      }}
+                      aria-invalid={Boolean(updateForm.formState.errors.content)}
+                      aria-describedby={
+                        updateForm.formState.errors.content ? 'update-content-error' : undefined
+                      }
+                      {...updateForm.register('content', {
+                        onChange: () => {
+                          setError('')
+                        },
+                      })}
                     />
-                  </label>
+                    <FieldError<UpdateRequestFormValues> id="update-content-error" name="content" />
+                  </Label>
 
-                  <label className={styles.submitField}>
+                  <Label className={styles.submitField} htmlFor="update-email">
                     <span>
                       邮箱 <em>可选</em>
                     </span>
-                    <input
+                    <Input
+                      id="update-email"
                       type="email"
                       autoComplete="email"
-                      value={updateEmail}
                       placeholder="如需进一步确认，可填写邮箱"
-                      onChange={(event) => {
-                        setUpdateEmail(event.target.value)
-                        setError('')
-                      }}
+                      aria-invalid={Boolean(updateForm.formState.errors.email)}
+                      aria-describedby={
+                        updateForm.formState.errors.email ? 'update-email-error' : undefined
+                      }
+                      {...updateForm.register('email', {
+                        onChange: () => {
+                          setError('')
+                        },
+                      })}
                     />
-                  </label>
+                    <FieldError<UpdateRequestFormValues> id="update-email-error" name="email" />
+                  </Label>
 
                   <p className={styles.contactDialogHint}>
                     如果涉及案例信息修改，建议提供相关凭证以帮助我们确认。敏感信息可以遮挡。
@@ -303,31 +309,43 @@ export function ContactCaseDialogButton({
                     >
                       返回
                     </button>
-                    <button
-                      type="submit"
-                      className={styles.submitPrimaryButton}
-                      disabled={isSubmittingUpdate}
-                    >
-                      {isSubmittingUpdate ? '正在提交...' : '提交更新'}
-                    </button>
+                    <SubmitButton className={styles.submitPrimaryButton} loadingText="正在提交...">
+                      提交更新
+                    </SubmitButton>
                   </div>
-                </form>
+                </FormWrapper>
               </section>
             ) : (
               <section className={styles.contactFeedbackSection}>
-                <form className={styles.contactDialogForm} onSubmit={handleSubmit}>
-                  <label className={styles.submitField}>
+                <FormWrapper
+                  form={otherForm}
+                  onSubmit={handleOtherSubmit}
+                  className={styles.contactDialogForm}
+                  noValidate
+                >
+                  <Label className={styles.submitField} htmlFor="other-feedback-content">
                     <span>反馈内容</span>
-                    <textarea
-                      value={otherMessage}
+                    <Textarea
+                      id="other-feedback-content"
                       placeholder="请输入你的建议或其他说明…"
                       rows={7}
-                      onChange={(event) => {
-                        setOtherMessage(event.target.value)
-                        setError('')
-                      }}
+                      aria-invalid={Boolean(otherForm.formState.errors.otherMessage)}
+                      aria-describedby={
+                        otherForm.formState.errors.otherMessage
+                          ? 'other-feedback-content-error'
+                          : undefined
+                      }
+                      {...otherForm.register('otherMessage', {
+                        onChange: () => {
+                          setError('')
+                        },
+                      })}
                     />
-                  </label>
+                    <FieldError<OtherFeedbackFormValues>
+                      id="other-feedback-content-error"
+                      name="otherMessage"
+                    />
+                  </Label>
 
                   {error ? (
                     <p className={styles.submitFormError} role="alert">
@@ -342,11 +360,9 @@ export function ContactCaseDialogButton({
                     >
                       返回
                     </button>
-                    <button type="submit" className={styles.submitPrimaryButton}>
-                      提交反馈
-                    </button>
+                    <SubmitButton className={styles.submitPrimaryButton}>提交反馈</SubmitButton>
                   </div>
-                </form>
+                </FormWrapper>
               </section>
             )}
           </DialogPanel>

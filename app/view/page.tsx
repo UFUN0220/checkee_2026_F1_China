@@ -4,7 +4,7 @@ import { genPageMetadata } from '~/app/seo'
 import { CheckmatePage } from '~/components/checkmate/checkmate-page'
 import { PageTheme } from '~/components/ui/page-theme'
 
-export const metadata = genPageMetadata({ title: '白宫严选' })
+export const metadata = genPageMetadata({ title: '统计' })
 
 export default async function ViewPage({
   searchParams,

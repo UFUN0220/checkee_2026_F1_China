@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 
-const MOBILE_PAGE_PATHS = ['/', '/view', '/about'] as const
+const MOBILE_PAGE_PATHS = ['/about', '/', '/view'] as const
 const MOBILE_PAGE_MEDIA_QUERY = '(max-width: 768px)'
 const SWIPE_THRESHOLD = 50
 

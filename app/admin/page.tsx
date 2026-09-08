@@ -42,7 +42,7 @@ export default async function AdminPage({
   return (
     <main
       className="min-h-[100dvh] px-5 py-16 text-ink dark:text-cream sm:px-8"
-      style={{ background: 'var(--page-background-about)' }}
+      style={{ background: 'var(--page-background-hall)' }}
     >
       <div className="mx-auto max-w-5xl">
         <header className="flex flex-wrap items-start justify-between gap-4">
