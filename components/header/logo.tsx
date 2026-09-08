@@ -1,13 +1,28 @@
 import { clsx } from 'clsx'
 import NextImage from 'next/image'
+import type { MouseEventHandler } from 'react'
 import { Link } from '~/components/ui/link'
 import { SITE_METADATA } from '~/data/site-metadata'
 
-export function Logo({ className }: { className?: string }) {
+type LogoProps = {
+  className?: string
+  onClick?: MouseEventHandler<HTMLAnchorElement>
+  'aria-expanded'?: boolean
+  'aria-label'?: string
+}
+
+export function Logo({
+  className,
+  onClick,
+  'aria-expanded': ariaExpanded,
+  'aria-label': ariaLabel,
+}: LogoProps) {
   return (
     <Link
       href="/about"
-      aria-label={SITE_METADATA.headerTitle}
+      aria-label={ariaLabel ?? SITE_METADATA.headerTitle}
+      aria-expanded={ariaExpanded}
+      onClick={onClick}
       className={clsx([
         'rounded-xl p-0.5',
         'ring-1 ring-zinc-900/5 dark:ring-white/10', //环形边框

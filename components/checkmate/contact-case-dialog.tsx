@@ -162,8 +162,13 @@ export function ContactCaseDialogButton({
 
             {view === 'menu' ? (
               <>
-                <section className={styles.contactFeedbackSection} aria-labelledby="contact-menu-title">
-                  <h3 id="contact-menu-title" className={styles.contactSectionTitle}>选择你要了解或维护的内容</h3>
+                <section
+                  className={styles.contactFeedbackSection}
+                  aria-labelledby="contact-menu-title"
+                >
+                  <h3 id="contact-menu-title" className={styles.contactSectionTitle}>
+                    选择你要了解或维护的内容
+                  </h3>
                   <div className={styles.contactIntentList}>
                     <button
                       type="button"
@@ -172,7 +177,6 @@ export function ContactCaseDialogButton({
                       onClick={() => setView('info')}
                     >
                       <strong>数据说明</strong>
-                      <span>了解数据来源与展示边界</span>
                     </button>
                     <button
                       type="button"
@@ -202,14 +206,21 @@ export function ContactCaseDialogButton({
               </>
             ) : view === 'info' ? (
               <>
-                <section className={styles.contactDataNotice} aria-labelledby="contact-data-notice-title">
+                <section
+                  className={styles.contactDataNotice}
+                  aria-labelledby="contact-data-notice-title"
+                >
                   <h3 id="contact-data-notice-title">数据说明</h3>
                   <p>数据来自用户提交案例，经整理后展示，不代表官方处理时间或个人结果。</p>
                   <p>{notice.content}</p>
                   <p className={styles.contactDataNoticeUpdated}>更新时间：{updatedAt}</p>
                 </section>
                 <div className={styles.submitFormActions}>
-                  <button type="button" className={styles.submitSecondaryButton} onClick={returnToMenu}>
+                  <button
+                    type="button"
+                    className={styles.submitSecondaryButton}
+                    onClick={returnToMenu}
+                  >
                     返回
                   </button>
                 </div>
@@ -227,7 +238,11 @@ export function ContactCaseDialogButton({
                   <p>如需进一步确认，我们会通过邮箱联系你。</p>
                 ) : null}
                 <div className={styles.submitFormActions}>
-                  <button type="button" className={styles.submitSecondaryButton} onClick={() => setDraftPrepared(false)}>
+                  <button
+                    type="button"
+                    className={styles.submitSecondaryButton}
+                    onClick={() => setDraftPrepared(false)}
+                  >
                     返回
                   </button>
                   <button type="button" className={styles.submitPrimaryButton} onClick={close}>
@@ -236,9 +251,8 @@ export function ContactCaseDialogButton({
                 </div>
               </section>
             ) : view === 'update' ? (
-              <section className={styles.contactFeedbackSection} aria-labelledby="update-data-title">
+              <section className={styles.contactFeedbackSection} aria-label="更新数据">
                 <form className={styles.contactDialogForm} onSubmit={handleSubmit}>
-                  <h3 id="update-data-title" className={styles.contactSectionTitle}>更新内容</h3>
                   <p className={styles.contactDialogCopy}>
                     如果你的案例信息发生变化，请告诉我们需要更新的内容。我们会人工核实后进行调整。
                   </p>
@@ -257,7 +271,9 @@ export function ContactCaseDialogButton({
                   </label>
 
                   <label className={styles.submitField}>
-                    <span>邮箱 <em>可选</em></span>
+                    <span>
+                      邮箱 <em>可选</em>
+                    </span>
                     <input
                       type="email"
                       autoComplete="email"
@@ -274,21 +290,32 @@ export function ContactCaseDialogButton({
                     如果涉及案例信息修改，建议提供相关凭证以帮助我们确认。敏感信息可以遮挡。
                   </p>
 
-                  {error ? <p className={styles.submitFormError} role="alert">{error}</p> : null}
+                  {error ? (
+                    <p className={styles.submitFormError} role="alert">
+                      {error}
+                    </p>
+                  ) : null}
                   <div className={styles.submitFormActions}>
-                    <button type="button" className={styles.submitSecondaryButton} onClick={returnToMenu}>
+                    <button
+                      type="button"
+                      className={styles.submitSecondaryButton}
+                      onClick={returnToMenu}
+                    >
                       返回
                     </button>
-                    <button type="submit" className={styles.submitPrimaryButton} disabled={isSubmittingUpdate}>
+                    <button
+                      type="submit"
+                      className={styles.submitPrimaryButton}
+                      disabled={isSubmittingUpdate}
+                    >
                       {isSubmittingUpdate ? '正在提交...' : '提交更新'}
                     </button>
                   </div>
                 </form>
               </section>
             ) : (
-              <section className={styles.contactFeedbackSection} aria-labelledby="other-feedback-title">
+              <section className={styles.contactFeedbackSection}>
                 <form className={styles.contactDialogForm} onSubmit={handleSubmit}>
-                  <h3 id="other-feedback-title" className={styles.contactSectionTitle}>反馈内容</h3>
                   <label className={styles.submitField}>
                     <span>反馈内容</span>
                     <textarea
@@ -302,9 +329,17 @@ export function ContactCaseDialogButton({
                     />
                   </label>
 
-                  {error ? <p className={styles.submitFormError} role="alert">{error}</p> : null}
+                  {error ? (
+                    <p className={styles.submitFormError} role="alert">
+                      {error}
+                    </p>
+                  ) : null}
                   <div className={styles.submitFormActions}>
-                    <button type="button" className={styles.submitSecondaryButton} onClick={returnToMenu}>
+                    <button
+                      type="button"
+                      className={styles.submitSecondaryButton}
+                      onClick={returnToMenu}
+                    >
                       返回
                     </button>
                     <button type="submit" className={styles.submitPrimaryButton}>

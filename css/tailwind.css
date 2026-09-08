@@ -496,7 +496,7 @@ body:has(.hall-of-fame-page) > main {
 
 .home-copy-action button:focus-visible,
 .nav-interactive:focus-visible {
-  outline: 2px solid #c24a2d;
+  outline: 2px solid var(--jade-interaction-border);
   outline-offset: 2px;
 }
 
@@ -559,11 +559,13 @@ body:has(.hall-of-fame-page) > main {
   align-items: center;
   border-radius: 30px;
   padding: 8px 12px;
+  color: rgb(70 87 77 / 0.76);
+  background: transparent;
   transition:
-    background-color 100ms ease-in-out,
-    color 100ms ease-in-out,
-    box-shadow 100ms ease-in-out,
-    transform 100ms ease-in-out;
+    background-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .site-header nav a,
@@ -575,16 +577,66 @@ body:has(.hall-of-fame-page) > main {
   display: none;
 }
 
+.site-header {
+  overflow: hidden;
+  transition:
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    max-width 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-header-navigation,
+.site-mobile-navigation {
+  width: auto;
+  max-width: 1000px;
+  overflow: hidden;
+  opacity: 1;
+  transform: translateX(0);
+  visibility: visible;
+  transition:
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    max-width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease,
+    transform 240ms ease,
+    visibility 0s linear 0s;
+}
+
+.site-header[data-nav-collapsed='true'] .site-header-navigation,
+.site-header[data-nav-collapsed='true'] .site-mobile-navigation {
+  width: 0;
+  max-width: 0;
+  opacity: 0;
+  transform: translateX(-0.35rem);
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    max-width 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease,
+    transform 240ms ease,
+    visibility 0s linear 360ms;
+}
+
 .nav-interactive:hover {
-  color: #a43d25;
-  background: #f4ebe7;
-  box-shadow: 0 6px 16px rgb(194 74 45 / 0.12);
+  color: #46574d;
+  background: rgb(220 230 220 / 0.35);
+  box-shadow: 0 6px 16px rgb(73 110 96 / 0.1);
 }
 
 .nav-interactive[data-active='true'] {
-  color: #963d27;
-  background: #ead8d2;
-  box-shadow: 0 6px 16px rgb(194 74 45 / 0.14);
+  color: #46574d;
+  background: rgb(210 225 215 / 0.55);
+  box-shadow:
+    0 8px 20px rgb(73 110 96 / 0.12),
+    inset 0 1px 0 rgb(255 255 255 / 0.68),
+    inset 0 -1px 0 rgb(50 77 68 / 0.05);
+}
+
+.nav-interactive:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 3px 8px rgb(73 110 96 / 0.08),
+    inset 0 2px 6px rgb(50 77 68 / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.38);
 }
 
 .dark .home-profile-card {
@@ -598,13 +650,52 @@ body:has(.hall-of-fame-page) > main {
 }
 
 .dark .nav-interactive:hover {
-  color: #f0ad98;
-  background: #3a2925;
+  color: rgb(196 216 205 / 0.94);
+  background: rgb(92 126 112 / 0.28);
+  box-shadow: 0 7px 18px rgb(0 0 0 / 0.16);
 }
 
 .dark .nav-interactive[data-active='true'] {
-  color: #f0ad98;
-  background: #452d27;
+  color: rgb(196 216 205 / 0.98);
+  background: rgb(84 118 103 / 0.44);
+  box-shadow:
+    0 8px 20px rgb(0 0 0 / 0.2),
+    inset 0 1px 0 rgb(222 240 229 / 0.2),
+    inset 0 -1px 0 rgb(0 0 0 / 0.12);
+}
+
+.dark .nav-interactive:active {
+  box-shadow:
+    0 3px 8px rgb(0 0 0 / 0.18),
+    inset 0 2px 6px rgb(0 0 0 / 0.26),
+    inset 0 1px 0 rgb(222 240 229 / 0.12);
+}
+
+@media (min-width: 640px) {
+  .site-header {
+    padding-inline: 0.2rem;
+  }
+
+  .site-header > div > div {
+    gap: 0.25rem;
+  }
+
+  .site-header > div > div > a:not(.mobile-nav-link) {
+    margin-right: 0;
+    margin-left: 0.25rem;
+  }
+
+  .site-header nav {
+    gap: 0.25rem;
+  }
+
+  .site-header nav > a {
+    padding-inline: 0;
+  }
+
+  .site-header .nav-interactive {
+    padding: 0.4rem 0.55rem;
+  }
 }
 
 @media (max-width: 639px) {
@@ -634,6 +725,11 @@ body:has(.hall-of-fame-page) > main {
       inset 0 1px 0 rgb(255 255 255 / 0.62);
     backdrop-filter: blur(18px) saturate(135%);
     -webkit-backdrop-filter: blur(18px) saturate(135%);
+  }
+
+  .site-header[data-nav-collapsed='true'] {
+    width: 3.25rem !important;
+    max-width: 3.25rem !important;
   }
 
   .site-header > div,
@@ -680,26 +776,38 @@ body:has(.hall-of-fame-page) > main {
     align-items: center;
     justify-content: center;
     border-radius: 999px;
+    overflow: hidden;
     padding: 0.4rem 0.55rem;
-    color: rgb(37 36 31 / 0.78);
+    color: rgb(70 87 77 / 0.76);
     font-family: 'heishenhua', var(--font-nunito), sans-serif;
     font-size: 0.9rem;
     line-height: 1;
     text-decoration: none;
     white-space: nowrap;
     transition:
-      background 180ms cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
-      color 160ms ease,
-      transform 120ms ease;
+      background-color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .mobile-nav-link:hover {
+      color: #46574d;
+      background: rgb(220 230 220 / 0.35);
+      box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.55);
+      transform: translateY(-1px);
+    }
   }
 
   .mobile-nav-link[data-active='true'] {
-    color: rgb(37 36 31 / 0.94);
-    background: rgb(255 255 255 / 0.54);
+    color: #46574d;
+    background: rgb(225 235 225 / 0.55);
+    backdrop-filter: blur(10px) saturate(112%);
+    -webkit-backdrop-filter: blur(10px) saturate(112%);
     box-shadow:
-      0 5px 12px rgb(65 65 75 / 0.08),
-      inset 0 1px 0 rgb(255 255 255 / 0.64);
+      inset 0 1px 0 rgb(255 255 255 / 0.68),
+      inset 0 -1px 0 rgb(50 77 68 / 0.05);
   }
 
   .site-header-logo-active {
@@ -708,24 +816,22 @@ body:has(.hall-of-fame-page) > main {
       0 7px 16px rgb(85 70 100 / 0.15);
   }
 
-  .mobile-nav-link:active,
+  .mobile-nav-link:active {
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 2px 6px rgb(50 77 68 / 0.18),
+      inset 0 1px 0 rgb(255 255 255 / 0.38);
+    transition-duration: 180ms;
+  }
+
   .site-header > div > div > a:not(.mobile-nav-link):active {
-    transform: scale(0.99);
-    transition-duration: 120ms;
+    transform: translateY(1px);
+    transition-duration: 180ms;
   }
 
   .view-page > .site-container,
   .hall-of-fame-page > .site-container {
     padding-top: calc(var(--mobile-nav-height) + 0.75rem);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .mobile-nav-link:hover {
-      color: rgb(37 36 31 / 0.94);
-      background: rgb(255 255 255 / 0.28);
-      box-shadow: 0 6px 16px rgb(65 65 75 / 0.07);
-      transform: translateY(-1px);
-    }
   }
 
   .dark .site-header {
@@ -737,15 +843,29 @@ body:has(.hall-of-fame-page) > main {
   }
 
   .dark .mobile-nav-link {
-    color: rgb(242 239 231 / 0.76);
+    color: rgb(188 208 198 / 0.76);
   }
 
   .dark .mobile-nav-link[data-active='true'] {
-    color: rgb(242 239 231 / 0.96);
-    background: rgb(255 255 255 / 0.1);
+    color: rgb(196 216 205 / 0.98);
+    background: rgb(84 118 103 / 0.42);
+    backdrop-filter: blur(10px) saturate(112%);
+    -webkit-backdrop-filter: blur(10px) saturate(112%);
     box-shadow:
-      0 5px 14px rgb(0 0 0 / 0.18),
-      inset 0 1px 0 rgb(255 255 255 / 0.12);
+      inset 0 1px 0 rgb(222 240 229 / 0.2),
+      inset 0 -1px 0 rgb(0 0 0 / 0.12);
+  }
+
+  .dark .mobile-nav-link:hover {
+    color: rgb(196 216 205 / 0.98);
+    background: rgb(92 126 112 / 0.28);
+    box-shadow: inset 0 1px 0 rgb(222 240 229 / 0.14);
+  }
+
+  .dark .mobile-nav-link:active {
+    box-shadow:
+      inset 0 2px 6px rgb(0 0 0 / 0.26),
+      inset 0 1px 0 rgb(222 240 229 / 0.12);
   }
 
   .dark .site-header-logo-active {
@@ -756,8 +876,7 @@ body:has(.hall-of-fame-page) > main {
 
   .personal-home-page {
     padding: calc(var(--mobile-nav-height) + 0.5rem + env(safe-area-inset-top))
-      max(1rem, env(safe-area-inset-left))
-      max(1.5rem, env(safe-area-inset-bottom));
+      max(1rem, env(safe-area-inset-left)) max(1.5rem, env(safe-area-inset-bottom));
     overflow: auto;
     background-position: center;
     background-size: 140% 140%;
@@ -794,7 +913,7 @@ body:has(.hall-of-fame-page) > main {
   }
 
   .home-copy-action button:active {
-    transform: scale(0.99);
+    transform: translateY(0);
   }
 
   .home-support-copy {
@@ -802,6 +921,95 @@ body:has(.hall-of-fame-page) > main {
     margin-top: 0.85rem;
     overflow-wrap: anywhere;
   }
+}
+
+:root {
+  --jade-interaction-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --jade-interaction-border: rgb(97 157 142 / 0.42);
+  --jade-interaction-ring: rgb(97 157 142 / 0.22);
+  --jade-interaction-shadow: 0 8px 20px rgb(73 110 96 / 0.14);
+  --jade-interaction-inset: inset 0 1px 0 rgb(255 255 255 / 0.58);
+  --jade-interaction-pressed: inset 0 2px 6px rgb(50 77 68 / 0.18);
+}
+
+button:not(:disabled),
+[role='button'],
+summary,
+a[class~='rounded-lg'],
+a[class~='rounded-xl'],
+a[class~='rounded-2xl'] {
+  transition-property:
+    transform, box-shadow, border-color, background, background-color, color, outline-color, width;
+  transition-duration: 220ms;
+  transition-timing-function: var(--jade-interaction-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button:not(:disabled):hover,
+  [role='button']:hover,
+  summary:hover,
+  a[class~='rounded-lg']:hover,
+  a[class~='rounded-xl']:hover,
+  a[class~='rounded-2xl']:hover {
+    border-color: var(--jade-interaction-border);
+    box-shadow: var(--jade-interaction-shadow), var(--jade-interaction-inset);
+    transform: translateY(-2px);
+  }
+}
+
+button:not(:disabled):active,
+[role='button']:active,
+summary:active,
+a[class~='rounded-lg']:active,
+a[class~='rounded-xl']:active,
+a[class~='rounded-2xl']:active {
+  box-shadow: var(--jade-interaction-pressed), var(--jade-interaction-inset);
+  transform: translateY(0);
+}
+
+button:focus-visible,
+a:focus-visible,
+[role='button']:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--jade-interaction-border);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 3px var(--jade-interaction-ring),
+    var(--jade-interaction-inset);
+}
+
+/* Navbar keeps its pre-global focus treatment. */
+.site-header a:focus-visible {
+  outline: revert;
+  outline-offset: revert;
+  box-shadow: none;
+}
+
+button[class~='bg-ink'],
+button[class~='bg-blue-600'],
+a[class~='bg-ink'],
+a[class~='bg-blue-600'] {
+  border-color: rgb(97 157 142 / 0.48) !important;
+  color: #f7fffb !important;
+  background: linear-gradient(145deg, #5e8e7d, #35584d) !important;
+  box-shadow:
+    0 5px 15px rgb(73 110 96 / 0.16),
+    inset 0 1px 0 rgb(255 255 255 / 0.34);
+}
+
+button[class~='border-line'],
+button[class~='border-line-dark'],
+a[class~='border-line'],
+a[class~='border-line-dark'] {
+  border-color: var(--jade-interaction-border) !important;
+  color: var(--color-ink);
+  background: rgb(255 255 255 / 0.48);
+  box-shadow:
+    0 4px 12px rgb(73 110 96 / 0.06),
+    var(--jade-interaction-inset);
 }
 
 @media (max-width: 768px) {
@@ -860,6 +1068,18 @@ body:has(.hall-of-fame-page) > main {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .site-header {
+    transition: opacity 0.01ms linear !important;
+  }
+
+  .site-header-navigation,
+  .site-mobile-navigation {
+    transform: none !important;
+    transition:
+      opacity 0.01ms linear,
+      visibility 0s linear 0s !important;
+  }
+
   *,
   *::before,
   *::after {

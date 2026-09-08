@@ -161,12 +161,11 @@
   padding: clamp(0.75rem, 1.45vw, 1rem);
   color: var(--color-ink);
   overflow: hidden;
-  background:
-    linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--checkmate-surface) 82%, var(--city-tint) 18%),
-      color-mix(in srgb, var(--checkmate-surface) 94%, var(--city-tint) 6%)
-    );
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--checkmate-surface) 82%, var(--city-tint) 18%),
+    color-mix(in srgb, var(--checkmate-surface) 94%, var(--city-tint) 6%)
+  );
   box-shadow: 0 8px 22px rgb(73 68 58 / 0.055);
   text-align: left;
   cursor: pointer;
@@ -201,12 +200,11 @@
 }
 .cityCardActive {
   transform: translateY(-2px);
-  background:
-    linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--checkmate-surface-strong) 78%, var(--city-tint) 22%),
-      color-mix(in srgb, var(--checkmate-surface-strong) 90%, var(--city-tint) 10%)
-    );
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--checkmate-surface-strong) 78%, var(--city-tint) 22%),
+    color-mix(in srgb, var(--checkmate-surface-strong) 90%, var(--city-tint) 10%)
+  );
   box-shadow:
     0 6px 14px rgb(73 68 58 / 0.07),
     0 16px 30px color-mix(in srgb, var(--city-tint) 14%, transparent);
@@ -216,8 +214,8 @@
   transform: translate3d(0, 0, 0) scale(1);
 }
 @media (hover: hover) and (pointer: fine) {
-  .cityCard:hover,
-  .cityCard:focus-visible {
+  button.cityCard.cityCard:hover,
+  button.cityCard.cityCard:focus-visible {
     border-color: color-mix(in srgb, var(--checkmate-border) 74%, white 26%);
     box-shadow:
       0 5px 12px rgb(73 68 58 / 0.07),
@@ -233,8 +231,8 @@
     transform: translate3d(0, 0, 0) scale(1.01);
   }
 
-  .cityCardActive:hover,
-  .cityCardActive:focus-visible {
+  button.cityCardActive.cityCardActive:hover,
+  button.cityCardActive.cityCardActive:focus-visible {
     border-color: color-mix(in srgb, var(--checkmate-border) 68%, white 32%);
     box-shadow:
       0 6px 14px rgb(73 68 58 / 0.08),
@@ -835,9 +833,31 @@
   background: color-mix(in srgb, var(--checkmate-surface-strong) 74%, rgb(97 157 142 / 0.3) 26%);
   box-shadow: 0 8px 20px rgb(97 157 142 / 0.16);
 }
+.contactDialogPanel .submitSecondaryButton,
+.contactDialogPanel .contactFeedbackSuccess .submitPrimaryButton {
+  border: 1px solid color-mix(in srgb, var(--checkmate-border) 82%, var(--checkmate-accent) 18%);
+  color: color-mix(in srgb, var(--color-ink) 92%, var(--checkmate-accent) 8%);
+  background: color-mix(in srgb, var(--checkmate-surface-strong) 94%, var(--checkmate-accent) 6%);
+  box-shadow:
+    0 4px 12px color-mix(in srgb, var(--checkmate-accent) 5%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.42);
+}
+.contactDialogPanel .submitSecondaryButton:hover:not(:disabled),
+.contactDialogPanel .submitSecondaryButton:focus-visible,
+.contactDialogPanel .contactFeedbackSuccess .submitPrimaryButton:hover:not(:disabled),
+.contactDialogPanel .contactFeedbackSuccess .submitPrimaryButton:focus-visible {
+  border-color: color-mix(in srgb, var(--checkmate-border) 48%, var(--checkmate-accent) 52%);
+  color: var(--color-ink);
+  background: color-mix(in srgb, var(--checkmate-surface-strong) 90%, var(--checkmate-accent) 10%);
+  box-shadow:
+    0 7px 16px color-mix(in srgb, var(--checkmate-accent) 9%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.52);
+  transform: translateY(-1px);
+}
 .contactDataNotice {
   margin: 0 0 1rem;
-  border-left: 2px solid color-mix(in srgb, var(--checkmate-border) 68%, var(--checkmate-accent) 32%);
+  border-left: 2px solid
+    color-mix(in srgb, var(--checkmate-border) 68%, var(--checkmate-accent) 32%);
   padding: 0.1rem 0 0.1rem 0.85rem;
 }
 .contactDataNotice h3 {
@@ -874,6 +894,11 @@
   font-size: 0.78rem;
   line-height: 1.65;
 }
+.contactDialogPanel .contactSectionTitle,
+.contactDialogPanel .contactDialogCopy,
+.contactDialogPanel .contactDialogHint {
+  text-align: center;
+}
 .contactDialogForm {
   display: grid;
   gap: 0.85rem;
@@ -890,7 +915,7 @@
   gap: 0.65rem;
 }
 .contactIntentOption {
-  --feedback-tint: rgb(133 177 158 / 0.16);
+  --feedback-tint: rgb(157 185 174 / 0.12);
   display: grid;
   min-width: 0;
   min-height: 5.35rem;
@@ -901,29 +926,37 @@
   padding: 0.75rem 0.8rem;
   color: var(--color-ink);
   background:
-    radial-gradient(circle at 90% 0%, color-mix(in srgb, var(--feedback-tint) 64%, transparent), transparent 62%),
+    radial-gradient(
+      circle at 90% 0%,
+      color-mix(in srgb, var(--feedback-tint) 74%, transparent),
+      transparent 62%
+    ),
     linear-gradient(
       135deg,
       color-mix(in srgb, var(--checkmate-surface-strong) 88%, var(--feedback-tint) 12%),
       color-mix(in srgb, var(--checkmate-surface) 94%, var(--feedback-tint) 6%)
     );
-  box-shadow: 0 7px 18px color-mix(in srgb, var(--feedback-tint) 15%, transparent);
+  box-shadow:
+    0 6px 16px color-mix(in srgb, var(--feedback-tint) 12%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.46),
+    inset 0 -1px 0 rgb(75 95 88 / 0.04);
   cursor: pointer;
   font: inherit;
-  text-align: left;
+  text-align: center;
   transition:
-    border-color 180ms ease,
-    box-shadow 220ms ease,
-    transform 180ms ease;
+    border-color 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .contactIntentOption[data-intent='info'] {
-  --feedback-tint: rgb(132 128 119 / 0.14);
+  --feedback-tint: rgb(151 190 181 / 0.13);
 }
 .contactIntentOption[data-intent='update'] {
-  --feedback-tint: rgb(97 157 142 / 0.18);
+  --feedback-tint: rgb(180 172 145 / 0.13);
 }
 .contactIntentOption[data-intent='other'] {
-  --feedback-tint: rgb(110 155 169 / 0.17);
+  --feedback-tint: rgb(157 166 165 / 0.12);
 }
 .contactIntentOption strong {
   font-size: 0.8rem;
@@ -938,22 +971,65 @@
 .contactIntentOption:focus-visible {
   border-color: color-mix(in srgb, var(--feedback-tint) 72%, var(--checkmate-border));
   background:
-    radial-gradient(circle at 90% 0%, color-mix(in srgb, var(--feedback-tint) 82%, transparent), transparent 62%),
+    radial-gradient(
+      circle at 90% 0%,
+      color-mix(in srgb, var(--feedback-tint) 92%, transparent),
+      transparent 62%
+    ),
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--checkmate-surface-strong) 82%, var(--feedback-tint) 18%),
-      color-mix(in srgb, var(--checkmate-surface) 90%, var(--feedback-tint) 10%)
+      color-mix(in srgb, var(--checkmate-surface-strong) 85%, var(--feedback-tint) 15%),
+      color-mix(in srgb, var(--checkmate-surface) 92%, var(--feedback-tint) 8%)
     );
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--feedback-tint) 28%, transparent);
+  box-shadow:
+    0 10px 22px color-mix(in srgb, var(--feedback-tint) 22%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.54),
+    inset 0 -1px 0 rgb(75 95 88 / 0.05);
   outline: none;
   transform: translateY(-2px);
+}
+.contactIntentOption:active {
+  box-shadow:
+    0 4px 10px color-mix(in srgb, var(--feedback-tint) 16%, transparent),
+    inset 0 2px 5px color-mix(in srgb, var(--feedback-tint) 18%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.3);
+  transform: translateY(0);
+}
+.contactIntentOption[aria-pressed='true'],
+.contactIntentOption[aria-selected='true'],
+.contactIntentOption[data-selected='true'],
+.contactIntentOption:has(input:checked) {
+  border-color: color-mix(in srgb, var(--feedback-tint) 78%, var(--checkmate-border));
+  background:
+    radial-gradient(
+      circle at 88% 0%,
+      color-mix(in srgb, var(--feedback-tint) 92%, transparent),
+      transparent 64%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--checkmate-surface-strong) 72%, var(--feedback-tint) 28%),
+      color-mix(in srgb, var(--checkmate-surface) 84%, var(--feedback-tint) 16%)
+    );
+  box-shadow:
+    0 8px 18px color-mix(in srgb, var(--feedback-tint) 22%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.52),
+    inset 0 -5px 10px color-mix(in srgb, var(--feedback-tint) 10%, transparent);
 }
 .contactFeedbackSuccess {
   display: grid;
   justify-items: center;
   gap: 0.65rem;
   min-height: 14rem;
-  padding: 1rem 0;
+  border: 1px solid color-mix(in srgb, var(--checkmate-accent) 22%, var(--checkmate-rule));
+  border-radius: 18px;
+  padding: 1.2rem;
+  background:
+    radial-gradient(circle at 50% 0%, rgb(220 235 220 / 0.4), transparent 68%),
+    color-mix(in srgb, var(--checkmate-surface-strong) 91%, rgb(180 220 210 / 0.35) 9%);
+  box-shadow:
+    0 10px 24px color-mix(in srgb, var(--checkmate-accent) 8%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.48);
   text-align: center;
 }
 .contactFeedbackSuccess > span {
@@ -964,6 +1040,8 @@
   border: 1px solid color-mix(in srgb, var(--checkmate-accent) 36%, transparent);
   border-radius: 50%;
   color: var(--checkmate-accent);
+  background: color-mix(in srgb, var(--checkmate-surface-strong) 78%, rgb(180 220 210 / 0.35) 22%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.52);
 }
 .contactFeedbackSuccess strong {
   color: var(--color-ink);
@@ -995,8 +1073,9 @@
   position: fixed;
   z-index: 1;
   inset: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow-y: auto;
   padding: 1rem;
 }
@@ -1011,6 +1090,22 @@
   background: rgb(255 255 255 / 0.9);
   box-shadow: 0 24px 70px rgb(42 35 25 / 0.16);
   backdrop-filter: blur(20px);
+}
+.submitDialogHeader > div {
+  flex: 1 1 auto;
+  text-align: center;
+}
+.submitDialogPanel .submitFormActions,
+.submitDialogPanel .hallWelcomeActions {
+  justify-content: center;
+}
+.submitDialogPanel .submitField {
+  text-align: center;
+}
+.submitDialogPanel .submitField input,
+.submitDialogPanel .submitField select,
+.submitDialogPanel .submitField textarea {
+  text-align: left;
 }
 .hallWelcomeDialogPanel {
   width: min(100%, 31rem);
@@ -1369,7 +1464,11 @@
   border: 1px solid color-mix(in srgb, var(--checkmate-border) 78%, var(--checkmate-accent) 22%);
   border-radius: 1.5rem;
   background:
-    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--checkmate-accent) 12%, transparent), transparent 58%),
+    radial-gradient(
+      circle at 50% 0%,
+      color-mix(in srgb, var(--checkmate-accent) 12%, transparent),
+      transparent 58%
+    ),
     var(--checkmate-surface-strong);
   box-shadow: 0 16px 36px rgb(42 35 25 / 0.055);
   text-align: center;
@@ -1526,7 +1625,11 @@
 .podiumActions .contactCaseButton[data-open='true'] {
   border: 1px solid color-mix(in srgb, var(--jade-button-tint) 32%, transparent);
   background:
-    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--jade-button-tint) 24%, transparent), transparent 72%),
+    radial-gradient(
+      circle at 50% 0%,
+      color-mix(in srgb, var(--jade-button-tint) 24%, transparent),
+      transparent 72%
+    ),
     linear-gradient(
       135deg,
       color-mix(in srgb, var(--checkmate-surface-strong) 82%, var(--jade-button-tint) 18%),
@@ -1671,7 +1774,7 @@
   margin: 0;
   padding: 0;
   text-align: center;
-  font-family: "Kaiti SC", "STKaiti", "华文行楷", "KaiTi", "楷体", serif;
+  font-family: 'Kaiti SC', 'STKaiti', '华文行楷', 'KaiTi', '楷体', serif;
   font-weight: 400;
   letter-spacing: 0.01em;
 }
@@ -1686,7 +1789,7 @@
   margin: auto 0;
   color: color-mix(in srgb, var(--color-ink) 88%, var(--checkmate-muted));
   overflow: hidden;
-  font-family: "FangSong", "仿宋", serif;
+  font-family: 'FangSong', '仿宋', 'STFangsong', serif;
   font-size: clamp(2rem, 3.5vw, 2.5rem);
   font-weight: 500;
   letter-spacing: 0.03em;
@@ -1837,7 +1940,7 @@
   justify-content: center;
   gap: 0.45rem;
   width: fit-content;
-  font-family: "Kaiti SC", "STKaiti", KaiTi, serif;
+  font-family: 'Kaiti SC', 'STKaiti', KaiTi, serif;
   font-size: clamp(2.7rem, 4.8vw, 4.15rem);
   font-weight: 400;
   line-height: 0.82;
@@ -1883,7 +1986,7 @@
 .podiumDuration .hallWaitValue {
   gap: 0.1rem;
   color: inherit;
-  font-family: Baskerville, "Times New Roman", serif;
+  font-family: Baskerville, 'Times New Roman', serif;
   font-size: clamp(2.8rem, 5vw, 4.15rem);
   font-weight: 400;
   letter-spacing: -0.045em;
@@ -1891,7 +1994,7 @@
 }
 .podiumDuration .hallWaitValue small {
   color: color-mix(in srgb, currentColor 62%, var(--checkmate-muted));
-  font-family: "Kaiti SC", "STKaiti", KaiTi, serif;
+  font-family: 'Kaiti SC', 'STKaiti', KaiTi, serif;
   font-size: 0.66rem;
   letter-spacing: 0.05em;
 }
@@ -2060,7 +2163,7 @@
   grid-template-columns:
     3rem minmax(5rem, 0.65fr) minmax(6rem, 0.8fr) minmax(5.5rem, 0.72fr) 4rem 4rem
     minmax(12rem, 2.4fr) 4.5rem;
-  font-family: "Kaiti SC", "STKaiti", KaiTi, serif;
+  font-family: 'Kaiti SC', 'STKaiti', KaiTi, serif;
   gap: clamp(1rem, 1.7vw, 1.3rem);
   align-items: center;
   min-height: 5.05rem;
@@ -2291,11 +2394,7 @@
   z-index: 0;
   inset: 0.08rem 0;
   border-radius: inherit;
-  background: radial-gradient(
-    circle at 84% 12%,
-    rgb(255 244 214 / 0.24),
-    transparent 52%
-  );
+  background: radial-gradient(circle at 84% 12%, rgb(255 244 214 / 0.24), transparent 52%);
   content: '';
   opacity: 0;
   pointer-events: none;
@@ -2415,12 +2514,12 @@
 }
 .eliteRow .standardSchool,
 .eliteRow .standardDates,
-  .eliteRow .standardEndDate,
-  .eliteRow .standardNote,
-  .eliteRow .standardNoteButton {
-    font-size: 0.9rem;
-    line-height: 1.35;
-  }
+.eliteRow .standardEndDate,
+.eliteRow .standardNote,
+.eliteRow .standardNoteButton {
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
 .eliteRow .eliteDuration {
   font-size: 1.16rem;
 }
@@ -2624,9 +2723,9 @@
     box-shadow: 0 3px 10px rgb(89 69 44 / 0.035);
     transform: translateY(-1px);
   }
-.standardRow:hover::before {
-  opacity: 0.42;
-}
+  .standardRow:hover::before {
+    opacity: 0.42;
+  }
 }
 .eliteRow.completedRow:hover,
 .standardRow.completedRow:hover {
@@ -2725,11 +2824,7 @@
     linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent 62%);
 }
 :global(.dark) .standardRow::before {
-  background: radial-gradient(
-    circle at 84% 12%,
-    rgb(225 172 92 / 0.1),
-    transparent 52%
-  );
+  background: radial-gradient(circle at 84% 12%, rgb(225 172 92 / 0.1), transparent 52%);
 }
 :global(.dark) .apBadge {
   border-color: rgb(134 208 196 / 0.24);
@@ -2827,6 +2922,10 @@
     padding-bottom: 1rem;
   }
 
+  :global(.view-page) .feature {
+    padding-top: 0.75rem;
+  }
+
   .citiesView,
   .hallView {
     display: flex;
@@ -2838,6 +2937,11 @@
     height: auto;
     min-height: 0;
     gap: var(--view-section-gap);
+  }
+
+  :global(.view-page) .citiesView {
+    --view-section-gap: 0.75rem;
+    padding-top: 0.25rem;
   }
 
   .citiesView::after {
@@ -2853,6 +2957,10 @@
   .citiesView .titleRow {
     order: 1;
     margin-bottom: 0;
+  }
+
+  :global(.view-page) .citiesView .titleRow {
+    min-height: clamp(5.4rem, 8vw, 6rem);
   }
 
   .citiesView .titleBlock,
@@ -3004,7 +3112,8 @@
 
 @media (max-width: 760px) {
   .submitDialogViewport {
-    place-items: start center;
+    align-items: center;
+    justify-content: center;
     padding: 0.75rem;
   }
 
@@ -3146,7 +3255,7 @@
   .citiesView .cityGrid > :nth-child(1) {
     grid-area: beijing;
     grid-column: 1 / -1;
-    width: 40%;
+    width: 50%;
     justify-self: center;
   }
   .citiesView .cityGrid > :nth-child(2) {
@@ -3163,7 +3272,7 @@
   }
   .citiesView .cityGrid > :nth-child(n + 2).cityCard,
   .citiesView .cityGrid > :nth-child(n + 2).cityCardActive {
-    width: 80%;
+    width: 100%;
     justify-self: center;
   }
   .citiesView .cityCard,
@@ -3287,8 +3396,8 @@
   .citiesView .cityDetail .pagination button:active:not(:disabled) {
     border-color: var(--checkmate-accent);
     box-shadow: 0 4px 12px rgb(73 68 58 / 0.07);
-    transform: scale(0.99);
-    transition-duration: 120ms;
+    transform: translateY(0);
+    transition-duration: 220ms;
   }
   .citiesView .cityDetail .dataNoticeTrigger[aria-expanded='true'] {
     border-color: var(--checkmate-accent);
@@ -3455,9 +3564,9 @@
   }
   .eliteRow .standardSchool,
   .eliteRow .standardDates,
-    .eliteRow .standardEndDate,
-    .eliteRow .standardNote,
-    .eliteRow .standardNoteButton {
+  .eliteRow .standardEndDate,
+  .eliteRow .standardNote,
+  .eliteRow .standardNoteButton {
     font-size: 0.82rem;
   }
   .eliteRow .eliteRank {
@@ -3949,51 +4058,61 @@
     text-align: left;
   }
   .citiesView .compactCaseRow {
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.85fr) auto;
-    gap: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
     min-height: 2.25rem;
     padding: 0.35rem 0;
   }
   .citiesView .compactCaseRow > :first-child {
-    display: flex;
-    min-width: 0;
-    align-items: center;
-    gap: 0.35rem;
+    display: contents;
   }
   .citiesView .compactCaseRow .status {
-    flex: 0 0 auto;
+    flex: 0 0 4rem;
+    width: 4rem;
+    box-sizing: border-box;
+    margin-right: 0.12rem;
     padding: 0.12rem 0.32rem;
     font-size: 0.58rem;
+    white-space: nowrap;
   }
   .citiesView .compactCaseRow p {
+    order: 2;
+    flex: 0 0 auto;
     min-width: 0;
-    margin: 0;
+    margin: 0 0.12rem 0 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .citiesView .compactCaseRow .caseCategory {
-    grid-column: 2;
-    grid-row: 1;
+    order: 3;
+    flex: 0 1 auto;
     min-width: 0;
+    max-width: 4rem;
     overflow: hidden;
     text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   .citiesView .compactCaseRow .caseDuration {
-    grid-column: 3;
-    grid-row: 1;
+    order: 4;
+    flex: 0 0 auto;
     min-width: max-content;
+    margin-left: auto;
+    justify-self: end;
     transform: none;
     font-size: 0.92rem;
+    white-space: nowrap;
   }
   .citiesView .compactCaseRow .caseDuration small {
     font-size: 0.56rem;
   }
   .trendTable {
     display: grid;
-    gap: 0.35rem;
+    gap: 0;
+    min-width: 0;
+    overflow-x: hidden;
   }
 
   .trendSummaryStats {
@@ -4002,49 +4121,50 @@
   }
 
   .trendHeader {
-    display: none;
+    display: grid;
+    padding: 0.34rem 0.3rem;
+    color: var(--checkmate-muted);
+    font-size: 0.58rem;
+    font-weight: 700;
   }
 
   .trendRow {
-    grid-template-columns: 2.5rem repeat(2, minmax(0, 1fr));
-    gap: 0.45rem;
-    border: 1px solid var(--checkmate-rule);
-    border-radius: 14px;
-    padding: 0.55rem 0.65rem;
-    text-align: left;
+    grid-template-columns: 2.5rem repeat(4, minmax(0, 1fr));
+    gap: 0.25rem;
+    border-top: 1px solid var(--checkmate-rule);
+    padding: 0.42rem 0.3rem;
+    text-align: center;
+    white-space: nowrap;
   }
 
-  .trendRow strong {
-    grid-row: 1 / span 2;
-    align-self: center;
+  .trendRow > * {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .trendRow span {
-    display: grid;
-    gap: 0.08rem;
+    display: block;
     color: var(--color-ink);
-    font-size: 0.74rem;
+    font-size: 0.7rem;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
   }
 
-  .trendRow span::before {
-    color: var(--checkmate-muted);
-    font-size: 0.58rem;
+  .trendRow strong {
+    grid-column: auto;
+    grid-row: auto;
+    align-self: center;
+    color: var(--color-ink);
+    font-family: 'heishenhua', var(--font-nunito), sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
   }
 
-  .trendRow span:nth-child(2)::before {
-    content: 'Pending';
-  }
-
-  .trendRow span:nth-child(3)::before {
-    content: 'Clear';
-  }
-
-  .trendRow span:nth-child(4)::before {
-    content: 'Total';
-  }
-
-  .trendRow span:nth-child(5)::before {
-    content: '平均';
+  .trendRow > :nth-child(5) {
+    color: var(--checkmate-accent);
+    font-weight: 700;
   }
 }
 
@@ -4101,6 +4221,185 @@
   }
 }
 
+/* Shared jade interaction language for Checkmate controls. */
+.submitCaseButton,
+.contactCaseButton,
+.submitSecondaryButton,
+.submitPrimaryButton,
+.secondaryButton,
+.pagination button,
+.contactIntentOption,
+.submitDialogClose,
+.textButton,
+.standardNoteButton {
+  transition-property:
+    transform, box-shadow, border-color, background, background-color, color, outline-color;
+  transition-duration: 220ms;
+  transition-timing-function: var(--jade-interaction-ease);
+}
+
+.submitPrimaryButton,
+.submitCaseDialogPanel .submitPrimaryButton {
+  border: 1px solid var(--jade-interaction-border);
+  color: #f7fffb;
+  background: linear-gradient(145deg, #5e8e7d, #35584d);
+  box-shadow:
+    0 5px 15px rgb(73 110 96 / 0.16),
+    inset 0 1px 0 rgb(255 255 255 / 0.34);
+}
+
+.submitCaseDialogPanel .submitPrimaryButton,
+.contactDialogPanel .submitPrimaryButton,
+.contactDialogPanel .contactFeedbackSuccess .submitPrimaryButton {
+  border-color: var(--jade-interaction-border);
+  color: #f7fffb;
+  background: linear-gradient(145deg, #5e8e7d, #35584d);
+  box-shadow:
+    0 5px 15px rgb(73 110 96 / 0.16),
+    inset 0 1px 0 rgb(255 255 255 / 0.34);
+}
+
+.submitSecondaryButton {
+  border: 1px solid var(--jade-interaction-border);
+  color: var(--color-ink);
+  background: rgb(255 255 255 / 0.48);
+  box-shadow:
+    0 4px 12px rgb(73 110 96 / 0.06),
+    inset 0 1px 0 rgb(255 255 255 / 0.58);
+}
+
+.submitCaseDialogPanel .submitSecondaryButton,
+.contactDialogPanel .submitSecondaryButton {
+  border-color: var(--jade-interaction-border);
+  color: var(--color-ink);
+  background: rgb(255 255 255 / 0.48);
+  box-shadow:
+    0 4px 12px rgb(73 110 96 / 0.06),
+    inset 0 1px 0 rgb(255 255 255 / 0.58);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .submitCaseButton:hover,
+  .submitCaseButton:focus-visible,
+  .contactCaseButton:hover,
+  .contactCaseButton:focus-visible,
+  .submitSecondaryButton:hover:not(:disabled),
+  .submitSecondaryButton:focus-visible,
+  .submitPrimaryButton:hover:not(:disabled),
+  .submitPrimaryButton:focus-visible,
+  .secondaryButton:hover,
+  .secondaryButton:focus-visible,
+  .pagination button:hover:not(:disabled),
+  .pagination button:focus-visible,
+  .contactIntentOption:hover,
+  .contactIntentOption:focus-visible,
+  .submitDialogClose:hover,
+  .submitDialogClose:focus-visible,
+  .textButton:hover,
+  .textButton:focus-visible,
+  .standardNoteButton:hover,
+  .standardNoteButton:focus-visible,
+  .submitCaseDialogPanel .submitPrimaryButton:hover:not(:disabled),
+  .submitCaseDialogPanel .submitPrimaryButton:focus-visible,
+  .contactDialogPanel .submitPrimaryButton:hover:not(:disabled),
+  .contactDialogPanel .submitPrimaryButton:focus-visible,
+  .contactDialogPanel .contactFeedbackSuccess .submitPrimaryButton:hover:not(:disabled),
+  .contactDialogPanel .contactFeedbackSuccess .submitPrimaryButton:focus-visible,
+  .submitCaseDialogPanel .submitSecondaryButton:hover:not(:disabled),
+  .submitCaseDialogPanel .submitSecondaryButton:focus-visible,
+  .contactDialogPanel .submitSecondaryButton:hover:not(:disabled),
+  .contactDialogPanel .submitSecondaryButton:focus-visible {
+    border-color: var(--jade-interaction-border);
+    box-shadow: var(--jade-interaction-shadow), var(--jade-interaction-inset);
+    transform: translateY(-2px);
+  }
+
+  .standardRow:hover {
+    box-shadow: var(--jade-interaction-shadow), var(--jade-interaction-inset);
+    transform: translateY(-2px);
+  }
+}
+
+.submitCaseButton:active,
+.contactCaseButton:active,
+.submitSecondaryButton:active:not(:disabled),
+.submitPrimaryButton:active:not(:disabled),
+.secondaryButton:active,
+.pagination button:active:not(:disabled),
+.contactIntentOption:active,
+.submitDialogClose:active,
+.textButton:active,
+.standardNoteButton:active {
+  box-shadow: var(--jade-interaction-pressed), var(--jade-interaction-inset);
+  transform: translateY(0);
+}
+
+.submitCaseDialogPanel .submitPrimaryButton:active:not(:disabled),
+.contactDialogPanel .submitPrimaryButton:active:not(:disabled),
+.contactDialogPanel .contactFeedbackSuccess .submitPrimaryButton:active:not(:disabled),
+.submitCaseDialogPanel .submitSecondaryButton:active:not(:disabled),
+.contactDialogPanel .submitSecondaryButton:active:not(:disabled) {
+  box-shadow: var(--jade-interaction-pressed), var(--jade-interaction-inset);
+  transform: translateY(0);
+}
+
+.submitDialogClose:focus-visible,
+.submitCaseButton:focus-visible,
+.contactCaseButton:focus-visible,
+.submitSecondaryButton:focus-visible,
+.submitPrimaryButton:focus-visible,
+.textButton:focus-visible,
+.secondaryButton:focus-visible,
+.pagination button:focus-visible,
+.podiumCard[data-note-trigger='true']:focus-visible,
+.standardRow[data-note-trigger='true']:focus-visible,
+.standardNoteButton:focus-visible {
+  outline-color: var(--jade-interaction-border);
+}
+
+/* City cards are data-selection widgets with their own calm environment-light treatment. */
+button.cityCard.cityCard,
+button.cityCardActive.cityCardActive {
+  transition:
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 420ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button.cityCard.cityCard:hover,
+  button.cityCard.cityCard:focus-visible {
+    border-color: color-mix(in srgb, var(--checkmate-border) 74%, white 26%);
+    box-shadow:
+      0 5px 12px rgb(73 68 58 / 0.07),
+      0 18px 34px color-mix(in srgb, var(--city-tint) 18%, transparent);
+    transform: translateY(-3px);
+  }
+
+  button.cityCardActive.cityCardActive:hover,
+  button.cityCardActive.cityCardActive:focus-visible {
+    border-color: color-mix(in srgb, var(--checkmate-border) 68%, white 32%);
+    box-shadow:
+      0 6px 14px rgb(73 68 58 / 0.08),
+      0 20px 38px color-mix(in srgb, var(--city-tint) 22%, transparent);
+    transform: translateY(-3px);
+  }
+}
+
+button.cityCard.cityCard:active {
+  border-color: var(--checkmate-border);
+  box-shadow: 0 8px 22px rgb(73 68 58 / 0.055);
+  transform: none;
+}
+
+button.cityCardActive.cityCardActive:active {
+  border-color: var(--checkmate-border);
+  box-shadow:
+    0 6px 14px rgb(73 68 58 / 0.07),
+    0 16px 30px color-mix(in srgb, var(--city-tint) 14%, transparent);
+  transform: translateY(-2px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .citiesView .titleRow,
   .citiesView .cityGrid,
@@ -4127,7 +4426,10 @@
   .secondaryButton,
   .pagination button,
   .podiumActions .submitCaseButton,
-  .podiumActions .contactCaseButton {
+  .podiumActions .contactCaseButton,
+  .contactDialogPanel .submitSecondaryButton,
+  .contactDialogPanel .contactFeedbackSuccess .submitPrimaryButton,
+  .contactIntentOption {
     transition: none;
   }
 

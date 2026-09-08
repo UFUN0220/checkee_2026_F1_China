@@ -16,7 +16,6 @@ import {
   type CheckmateDataNotice,
   type CheckmatePageKey,
 } from '~/data/checkmate/config'
-import { DataDescription } from './data-description'
 import { ContactCaseDialogButton } from './contact-case-dialog'
 import { HallWelcomeDialog } from './hall-welcome-dialog'
 import { SubmitCaseButton } from './submit-case-dialog'
@@ -67,7 +66,7 @@ export function CheckmateExperience({
   return (
     <section className={styles.feature} aria-label="Checkmate F-1 公开样本">
       {view === 'cities' ? (
-        <WhiteHouseSelection snapshot={checkeeSnapshot} notice={notice} />
+        <WhiteHouseSelection snapshot={checkeeSnapshot} />
       ) : (
         <HallOfFame dataset={checkeeDataset} notice={notice} />
       )}
@@ -88,10 +87,8 @@ function FeatureTitle({ children, trailing }: { children: ReactNode; trailing?: 
 
 function WhiteHouseSelection({
   snapshot,
-  notice,
 }: {
   snapshot: CheckmateSnapshot
-  notice: CheckmateDataNotice
 }) {
   const [page, setPage] = useState(1)
   const [selectedCity, setSelectedCity] = useState<CheckmateLocation | null>(null)
@@ -148,8 +145,6 @@ function WhiteHouseSelection({
           allCasesCount={snapshot.cases.length}
           page={page}
           totalPages={totalPages}
-          notice={notice}
-          updatedAt={snapshot.manifest.snapshotDate}
           onPageChange={setPage}
           onClose={() => setSelectedCity(null)}
         />
@@ -243,8 +238,6 @@ function CityDetail({
   allCasesCount,
   page,
   totalPages,
-  notice,
-  updatedAt,
   onPageChange,
   onClose,
 }: {
@@ -254,8 +247,6 @@ function CityDetail({
   allCasesCount: number
   page: number
   totalPages: number
-  notice: CheckmateDataNotice
-  updatedAt: string
   onPageChange: (page: number) => void
   onClose: () => void
 }) {
@@ -274,7 +265,6 @@ function CityDetail({
         className={`${styles.panel} ${styles.cityDetail} ${styles.cityEmpty}`}
         aria-live="polite"
       >
-        <DataDescription notice={notice} updatedAt={updatedAt} />
         <div className={styles.cityEmptyMessage}>
           <MapPin size={18} strokeWidth={1.8} aria-hidden="true" />
           <div>
@@ -291,7 +281,6 @@ function CityDetail({
         className={`${styles.panel} ${styles.cityDetail} ${styles.cityEmpty}`}
         aria-live="polite"
       >
-        <DataDescription notice={notice} updatedAt={updatedAt} />
         <div className={styles.cityEmptyMessage}>
           <MapPin size={18} strokeWidth={1.8} aria-hidden="true" />
           <div>
@@ -316,7 +305,6 @@ function CityDetail({
           关闭
         </button>
       </div>
-      <DataDescription notice={notice} updatedAt={updatedAt} />
       <div
         className={`${styles.caseList} ${styles.caseListDesktop}`}
         aria-label={`${LOCATION_NAMES[city]} 案例列表`}
