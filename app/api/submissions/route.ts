@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server'
+import {
+  normalizeSubmissionLocation,
+  normalizeSubmissionStatus,
+  type CaseSubmissionStatus,
+} from '~/lib/validations/case-submission'
 import { getSupabaseServerClient } from '~/lib/supabase/server'
 
 export const runtime = 'nodejs'
 
 const ALLOWED_STATUSES = new Set(['Check', 'Approved', 'Issued', 'Refused'])
 const MAX_LENGTHS = {
+  name: 120,
   location: 80,
   degree: 80,
   major: 120,
@@ -14,6 +20,7 @@ const MAX_LENGTHS = {
 const COMPACT_NOTE_LIMIT = 28
 
 type SubmissionBody = {
+  name?: unknown
   location?: unknown
   degree?: unknown
   major?: unknown
@@ -34,7 +41,7 @@ function requiredString(value: unknown, field: keyof typeof MAX_LENGTHS) {
   return normalized
 }
 
-function optionalString(value: unknown, field: 'school' | 'note') {
+function optionalString(value: unknown, field: 'name' | 'school' | 'note') {
   if (value === undefined || value === null) return null
   if (typeof value !== 'string') throw new BadRequestError(`Invalid ${field}`)
   const normalized = value.trim()
@@ -94,7 +101,9 @@ async function parseBody(request: Request) {
     throw new BadRequestError('Invalid JSON')
   }
 
-  const location = requiredString(body.location, 'location')
+  const rawLocation = requiredString(body.location, 'location')
+  const location = normalizeSubmissionLocation(rawLocation)
+  if (!location) throw new BadRequestError('Invalid location')
   const degree = requiredString(body.degree, 'degree')
   const major = requiredString(body.major, 'major')
   const interviewDate = normalizedDate(body.interviewDate, 'interviewDate', true)
@@ -103,25 +112,28 @@ async function parseBody(request: Request) {
   const status = typeof body.status === 'string' ? body.status.trim() : ''
   if (!ALLOWED_STATUSES.has(status)) throw new BadRequestError('Invalid status')
 
-  const normalizedEndDate = status === 'Check' ? null : endDate
+  const normalizedStatus = normalizeSubmissionStatus(status as CaseSubmissionStatus, endDate)
+  const normalizedEndDate = normalizedStatus === 'Check' ? null : endDate
   if (normalizedEndDate && interviewDate && normalizedEndDate < interviewDate) {
     throw new BadRequestError('End date cannot be earlier than interview date')
   }
   const waitingDays = normalizedEndDate
     ? daysBetween(interviewDate, normalizedEndDate)
-    : status === 'Check'
+    : normalizedStatus === 'Check'
       ? daysBetween(interviewDate, currentDate())
       : null
   if (waitingDays !== null && waitingDays < 0) throw new BadRequestError('Invalid waiting days')
+  const name = optionalString(body.name, 'name')
   const detailNote = optionalString(body.note, 'note')
 
   return {
+    name,
     location,
     degree,
     major,
     interview_date: interviewDate,
     start_date: interviewDate,
-    status,
+    status: normalizedStatus,
     end_date: normalizedEndDate,
     school: optionalString(body.school, 'school'),
     note: detailNote,

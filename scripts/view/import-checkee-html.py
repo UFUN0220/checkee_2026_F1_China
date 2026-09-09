@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import html
 import json
+from math import ceil
 import re
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
@@ -162,6 +163,11 @@ def percentile(values: list[int], fraction: float) -> float | int | None:
     upper = min(lower + 1, len(ordered) - 1)
     result = ordered[lower] + (ordered[upper] - ordered[lower]) * (position - lower)
     return int(result) if result.is_integer() else round(result, 2)
+
+
+def median_ceiling(values: list[int]) -> int | None:
+    median = percentile(values, 0.5)
+    return ceil(median) if median is not None else None
 
 
 def distribution(values: list[str]) -> list[dict[str, object]]:
@@ -344,6 +350,7 @@ def build_snapshot(files: list[Path], snapshot_date: str, source_url: str) -> di
                 "clearCount": sum(case["status"] == "clear" for case in month_cases),
                 "totalCount": len(month_cases),
                 "averageWaitingDays": round(sum(durations) / len(durations), 1) if durations else None,
+                "medianWaitingDays": median_ceiling(durations),
                 "averageSampleSize": len(durations),
                 "waitingDaysTotal": sum(durations),
             }

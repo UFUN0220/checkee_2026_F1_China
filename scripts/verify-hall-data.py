@@ -40,6 +40,7 @@ RELEASE_VERSION = re.compile(r"^\d{8}-v\d{3}$")
 RELEASE_FILES = ("hall-master.json", "published-submissions.json", "release-meta.json")
 COMPARISON_FIELDS = (
     "id",
+    "nickname",
     "location",
     "degree",
     "major",
@@ -85,7 +86,7 @@ def sort_records(records):
     )
 
 
-def verify_dataset(dataset):
+def verify_dataset(dataset, verify_waiting_days=True, require_nickname=True):
     if not isinstance(dataset, dict):
         raise ValueError("Hall dataset must be an object")
     if dataset.get("schemaVersion") != 1:
@@ -94,6 +95,7 @@ def verify_dataset(dataset):
     if not isinstance(data_version, str) or not RELEASE_VERSION.fullmatch(data_version):
         raise ValueError("dataVersion must match YYYYMMDD-vXXX")
     valid_date(dataset.get("generatedAt"), "generatedAt")
+    snapshot_date = valid_date(dataset.get("snapshotDate"), "snapshotDate")
     if not dataset.get("sourceDescription"):
         raise ValueError("sourceDescription is required")
     records = dataset.get("records")
@@ -113,6 +115,10 @@ def verify_dataset(dataset):
         if item["id"] in ids:
             raise ValueError(f"Duplicate record id: {item['id']}")
         ids.add(item["id"])
+        if require_nickname and "nickname" not in item:
+            raise ValueError(f"Record {index} is missing: nickname")
+        if "nickname" in item and item["nickname"] is not None and not isinstance(item["nickname"], str):
+            raise ValueError(f"Record {index}.nickname must be a string or null")
         if not item["location"]:
             raise ValueError(f"Record {index} has no location")
         start = valid_date(item["startDate"], f"records[{index}].startDate")
@@ -121,6 +127,12 @@ def verify_dataset(dataset):
             raise ValueError(f"Record {index} has endDate before startDate")
         if item["waitingDays"] is not None and not isinstance(item["waitingDays"], int):
             raise ValueError(f"Record {index}.waitingDays must be an integer or null")
+        expected_waiting_days = ((end or snapshot_date) - start).days
+        if verify_waiting_days and item["waitingDays"] != expected_waiting_days:
+            raise ValueError(
+                f"Record {index}.waitingDays must equal "
+                f"{'endDate' if end else 'snapshotDate'} minus startDate"
+            )
         if item["status"] not in STATUSES:
             raise ValueError(f"Record {index} has invalid status")
         if item["source"] not in SOURCES:
@@ -133,15 +145,10 @@ def verify_dataset(dataset):
             valid_date(item["publishedAt"], f"records[{index}].publishedAt")
         if item["visibility"] == "published" and not item["publishedAt"]:
             raise ValueError(f"Published record {index} must have publishedAt")
-        if item["status"] != "Check" and item["endDate"] is None and item["waitingDays"] is not None:
-            anomalies.append(f"records[{index}] has waitingDays without endDate for a completed status")
-        if item["status"] == "Check" and item["endDate"] is None and item["waitingDays"] is None:
-            raise ValueError(f"Check record {index} must have waitingDays when it is still open")
-
     return records, anomalies
 
 
-def verify_published_snapshot(snapshot):
+def verify_published_snapshot(snapshot, require_nickname=True):
     if not isinstance(snapshot, dict):
         raise ValueError("published-submissions.json must contain an object")
     if snapshot.get("schemaVersion") != 1:
@@ -156,7 +163,9 @@ def verify_published_snapshot(snapshot):
         if not isinstance(item, dict):
             raise ValueError(f"published-submissions.records[{index}] must be an object")
         missing = REQUIRED_FIELDS - item.keys()
-        extra = item.keys() - REQUIRED_FIELDS
+        if require_nickname and "nickname" not in item:
+            missing = missing | {"nickname"}
+        extra = item.keys() - (REQUIRED_FIELDS | {"nickname"})
         if missing or extra:
             details = []
             if missing:
@@ -167,6 +176,8 @@ def verify_published_snapshot(snapshot):
         if item["id"] in ids:
             raise ValueError(f"Duplicate published submission id: {item['id']}")
         ids.add(item["id"])
+        if "nickname" in item and item["nickname"] is not None and not isinstance(item["nickname"], str):
+            raise ValueError(f"published-submissions.records[{index}].nickname must be a string or null")
         if item["visibility"] != "published":
             raise ValueError(f"published-submissions.records[{index}] must be published")
 
@@ -179,13 +190,9 @@ def compare_legacy(expected_records, records):
         raise ValueError(
             f"Legacy record count mismatch: expected {len(expected_records)}, found {len(current_legacy)}"
         )
-    by_id = {item["id"]: item for item in current_legacy}
-    for expected in expected_records:
-        current = by_id.get(expected["id"])
-        if current is None:
-            raise ValueError(f"Legacy record missing from Hall master: {expected['id']}")
+    for expected, current in zip(expected_records, current_legacy):
         for field in COMPARISON_FIELDS:
-            if current[field] != expected[field]:
+            if current.get(field) != expected.get(field):
                 raise ValueError(f"Legacy field mismatch: {expected['id']}.{field}")
 
     def top_three(items):
@@ -193,6 +200,11 @@ def compare_legacy(expected_records, records):
 
     if top_three(expected_records) != top_three(current_legacy):
         raise ValueError("Top 3 changed while exporting the new legacy source")
+
+
+def comparable_field(record, field):
+    value = record.get(field)
+    return None if field == "nickname" and value == "" else value
 
 
 def report_legacy_changes(previous_dataset, current_records):
@@ -205,7 +217,8 @@ def report_legacy_changes(previous_dataset, current_records):
         record_id
         for record_id in set(previous_by_id) & set(current_by_id)
         if any(
-            previous_by_id[record_id].get(field) != current_by_id[record_id].get(field)
+            comparable_field(previous_by_id[record_id], field)
+            != comparable_field(current_by_id[record_id], field)
             for field in COMPARISON_FIELDS
         )
     )
@@ -225,7 +238,7 @@ def report_legacy_changes(previous_dataset, current_records):
         print("Changed IDs: " + ", ".join(changed))
 
 
-def compare_published_snapshot(snapshot_records, legacy_records, hall_records):
+def compare_published_snapshot(snapshot_records, legacy_records, hall_records, snapshot_date):
     legacy_ids = {item["id"] for item in legacy_records}
     snapshot_ids = {item["id"] for item in snapshot_records}
     if legacy_ids & snapshot_ids:
@@ -248,7 +261,17 @@ def compare_published_snapshot(snapshot_records, legacy_records, hall_records):
 
     by_id = {item["id"]: item for item in hall_records}
     for snapshot_record in snapshot_records:
-        if by_id[snapshot_record["id"]] != snapshot_record:
+        start = valid_date(snapshot_record["startDate"], f"published snapshot {snapshot_record['id']}.startDate")
+        end = (
+            valid_date(snapshot_record["endDate"], f"published snapshot {snapshot_record['id']}.endDate")
+            if snapshot_record["endDate"]
+            else None
+        )
+        expected_record = {
+            **snapshot_record,
+            "waitingDays": ((end or snapshot_date) - start).days,
+        }
+        if by_id[snapshot_record["id"]] != expected_record:
             raise ValueError(f"Published snapshot record differs in Hall master: {snapshot_record['id']}")
 
 
@@ -316,8 +339,15 @@ def verify_release_history(releases_dir, current_master, current_snapshot):
             raise ValueError(f"Duplicate release version: {version}")
         seen_versions.add(version)
 
-        snapshot_records = verify_published_snapshot(load_json(release_dir / "published-submissions.json"))
-        hall_records, _ = verify_dataset(load_json(release_dir / "hall-master.json"))
+        snapshot_records = verify_published_snapshot(
+            load_json(release_dir / "published-submissions.json"),
+            require_nickname=False,
+        )
+        hall_records, _ = verify_dataset(
+            load_json(release_dir / "hall-master.json"),
+            verify_waiting_days=False,
+            require_nickname=False,
+        )
         verify_release_meta(meta, release_dir, snapshot_records, hall_records)
         release_hall = load_json(release_dir / "hall-master.json")
         if release_hall.get("dataVersion") != release_dir.name:
@@ -354,18 +384,20 @@ def main():
     dataset = load_json(args.master)
     records, anomalies = verify_dataset(dataset)
     converter = load_converter()
+    conversion_warnings = []
     legacy_records = converter.convert_records(
         args.legacy_input,
-        dataset.get("snapshotDate", "2026-09-07"),
+        dataset["snapshotDate"],
         next(
             (
                 record["publishedAt"]
                 for record in records
                 if record["source"] == "legacy_excel" and record["publishedAt"]
             ),
-            dataset.get("generatedAt", "2026-09-07"),
+            dataset["generatedAt"],
         ),
         require_case_id=True,
+        warnings=conversion_warnings,
     )
     if dataset.get("sourceName") != args.legacy_input.name:
         raise ValueError(
@@ -376,7 +408,12 @@ def main():
     report_legacy_changes(previous_dataset, legacy_records)
     current_snapshot = load_json(args.published_snapshot)
     snapshot_records = verify_published_snapshot(current_snapshot)
-    compare_published_snapshot(snapshot_records, legacy_records, records)
+    compare_published_snapshot(
+        snapshot_records,
+        legacy_records,
+        records,
+        valid_date(dataset["snapshotDate"], "snapshotDate"),
+    )
     latest_version = verify_release_history(args.releases_dir, dataset, current_snapshot)
     sorted_records = sort_records(records)
     print(
@@ -389,6 +426,10 @@ def main():
         print("Warnings (preserved legacy anomalies):")
         for anomaly in anomalies:
             print(f"- {anomaly}")
+    if conversion_warnings:
+        print("Warnings (legacy Excel identity checks):")
+        for warning in conversion_warnings:
+            print(f"- {warning}")
 
 
 if __name__ == "__main__":

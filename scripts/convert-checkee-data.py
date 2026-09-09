@@ -19,6 +19,7 @@ SOURCE_NAME = "ufun_checkee_pure_processed.xlsx"
 
 SOURCE_HEADERS = {
     "caseId": ("case_id", "case id", "caseId"),
+    "nickname": ("name", "姓名", "昵称", "nickname"),
     "location": ("地点", "location"),
     "degree": ("学位", "degree"),
     "major": ("专业", "major"),
@@ -29,11 +30,13 @@ SOURCE_HEADERS = {
     "note": ("Note", "备注", "note"),
     "waitingDays": ("等待天数", "waiting days", "waitingDays"),
 }
+OPTIONAL_HEADERS = {"caseId", "nickname", "waitingDays"}
 
 HALL_SCHEMA_VERSION = 1
 SOURCE_DESCRIPTION = "UFUN Hall curated visa cases"
 COMPACT_NOTE_LIMIT = 28
-DEFAULT_GENERATED_AT = "2026-09-06"
+DEFAULT_SNAPSHOT_DATE = "2026-09-09"
+DEFAULT_GENERATED_AT = DEFAULT_SNAPSHOT_DATE
 DEFAULT_PUBLISHED_AT = "2026-09-06"
 LEGACY_SOURCE = "legacy_excel"
 STATUS_MAP = {
@@ -120,6 +123,11 @@ def days_between(start_date, end_date):
     return (end - start).days
 
 
+def derived_waiting_days(start_date, end_date, snapshot_date):
+    """Calculate a Hall release's immutable waiting duration from dates only."""
+    return days_between(start_date, end_date or snapshot_date)
+
+
 def header_columns(header_values):
     columns = {}
     for cell_reference, value in header_values.items():
@@ -136,7 +144,7 @@ def header_columns(header_values):
             if matches:
                 resolved[field] = matches[0]
                 break
-        if field not in resolved and field != "caseId":
+        if field not in resolved and field not in OPTIONAL_HEADERS:
             raise ValueError(f"Missing Excel header for {field}: {aliases}")
     return resolved
 
@@ -165,9 +173,16 @@ def canonical_status(value):
         raise ValueError(f"Unsupported status value: {status}") from error
 
 
-def convert_records(input_path: Path, snapshot_date: str, published_at: str, require_case_id=False):
+def convert_records(
+    input_path: Path,
+    snapshot_date: str,
+    published_at: str,
+    require_case_id=False,
+    warnings=None,
+):
     records = []
-    record_ids = set()
+    seen_case_ids = set()
+    conversion_warnings = warnings if warnings is not None else []
     rows = read_xlsx(input_path)
     header_row, header_values = next(rows)
     columns = header_columns(header_values)
@@ -183,22 +198,19 @@ def convert_records(input_path: Path, snapshot_date: str, published_at: str, req
         end_date = date_value(row["endDate"])
         if end_date and end_date < interview_date:
             raise ValueError(f"End date is earlier than interview date at Excel row {excel_row}")
-        waiting_days = number_value(row["waitingDays"])
-        if status == "Check" and end_date is None:
-            waiting_days = days_between(interview_date, snapshot_date)
-        elif waiting_days is None:
-            if end_date:
-                waiting_days = days_between(interview_date, end_date)
+        waiting_days = derived_waiting_days(interview_date, end_date, snapshot_date)
         case_id = normalize(row.get("caseId"))
-        if require_case_id and not case_id:
-            raise ValueError(f"Missing case_id at Excel row {excel_row}")
+        if not case_id:
+            conversion_warnings.append(f"Excel row {excel_row} has no case_id; using its row-based fallback id")
         record_id = case_id or f"ufun-checkee-{int(excel_row):03d}"
-        if record_id in record_ids:
-            raise ValueError(f"Duplicate case_id at Excel row {excel_row}: {record_id}")
-        record_ids.add(record_id)
+        if case_id:
+            if case_id in seen_case_ids:
+                conversion_warnings.append(f"Duplicate case_id at Excel row {excel_row}: {case_id}")
+            seen_case_ids.add(case_id)
         records.append(
             {
                 "id": record_id,
+                "nickname": normalize(row.get("nickname")),
                 "location": location,
                 "degree": normalize(row["degree"]) or "",
                 "major": normalize(row["major"]) or "",
@@ -252,7 +264,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--snapshot-date", default="2026-09-07")
+    parser.add_argument("--snapshot-date", default=DEFAULT_SNAPSHOT_DATE)
     parser.add_argument("--generated-at", default=DEFAULT_GENERATED_AT)
     parser.add_argument("--published-at", default=DEFAULT_PUBLISHED_AT)
     args = parser.parse_args()

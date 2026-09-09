@@ -14,12 +14,12 @@
 
 ## 路由
 
-| 路径 | 页面 | 主要内容 |
-| --- | --- | --- |
-| `/` | 名人堂 | 公开案例排名、详情备注、分页与案例提交入口 |
-| `/view` | F-1 数据统计 | 五城分位数、月度趋势、按城市筛选的案例列表 |
-| `/about` | 个人主页 | 个人资料与联系入口 |
-| `/api/submissions` | 案例提交接口 | 接收并校验表单数据，然后写入 Supabase |
+| 路径               | 页面         | 主要内容                                   |
+| ------------------ | ------------ | ------------------------------------------ |
+| `/`                | 名人堂       | 公开案例排名、详情备注、分页与案例提交入口 |
+| `/view`            | F-1 数据统计 | 五城分位数、月度趋势、按城市筛选的案例列表 |
+| `/about`           | 个人主页     | 个人资料与联系入口                         |
+| `/api/submissions` | 案例提交接口 | 接收并校验表单数据，然后写入 Supabase      |
 
 ## 技术栈
 
@@ -49,17 +49,17 @@ pnpm dev
 
 先复制 `.env.example` 为 `.env.local`，再按所需功能填写变量。
 
-| 变量 | 是否必需 | 说明 |
-| --- | --- | --- |
-| `NEXT_PUBLIC_UMAMI_ID` | 否 | Umami 网站 ID。 |
-| `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | 否 | Umami 脚本地址。 |
-| `SUPABASE_URL` | 提交案例时必需 | Supabase 项目 URL，仅由服务端读取。 |
-| `SUPABASE_SECRET_KEY` | 提交案例时必需 | Supabase Secret Key（通常以 `sb_secret_` 开头），仅供服务端 API 使用。 |
-| `BASE_PATH` | 否 | 部署在子路径时使用。 |
-| `EXPORT` | 否 | 按部署需求启用静态导出。 |
-| `UNOPTIMIZED` | 否 | 按部署需求关闭图片优化。 |
-| `ADMIN_PASSWORD` | 使用 Admin 时必需 | `/admin` 管理员登录密码，仅由服务端读取。 |
-| `ADMIN_SESSION_SECRET` | 否 | Admin session cookie 签名密钥；未设置时使用 `ADMIN_PASSWORD`，建议在线上单独设置。 |
+| 变量                           | 是否必需          | 说明                                                                               |
+| ------------------------------ | ----------------- | ---------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_UMAMI_ID`         | 否                | Umami 网站 ID。                                                                    |
+| `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | 否                | Umami 脚本地址。                                                                   |
+| `SUPABASE_URL`                 | 提交案例时必需    | Supabase 项目 URL，仅由服务端读取。                                                |
+| `SUPABASE_SECRET_KEY`          | 提交案例时必需    | Supabase Secret Key（通常以 `sb_secret_` 开头），仅供服务端 API 使用。             |
+| `BASE_PATH`                    | 否                | 部署在子路径时使用。                                                               |
+| `EXPORT`                       | 否                | 按部署需求启用静态导出。                                                           |
+| `UNOPTIMIZED`                  | 否                | 按部署需求关闭图片优化。                                                           |
+| `ADMIN_PASSWORD`               | 使用 Admin 时必需 | `/admin` 管理员登录密码，仅由服务端读取。                                          |
+| `ADMIN_SESSION_SECRET`         | 否                | Admin session cookie 签名密钥；未设置时使用 `ADMIN_PASSWORD`，建议在线上单独设置。 |
 
 `SUPABASE_SECRET_KEY` 具备高权限：不要使用 `NEXT_PUBLIC_` 前缀，不要提交到仓库，也不要在浏览器端使用。当前提交接口会把记录写入 `case_submissions` 表；该表需要支持以下字段：
 
@@ -82,7 +82,7 @@ pnpm dev
 - `data/checkmate/hall-master.json`：名人堂唯一运行时数据源；页面只读取 `visibility=published` 的精选案例。这是由导出脚本生成的产物，不建议手工编辑，`dataVersion` 标识当前发布版本。
 - `data/checkmate/hall_fame.xlsx`：当前 Hall legacy 生产输入源；旧的 `ufun_checkee_pure_processed.xlsx` 与对应 JSON 保留为历史核对参考。
 
-`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。`scripts/export-hall-master.py --submissions <supabase-export.json>` 会先筛选并冻结 Supabase 中已发布的投稿到 `published-submissions.json`，再将当前 legacy Excel 与该快照合并生成 `hall-master.json`；不传 `--submissions` 时只读取已有快照，不重新读取 Supabase。历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 用于生成后检查新 Excel、JSON schema、字段、日期、来源、可见性、重复 ID、合并数量、release 完整性及与上一版 legacy 数据的 Added/Removed/Changed。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。非 `Check` 且没有结束日期的记录，其 `waitingDays` 保持为空，避免用当前日期造成历史数据漂移。
+`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。`scripts/export-hall-master.py --submissions <supabase-export.json>` 会先筛选并冻结 Supabase 中已发布的投稿到 `published-submissions.json`，再将当前 legacy Excel 与该快照合并生成 `hall-master.json`；不传 `--submissions` 时只读取已有快照，不重新读取 Supabase。历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 用于生成后检查新 Excel、JSON schema、字段、日期、来源、可见性、重复 ID、合并数量、release 完整性及与上一版 legacy 数据的 Added/Removed/Changed。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。每个 release 都从日期重新计算 `waitingDays`：有 `endDate` 时为 `endDate - startDate`，否则为该 release 的 `snapshotDate - startDate`；Excel 或投稿快照中的同名列只可作为缓存，不能覆盖最终 Hall 值。
 
 当前正式发布链路为：
 
@@ -102,6 +102,20 @@ data/checkmate/hall-master.json
 Frontend
 /
 ```
+
+导出 Hall 时，`snapshotDate` 默认使用当天日期；如需重现指定日期的快照，可手动传入：
+
+```bash
+python scripts/export-hall-master.py
+```
+
+默认使用当天日期。
+
+```bash
+python scripts/export-hall-master.py --snapshot-date 2026-09-10
+```
+
+手动指定 `snapshotDate`。无论使用哪种方式，导出脚本都会根据本次发布的 `snapshotDate` 重新计算 `waitingDays`，不会沿用 Excel、投稿快照或已有 JSON 中的缓存值。
 
 更新数据后，请核对快照日期、样本范围与页面的数据说明，再执行构建验证。
 

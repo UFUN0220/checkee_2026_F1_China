@@ -22,13 +22,28 @@ DEFAULT_PUBLISHED_SNAPSHOT = ROOT / "data/checkmate/published-submissions.json"
 DEFAULT_RELEASES_DIR = ROOT / "data/checkmate/releases"
 DEFAULT_OUTPUT = ROOT / "data/checkmate/hall-master.json"
 ALLOWED_SOURCES = {"submission_user", "admin_import"}
+SUBMISSION_LOCATION_ALIASES = {
+    "beijing": "北京",
+    "北京": "北京",
+    "shanghai": "上海",
+    "上海": "上海",
+    "guangzhou": "广州",
+    "广州": "广州",
+    "shenyang": "沈阳",
+    "沈阳": "沈阳",
+    "wuhan": "武汉",
+    "武汉": "武汉",
+}
 SNAPSHOT_SCHEMA_VERSION = 1
 RELEASE_META_SCHEMA_VERSION = 1
-DEFAULT_GENERATED_AT = date.today().isoformat()
+DEFAULT_SNAPSHOT_DATE = date.today().isoformat()
+DEFAULT_GENERATED_AT = DEFAULT_SNAPSHOT_DATE
 DEFAULT_PUBLISHED_AT = "2026-09-06"
+ISO_DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RELEASE_VERSION_PATTERN = re.compile(r"^(\d{8})-v(\d{3})$")
 SNAPSHOT_RECORD_FIELDS = {
     "id",
+    "nickname",
     "location",
     "degree",
     "major",
@@ -54,6 +69,23 @@ def load_converter():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def validate_iso_date(value, label):
+    if not isinstance(value, str) or not ISO_DATE_PATTERN.fullmatch(value):
+        raise ValueError(f"{label} must be YYYY-MM-DD")
+    try:
+        date.fromisoformat(value)
+    except ValueError as error:
+        raise ValueError(f"{label} is not a valid calendar date") from error
+    return value
+
+
+def snapshot_date_argument(value):
+    try:
+        return validate_iso_date(value, "snapshot-date")
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(str(error)) from error
 
 
 def read_submission_rows(path: Path):
@@ -170,7 +202,25 @@ def value(row, *names):
     return None
 
 
-def submission_record(row, index, generated_at, converter):
+def normalize_submission_status(status, end_date):
+    if status == "Refused" and end_date is None:
+        return "Check"
+    return status
+
+
+def normalize_submission_location(value, converter, index):
+    normalized = converter.normalize(value)
+    if normalized is None:
+        raise ValueError(f"Published submission row {index} has no location")
+    canonical = SUBMISSION_LOCATION_ALIASES.get(normalized)
+    if canonical is None:
+        canonical = SUBMISSION_LOCATION_ALIASES.get(normalized.lower())
+    if canonical is None:
+        raise ValueError(f"Published submission row {index} has unknown location: {normalized}")
+    return canonical
+
+
+def submission_record(row, index, snapshot_date, generated_at, converter):
     if not isinstance(row, dict):
         raise ValueError(f"Submission row {index} must be an object")
     visibility = converter.normalize(value(row, "visibility"))
@@ -186,13 +236,10 @@ def submission_record(row, index, generated_at, converter):
     end_date = converter.date_value(value(row, "endDate", "end_date"))
     if end_date and end_date < start_date:
         raise ValueError(f"Published submission row {index} has an end date before its start date")
+    status = normalize_submission_status(status, end_date)
+    location = normalize_submission_location(value(row, "location"), converter, index)
 
-    waiting_days = converter.number_value(value(row, "waitingDays", "waiting_days"))
-    if status == "Check" and end_date is None:
-        waiting_days = converter.days_between(start_date, generated_at)
-    elif waiting_days is None:
-        if end_date:
-            waiting_days = converter.days_between(start_date, end_date)
+    waiting_days = converter.derived_waiting_days(start_date, end_date, snapshot_date)
 
     raw_id = converter.normalize(value(row, "id")) or str(index)
     record_id = raw_id if raw_id.startswith("submission-") else f"submission-{raw_id}"
@@ -204,7 +251,8 @@ def submission_record(row, index, generated_at, converter):
 
     return {
         "id": record_id,
-        "location": converter.normalize(value(row, "location")) or "",
+        "nickname": converter.normalize(value(row, "nickname", "name")),
+        "location": location,
         "degree": converter.normalize(value(row, "degree")) or "",
         "major": converter.normalize(value(row, "major")) or "",
         "school": converter.normalize(value(row, "school")),
@@ -221,6 +269,26 @@ def submission_record(row, index, generated_at, converter):
     }
 
 
+def with_derived_waiting_days(record, snapshot_date, converter):
+    start_date = converter.date_value(record.get("startDate"))
+    end_date = converter.date_value(record.get("endDate"))
+    if not start_date:
+        raise ValueError(f"Published snapshot record {record.get('id', 'unknown')} has no start date")
+    if end_date and end_date < start_date:
+        raise ValueError(f"Published snapshot record {record.get('id', 'unknown')} has an end date before its start date")
+    status = normalize_submission_status(record.get("status"), end_date)
+    location = normalize_submission_location(record.get("location"), converter, record.get("id", "unknown"))
+
+    return {
+        **record,
+        "startDate": start_date,
+        "endDate": end_date,
+        "waitingDays": converter.derived_waiting_days(start_date, end_date, snapshot_date),
+        "status": status,
+        "location": location,
+    }
+
+
 def export_hall_master(
     legacy_input,
     submissions_input,
@@ -231,15 +299,25 @@ def export_hall_master(
     published_snapshot=DEFAULT_PUBLISHED_SNAPSHOT,
     releases_dir=DEFAULT_RELEASES_DIR,
 ):
+    snapshot_date = validate_iso_date(snapshot_date, "snapshot-date")
     converter = load_converter()
-    records = converter.convert_records(legacy_input, snapshot_date, published_at, require_case_id=True)
+    legacy_warnings = []
+    records = converter.convert_records(
+        legacy_input,
+        snapshot_date,
+        published_at,
+        require_case_id=True,
+        warnings=legacy_warnings,
+    )
+    for warning in legacy_warnings:
+        print(f"Warning: {warning}")
     existing_ids = {record["id"] for record in records}
 
     if submissions_input:
         snapshot_records = []
         snapshot_ids = set()
         for index, row in enumerate(read_submission_rows(submissions_input), start=1):
-            record = submission_record(row, index, generated_at, converter)
+            record = submission_record(row, index, snapshot_date, generated_at, converter)
             if record is None:
                 continue
             if record["id"] in existing_ids:
@@ -251,7 +329,20 @@ def export_hall_master(
         converter.write_dataset(build_published_snapshot(snapshot_records, generated_at), published_snapshot)
         print(f"Froze {len(snapshot_records)} published submissions to {published_snapshot}")
     else:
-        _, snapshot_records = read_published_snapshot(published_snapshot)
+        snapshot_generated_at, frozen_snapshot_records = read_published_snapshot(published_snapshot)
+        snapshot_records = [
+            with_derived_waiting_days(record, snapshot_date, converter)
+            for record in frozen_snapshot_records
+        ]
+        if any(
+            normalized["status"] != original.get("status")
+            for original, normalized in zip(frozen_snapshot_records, snapshot_records)
+        ):
+            converter.write_dataset(
+                build_published_snapshot(snapshot_records, snapshot_generated_at),
+                published_snapshot,
+            )
+            print(f"Normalized published submission statuses in {published_snapshot}")
 
     for record in snapshot_records:
         if record["id"] in existing_ids:
@@ -306,8 +397,13 @@ def main():
     )
     parser.add_argument("--releases-dir", type=Path, default=DEFAULT_RELEASES_DIR)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
-    parser.add_argument("--snapshot-date", default="2026-09-07")
-    parser.add_argument("--generated-at", default="2026-09-07")
+    parser.add_argument(
+        "--snapshot-date",
+        type=snapshot_date_argument,
+        default=DEFAULT_SNAPSHOT_DATE,
+        help="The release cutoff date used to derive open-record waitingDays (default: today)",
+    )
+    parser.add_argument("--generated-at", default=DEFAULT_GENERATED_AT)
     parser.add_argument("--published-at", default="2026-09-06")
     args = parser.parse_args()
     export_hall_master(

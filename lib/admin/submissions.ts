@@ -4,6 +4,7 @@ import { getSupabaseServerClient } from '~/lib/supabase/server'
 
 export const ADMIN_SUBMISSION_COLUMNS = [
   'id',
+  'name',
   'location',
   'degree',
   'major',
@@ -25,6 +26,7 @@ export type AdminVisibilityFilter = (typeof ADMIN_VISIBILITY_FILTERS)[number]
 
 export type AdminSubmission = {
   id: string | number
+  name: string | null
   location: string | null
   degree: string | null
   major: string | null
@@ -83,7 +85,7 @@ export async function getAdminStats() {
     stats: {
       ...Object.fromEntries(entries.map((entry) => [entry.visibility, entry.count])),
       lastPublishedAt: lastPublished?.published_at ?? null,
-      pendingUpdateRequests: updateRequestsError ? null : pendingUpdateRequests ?? 0,
+      pendingUpdateRequests: updateRequestsError ? null : (pendingUpdateRequests ?? 0),
       updateRequestsError: updateRequestsError ? '暂时无法读取修改反馈待办。' : null,
     } as AdminStats,
     error: null,
@@ -91,9 +93,7 @@ export async function getAdminStats() {
 }
 
 export async function getAdminSubmissions(visibility: AdminVisibilityFilter = 'pending') {
-  let query = getSupabaseServerClient()
-    .from('case_submissions')
-    .select(ADMIN_SUBMISSION_COLUMNS)
+  let query = getSupabaseServerClient().from('case_submissions').select(ADMIN_SUBMISSION_COLUMNS)
 
   if (visibility !== 'all') query = query.eq('visibility', visibility)
 

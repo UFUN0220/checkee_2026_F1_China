@@ -19,7 +19,7 @@
       "2026-07",
       "2026-08"
     ],
-    "importedAt": "2026-09-07T15:09:32Z",
+    "importedAt": "2026-09-09T17:09:53Z",
     "fetchedAt": null,
     "snapshotDate": "2026-09-07",
     "parserVersion": "checkee-html-archive-v1",
@@ -1217,6 +1217,7 @@
       "clearCount": 17,
       "totalCount": 23,
       "averageWaitingDays": 104.5,
+      "medianWaitingDays": 64,
       "averageSampleSize": 23,
       "waitingDaysTotal": 2403
     },
@@ -1226,6 +1227,7 @@
       "clearCount": 13,
       "totalCount": 19,
       "averageWaitingDays": 85.7,
+      "medianWaitingDays": 44,
       "averageSampleSize": 19,
       "waitingDaysTotal": 1628
     },
@@ -1235,6 +1237,7 @@
       "clearCount": 20,
       "totalCount": 30,
       "averageWaitingDays": 74.6,
+      "medianWaitingDays": 34,
       "averageSampleSize": 30,
       "waitingDaysTotal": 2239
     },
@@ -1244,6 +1247,7 @@
       "clearCount": 29,
       "totalCount": 51,
       "averageWaitingDays": 97.7,
+      "medianWaitingDays": 97,
       "averageSampleSize": 51,
       "waitingDaysTotal": 4984
     },
@@ -1253,6 +1257,7 @@
       "clearCount": 75,
       "totalCount": 135,
       "averageWaitingDays": 79.8,
+      "medianWaitingDays": 75,
       "averageSampleSize": 135,
       "waitingDaysTotal": 10772
     },
@@ -1262,6 +1267,7 @@
       "clearCount": 77,
       "totalCount": 178,
       "averageWaitingDays": 72.1,
+      "medianWaitingDays": 77,
       "averageSampleSize": 178,
       "waitingDaysTotal": 12838
     },
@@ -1271,6 +1277,7 @@
       "clearCount": 62,
       "totalCount": 135,
       "averageWaitingDays": 47.9,
+      "medianWaitingDays": 49,
       "averageSampleSize": 135,
       "waitingDaysTotal": 6468
     },
@@ -1280,6 +1287,7 @@
       "clearCount": 2,
       "totalCount": 30,
       "averageWaitingDays": 22.1,
+      "medianWaitingDays": 24,
       "averageSampleSize": 30,
       "waitingDaysTotal": 663
     }

@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useState } from 'react'
-import { CHECKMATE_LOCATIONS, type CheckmateLocation } from '~/data/checkmate/types'
 import { FieldError, FormWrapper, SubmitButton } from '~/components/forms'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -15,20 +14,14 @@ import {
   type CaseSubmissionFormValues,
   type CaseSubmissionValues,
   DEGREES,
+  SUBMISSION_LOCATIONS,
   STATUSES,
 } from '~/lib/validations/case-submission'
 import { submitCase, type SubmissionPayload } from './submit-case'
 import styles from './checkmate-experience.module.css'
 
-const LOCATION_NAMES: Record<CheckmateLocation, string> = {
-  beijing: '北京',
-  shanghai: '上海',
-  guangzhou: '广州',
-  shenyang: '沈阳',
-  wuhan: '武汉',
-}
-
 const INITIAL_FORM: CaseSubmissionFormValues = {
+  name: '',
   location: '',
   degree: '',
   major: '',
@@ -121,7 +114,11 @@ export function SubmitCaseButton() {
                 <p>感谢你的案例贡献。</p>
                 <p>提交后会经过人工整理和审核，符合展示标准的案例会进入名人堂。</p>
                 <div className={styles.submitSuccessActions}>
-                  <button type="button" className={styles.submitSecondaryButton} onClick={() => setStatus('idle')}>
+                  <button
+                    type="button"
+                    className={styles.submitSecondaryButton}
+                    onClick={() => setStatus('idle')}
+                  >
                     返回
                   </button>
                   <button type="button" className={styles.submitPrimaryButton} onClick={close}>
@@ -141,22 +138,45 @@ export function SubmitCaseButton() {
                   可以提交个人昵称，有一定信息量，唯一且有趣。
                 </p>
                 <div className={styles.submitFormGrid}>
+                  <Label className={styles.submitField} htmlFor="submit-name">
+                    <span>昵称（选填）</span>
+                    <Input
+                      id="submit-name"
+                      type="text"
+                      placeholder="请输入昵称（可选）"
+                      aria-invalid={Boolean(form.formState.errors.name)}
+                      aria-describedby={
+                        form.formState.errors.name ? 'submit-name-error' : undefined
+                      }
+                      {...form.register('name', { onChange: handleChange })}
+                    />
+                    <span className="text-muted text-xs leading-5 font-normal">
+                      将作为名人堂展示名称；可填写昵称，无需真实姓名。
+                    </span>
+                    <FieldError<CaseSubmissionFormValues> id="submit-name-error" name="name" />
+                  </Label>
+
                   <Label className={styles.submitField} htmlFor="submit-location">
                     <span>面签地点</span>
                     <Select
                       id="submit-location"
                       aria-invalid={Boolean(form.formState.errors.location)}
-                      aria-describedby={form.formState.errors.location ? 'submit-location-error' : undefined}
+                      aria-describedby={
+                        form.formState.errors.location ? 'submit-location-error' : undefined
+                      }
                       {...form.register('location', { onChange: handleChange })}
                     >
                       <option value="">选择面签地点</option>
-                      {CHECKMATE_LOCATIONS.map((location) => (
+                      {SUBMISSION_LOCATIONS.map((location) => (
                         <option key={location} value={location}>
-                          {LOCATION_NAMES[location]}
+                          {location}
                         </option>
                       ))}
                     </Select>
-                    <FieldError<CaseSubmissionFormValues> id="submit-location-error" name="location" />
+                    <FieldError<CaseSubmissionFormValues>
+                      id="submit-location-error"
+                      name="location"
+                    />
                   </Label>
 
                   <Label className={styles.submitField} htmlFor="submit-degree">
@@ -164,7 +184,9 @@ export function SubmitCaseButton() {
                     <Select
                       id="submit-degree"
                       aria-invalid={Boolean(form.formState.errors.degree)}
-                      aria-describedby={form.formState.errors.degree ? 'submit-degree-error' : undefined}
+                      aria-describedby={
+                        form.formState.errors.degree ? 'submit-degree-error' : undefined
+                      }
                       {...form.register('degree', { onChange: handleChange })}
                     >
                       <option value="">选择学位</option>
@@ -184,7 +206,9 @@ export function SubmitCaseButton() {
                       type="text"
                       placeholder="例如：Computer Science"
                       aria-invalid={Boolean(form.formState.errors.major)}
-                      aria-describedby={form.formState.errors.major ? 'submit-major-error' : undefined}
+                      aria-describedby={
+                        form.formState.errors.major ? 'submit-major-error' : undefined
+                      }
                       {...form.register('major', { onChange: handleChange })}
                     />
                     <FieldError<CaseSubmissionFormValues> id="submit-major-error" name="major" />
@@ -196,7 +220,11 @@ export function SubmitCaseButton() {
                       id="submit-interview-date"
                       type="date"
                       aria-invalid={Boolean(form.formState.errors.interviewDate)}
-                      aria-describedby={form.formState.errors.interviewDate ? 'submit-interview-date-error' : undefined}
+                      aria-describedby={
+                        form.formState.errors.interviewDate
+                          ? 'submit-interview-date-error'
+                          : undefined
+                      }
                       {...form.register('interviewDate', { onChange: handleChange })}
                     />
                     <FieldError<CaseSubmissionFormValues>
@@ -215,7 +243,9 @@ export function SubmitCaseButton() {
                     <Select
                       id="submit-status"
                       aria-invalid={Boolean(form.formState.errors.status)}
-                      aria-describedby={form.formState.errors.status ? 'submit-status-error' : undefined}
+                      aria-describedby={
+                        form.formState.errors.status ? 'submit-status-error' : undefined
+                      }
                       {...form.register('status', { onChange: handleStatusChange })}
                     >
                       <option value="">选择状态</option>
@@ -238,7 +268,9 @@ export function SubmitCaseButton() {
                         type="date"
                         min={interviewDate || undefined}
                         aria-invalid={Boolean(form.formState.errors.endDate)}
-                        aria-describedby={form.formState.errors.endDate ? 'submit-end-date-error' : undefined}
+                        aria-describedby={
+                          form.formState.errors.endDate ? 'submit-end-date-error' : undefined
+                        }
                         {...form.register('endDate', { onChange: handleChange })}
                       />
                       <FieldError<CaseSubmissionFormValues>
@@ -257,13 +289,18 @@ export function SubmitCaseButton() {
                       type="text"
                       placeholder="学校（可选）"
                       aria-invalid={Boolean(form.formState.errors.school)}
-                      aria-describedby={form.formState.errors.school ? 'submit-school-error' : undefined}
+                      aria-describedby={
+                        form.formState.errors.school ? 'submit-school-error' : undefined
+                      }
                       {...form.register('school', { onChange: handleChange })}
                     />
                     <FieldError<CaseSubmissionFormValues> id="submit-school-error" name="school" />
                   </Label>
 
-                  <Label className={`${styles.submitField} ${styles.submitFieldWide}`} htmlFor="submit-note">
+                  <Label
+                    className={`${styles.submitField} ${styles.submitFieldWide}`}
+                    htmlFor="submit-note"
+                  >
                     <span>
                       备注 <em>选填</em>
                     </span>
@@ -272,7 +309,9 @@ export function SubmitCaseButton() {
                       rows={3}
                       placeholder="想写什么都可以"
                       aria-invalid={Boolean(form.formState.errors.note)}
-                      aria-describedby={form.formState.errors.note ? 'submit-note-error' : undefined}
+                      aria-describedby={
+                        form.formState.errors.note ? 'submit-note-error' : undefined
+                      }
                       {...form.register('note', { onChange: handleChange })}
                     />
                     <FieldError<CaseSubmissionFormValues> id="submit-note-error" name="note" />

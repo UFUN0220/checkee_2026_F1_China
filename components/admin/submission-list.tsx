@@ -40,11 +40,13 @@ function formatDate(value: string | null | undefined, includeTime = false) {
 }
 
 function visibilityLabel(visibility: string) {
-  return {
-    pending: 'Pending',
-    published: 'Published',
-    rejected: 'Rejected',
-  }[visibility] ?? display(visibility)
+  return (
+    {
+      pending: 'Pending',
+      published: 'Published',
+      rejected: 'Rejected',
+    }[visibility] ?? display(visibility)
+  )
 }
 
 function visibilityClass(visibility: string) {
@@ -109,11 +111,14 @@ export function SubmissionList({
     setError(null)
     setSuccess(null)
     try {
-      const response = await fetch(`/api/admin/submissions/${encodeURIComponent(String(submission.id))}`, {
-        method: 'PATCH',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ visibility: values.visibility }),
-      })
+      const response = await fetch(
+        `/api/admin/submissions/${encodeURIComponent(String(submission.id))}`,
+        {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ visibility: values.visibility }),
+        }
+      )
       const result = (await response.json()) as {
         error?: string
         submission?: { id: string | number; visibility: string; published_at: string | null }
@@ -151,11 +156,30 @@ export function SubmissionList({
                 </DialogDescription>
               </DialogHeader>
 
-              <dl className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-3 rounded-xl border border-line bg-white/45 p-4 text-sm dark:border-line-dark dark:bg-white/5">
-                <div className="min-w-0"><dt className="text-xs text-muted dark:text-muted-dark">地点</dt><dd className="mt-1 break-words font-semibold">{display(pendingAction.submission.location)}</dd></div>
-                <div className="min-w-0"><dt className="text-xs text-muted dark:text-muted-dark">学位</dt><dd className="mt-1 break-words font-semibold">{display(pendingAction.submission.degree)}</dd></div>
-                <div className="col-span-2 min-w-0"><dt className="text-xs text-muted dark:text-muted-dark">专业 / 学校</dt><dd className="mt-1 break-words font-semibold">{display(pendingAction.submission.major)} / {display(pendingAction.submission.school)}</dd></div>
-                <div className="col-span-2 min-w-0"><dt className="text-xs text-muted dark:text-muted-dark">面签日期</dt><dd className="mt-1">{formatDate(pendingAction.submission.interview_date)}</dd></div>
+              <dl className="border-line dark:border-line-dark grid min-w-0 grid-cols-2 gap-x-4 gap-y-3 rounded-xl border bg-white/45 p-4 text-sm dark:bg-white/5">
+                <div className="min-w-0">
+                  <dt className="text-muted dark:text-muted-dark text-xs">地点</dt>
+                  <dd className="mt-1 font-semibold break-words">
+                    {display(pendingAction.submission.location)}
+                  </dd>
+                </div>
+                <div className="min-w-0">
+                  <dt className="text-muted dark:text-muted-dark text-xs">学位</dt>
+                  <dd className="mt-1 font-semibold break-words">
+                    {display(pendingAction.submission.degree)}
+                  </dd>
+                </div>
+                <div className="col-span-2 min-w-0">
+                  <dt className="text-muted dark:text-muted-dark text-xs">专业 / 学校</dt>
+                  <dd className="mt-1 font-semibold break-words">
+                    {display(pendingAction.submission.major)} /{' '}
+                    {display(pendingAction.submission.school)}
+                  </dd>
+                </div>
+                <div className="col-span-2 min-w-0">
+                  <dt className="text-muted dark:text-muted-dark text-xs">面签日期</dt>
+                  <dd className="mt-1">{formatDate(pendingAction.submission.interview_date)}</dd>
+                </div>
               </dl>
 
               <FormWrapper
@@ -177,7 +201,9 @@ export function SubmissionList({
                     {...decisionForm.register('visibility')}
                   >
                     <option value={pendingAction.visibility}>
-                      {pendingAction.visibility === 'published' ? 'Published · 发布' : 'Rejected · 拒绝'}
+                      {pendingAction.visibility === 'published'
+                        ? 'Published · 发布'
+                        : 'Rejected · 拒绝'}
                     </option>
                   </Select>
                   <FieldError<AdminSubmissionDecisionFormValues>
@@ -209,100 +235,214 @@ export function SubmissionList({
 
       <div className="space-y-4">
         {success ? (
-          <p className="rounded-xl border border-emerald-200/70 bg-emerald-50/70 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-200" role="status">
+          <p
+            className="rounded-xl border border-emerald-200/70 bg-emerald-50/70 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-emerald-200"
+            role="status"
+          >
             {success}
           </p>
         ) : null}
         {error ? (
-          <p className="rounded-xl border border-rose-200/70 bg-rose-50/70 px-4 py-3 text-sm text-rose-800 dark:border-rose-800/50 dark:bg-rose-950/30 dark:text-rose-200" role="alert">
+          <p
+            className="rounded-xl border border-rose-200/70 bg-rose-50/70 px-4 py-3 text-sm text-rose-800 dark:border-rose-800/50 dark:bg-rose-950/30 dark:text-rose-200"
+            role="alert"
+          >
             {error}
           </p>
         ) : null}
         {submissions.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-line p-6 text-center text-muted dark:border-line-dark dark:text-muted-dark">
+          <p className="border-line text-muted dark:border-line-dark dark:text-muted-dark rounded-xl border border-dashed p-6 text-center">
             {filter === 'pending' ? '暂无待审核投稿。' : '暂无符合条件的投稿。'}
           </p>
-        ) : submissions.map((submission) => {
-          const key = String(submission.id)
-          const isBusy = busyId === submission.id
-          const isExpanded = expandedId === submission.id
-          const detailsId = `admin-submission-details-${key}`
+        ) : (
+          submissions.map((submission) => {
+            const key = String(submission.id)
+            const isBusy = busyId === submission.id
+            const isExpanded = expandedId === submission.id
+            const detailsId = `admin-submission-details-${key}`
 
-          return (
-            <article className="border-b border-line py-4 first:pt-0 last:border-b-0 dark:border-line-dark" key={key}>
-              <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-start">
-                <dl className="grid min-w-0 gap-x-5 gap-y-2 text-sm sm:grid-cols-2 lg:grid-cols-5">
-                  <div className="min-w-0"><dt className="text-xs text-muted dark:text-muted-dark">地点</dt><dd className="mt-0.5 truncate font-semibold">{display(submission.location)}</dd></div>
-                  <div className="min-w-0"><dt className="text-xs text-muted dark:text-muted-dark">学位</dt><dd className="mt-0.5 truncate font-semibold">{display(submission.degree)}</dd></div>
-                  <div className="min-w-0"><dt className="text-xs text-muted dark:text-muted-dark">专业</dt><dd className="mt-0.5 truncate font-semibold">{display(submission.major)}</dd></div>
-                  <div className="min-w-0"><dt className="text-xs text-muted dark:text-muted-dark">学校</dt><dd className="mt-0.5 truncate font-semibold">{display(submission.school)}</dd></div>
-                  <div><dt className="text-xs text-muted dark:text-muted-dark">面签日期</dt><dd className="mt-0.5">{formatDate(submission.interview_date)}</dd></div>
-                  <div><dt className="text-xs text-muted dark:text-muted-dark">状态</dt><dd className="mt-0.5">{display(submission.status)}</dd></div>
-                  <div><dt className="text-xs text-muted dark:text-muted-dark">等待天数</dt><dd className="mt-0.5">{submission.waiting_days === null ? '—' : `${submission.waiting_days} 天`}</dd></div>
-                  <div><dt className="text-xs text-muted dark:text-muted-dark">提交时间</dt><dd className="mt-0.5">{formatDate(submission.created_at, true)}</dd></div>
-                  <div className="min-w-0 sm:col-span-2"><dt className="text-xs text-muted dark:text-muted-dark">发布状态</dt><dd className="mt-0.5"><span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${visibilityClass(submission.visibility)}`}>{visibilityLabel(submission.visibility)}</span></dd></div>
-                  <div className="min-w-0 sm:col-span-2 lg:col-span-5"><dt className="text-xs text-muted dark:text-muted-dark">备注摘要</dt><dd className="mt-0.5 truncate">{display(submission.note || submission.detail_note)}</dd></div>
-                </dl>
-                <div className="flex min-w-0 flex-wrap gap-2 md:justify-end">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="compact"
-                    aria-expanded={isExpanded}
-                    aria-controls={detailsId}
-                    onClick={() => setExpandedId(isExpanded ? null : submission.id)}
-                  >
-                    {isExpanded ? '收起详情' : '查看详情'}
-                  </Button>
-                  {submission.visibility === 'pending' ? (
-                    <>
-                      <Button
-                        type="button"
-                        size="compact"
-                        disabled={isBusy}
-                        aria-busy={isBusy}
-                        onClick={() => openDecisionDialog(submission, 'published')}
-                      >
-                        通过
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="danger"
-                        size="compact"
-                        disabled={isBusy}
-                        aria-busy={isBusy}
-                        onClick={() => openDecisionDialog(submission, 'rejected')}
-                      >
-                        拒绝
-                      </Button>
-                    </>
-                  ) : null}
-                </div>
-              </div>
-
-              {isExpanded ? (
-                <div id={detailsId} className="mt-5 border-t border-line pt-4 text-sm dark:border-line-dark">
-                  <dl className="grid min-w-0 gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">ID</dt><dd className="mt-1 break-all font-mono text-xs">{display(submission.id)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">案例状态</dt><dd className="mt-1">{display(submission.status)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">发布状态</dt><dd className="mt-1">{visibilityLabel(submission.visibility)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">来源</dt><dd className="mt-1 break-words font-mono text-xs">{display(submission.source)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">地点</dt><dd className="mt-1 break-words">{display(submission.location)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">学位</dt><dd className="mt-1 break-words">{display(submission.degree)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">专业</dt><dd className="mt-1 break-words">{display(submission.major)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">学校</dt><dd className="mt-1 break-words">{display(submission.school)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">面签日期</dt><dd className="mt-1">{formatDate(submission.interview_date)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">结束日期</dt><dd className="mt-1">{formatDate(submission.end_date)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">等待天数</dt><dd className="mt-1">{submission.waiting_days === null ? '—' : `${submission.waiting_days} 天`}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">Created</dt><dd className="mt-1">{formatDate(submission.created_at, true)}</dd></div>
-                    <div><dt className="text-xs text-muted dark:text-muted-dark">Reviewed</dt><dd className="mt-1">{formatDate(submission.published_at, true)}</dd></div>
-                    <div className="min-w-0 sm:col-span-2 lg:col-span-3"><dt className="text-xs text-muted dark:text-muted-dark">备注</dt><dd className="mt-1 whitespace-pre-wrap break-words">{display(submission.detail_note || submission.note)}</dd></div>
+            return (
+              <article
+                className="border-line dark:border-line-dark border-b py-4 first:pt-0 last:border-b-0"
+                key={key}
+              >
+                <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-start">
+                  <dl className="grid min-w-0 gap-x-5 gap-y-2 text-sm sm:grid-cols-2 lg:grid-cols-5">
+                    <div className="min-w-0">
+                      <dt className="text-muted dark:text-muted-dark text-xs">地点</dt>
+                      <dd className="mt-0.5 truncate font-semibold">
+                        {display(submission.location)}
+                      </dd>
+                    </div>
+                    <div className="min-w-0">
+                      <dt className="text-muted dark:text-muted-dark text-xs">学位</dt>
+                      <dd className="mt-0.5 truncate font-semibold">
+                        {display(submission.degree)}
+                      </dd>
+                    </div>
+                    <div className="min-w-0">
+                      <dt className="text-muted dark:text-muted-dark text-xs">专业</dt>
+                      <dd className="mt-0.5 truncate font-semibold">{display(submission.major)}</dd>
+                    </div>
+                    <div className="min-w-0">
+                      <dt className="text-muted dark:text-muted-dark text-xs">学校</dt>
+                      <dd className="mt-0.5 truncate font-semibold">
+                        {display(submission.school)}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-muted dark:text-muted-dark text-xs">面签日期</dt>
+                      <dd className="mt-0.5">{formatDate(submission.interview_date)}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-muted dark:text-muted-dark text-xs">状态</dt>
+                      <dd className="mt-0.5">{display(submission.status)}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-muted dark:text-muted-dark text-xs">等待天数</dt>
+                      <dd className="mt-0.5">
+                        {submission.waiting_days === null ? '—' : `${submission.waiting_days} 天`}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-muted dark:text-muted-dark text-xs">提交时间</dt>
+                      <dd className="mt-0.5">{formatDate(submission.created_at, true)}</dd>
+                    </div>
+                    <div className="min-w-0 sm:col-span-2">
+                      <dt className="text-muted dark:text-muted-dark text-xs">发布状态</dt>
+                      <dd className="mt-0.5">
+                        <span
+                          className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${visibilityClass(submission.visibility)}`}
+                        >
+                          {visibilityLabel(submission.visibility)}
+                        </span>
+                      </dd>
+                    </div>
+                    <div className="min-w-0 sm:col-span-2 lg:col-span-5">
+                      <dt className="text-muted dark:text-muted-dark text-xs">备注摘要</dt>
+                      <dd className="mt-0.5 truncate">
+                        {display(submission.note || submission.detail_note)}
+                      </dd>
+                    </div>
                   </dl>
+                  <div className="flex min-w-0 flex-wrap gap-2 md:justify-end">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="compact"
+                      aria-expanded={isExpanded}
+                      aria-controls={detailsId}
+                      onClick={() => setExpandedId(isExpanded ? null : submission.id)}
+                    >
+                      {isExpanded ? '收起详情' : '查看详情'}
+                    </Button>
+                    {submission.visibility === 'pending' ? (
+                      <>
+                        <Button
+                          type="button"
+                          size="compact"
+                          disabled={isBusy}
+                          aria-busy={isBusy}
+                          onClick={() => openDecisionDialog(submission, 'published')}
+                        >
+                          通过
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="danger"
+                          size="compact"
+                          disabled={isBusy}
+                          aria-busy={isBusy}
+                          onClick={() => openDecisionDialog(submission, 'rejected')}
+                        >
+                          拒绝
+                        </Button>
+                      </>
+                    ) : null}
+                  </div>
                 </div>
-              ) : null}
-            </article>
-          )
-        })}
+
+                {isExpanded ? (
+                  <div
+                    id={detailsId}
+                    className="border-line dark:border-line-dark mt-5 border-t pt-4 text-sm"
+                  >
+                    <dl className="grid min-w-0 gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">ID</dt>
+                        <dd className="mt-1 font-mono text-xs break-all">
+                          {display(submission.id)}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">名字</dt>
+                        <dd className="mt-1 break-words">{display(submission.name)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">案例状态</dt>
+                        <dd className="mt-1">{display(submission.status)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">发布状态</dt>
+                        <dd className="mt-1">{visibilityLabel(submission.visibility)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">来源</dt>
+                        <dd className="mt-1 font-mono text-xs break-words">
+                          {display(submission.source)}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">地点</dt>
+                        <dd className="mt-1 break-words">{display(submission.location)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">学位</dt>
+                        <dd className="mt-1 break-words">{display(submission.degree)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">专业</dt>
+                        <dd className="mt-1 break-words">{display(submission.major)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">学校</dt>
+                        <dd className="mt-1 break-words">{display(submission.school)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">面签日期</dt>
+                        <dd className="mt-1">{formatDate(submission.interview_date)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">结束日期</dt>
+                        <dd className="mt-1">{formatDate(submission.end_date)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">等待天数</dt>
+                        <dd className="mt-1">
+                          {submission.waiting_days === null ? '—' : `${submission.waiting_days} 天`}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">Created</dt>
+                        <dd className="mt-1">{formatDate(submission.created_at, true)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-muted dark:text-muted-dark text-xs">Reviewed</dt>
+                        <dd className="mt-1">{formatDate(submission.published_at, true)}</dd>
+                      </div>
+                      <div className="min-w-0 sm:col-span-2 lg:col-span-3">
+                        <dt className="text-muted dark:text-muted-dark text-xs">备注</dt>
+                        <dd className="mt-1 break-words whitespace-pre-wrap">
+                          {display(submission.detail_note || submission.note)}
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                ) : null}
+              </article>
+            )
+          })
+        )}
       </div>
     </>
   )

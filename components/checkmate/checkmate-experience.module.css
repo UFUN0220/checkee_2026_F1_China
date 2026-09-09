@@ -2161,8 +2161,9 @@
   --elite-material-edge: rgb(248 255 250 / 0.4);
   display: grid;
   grid-template-columns:
-    3rem minmax(5rem, 0.65fr) minmax(6rem, 0.8fr) minmax(5.5rem, 0.72fr) 4rem 4rem
-    minmax(12rem, 2.4fr) 4.5rem;
+    3rem minmax(6rem, 1.15fr) minmax(8rem, 1.5fr)
+    minmax(7.5rem, 1.35fr) minmax(7.5rem, 1.4fr)
+    4rem 4rem 4.5rem 4.5rem;
   font-family: 'Kaiti SC', 'STKaiti', KaiTi, serif;
   gap: clamp(1rem, 1.7vw, 1.3rem);
   align-items: center;
@@ -2209,7 +2210,8 @@
   transition: opacity 380ms ease;
 }
 .eliteRow > *,
-.standardRow > * {
+.standardRow > *,
+.standardDesktopRow > * {
   position: relative;
   z-index: 1;
 }
@@ -2254,8 +2256,9 @@
 .standardRow {
   display: grid;
   grid-template-columns:
-    3rem minmax(5rem, 0.65fr) minmax(6rem, 0.8fr) minmax(5.5rem, 0.72fr) 4rem 4rem
-    minmax(12rem, 2.4fr) 4.5rem;
+    3rem minmax(6rem, 1.15fr) minmax(8rem, 1.5fr)
+    minmax(7.5rem, 1.35fr) minmax(7.5rem, 1.4fr)
+    4rem 4rem 4.5rem 4.5rem;
   gap: clamp(0.5rem, 1.25vw, 0.9rem);
   align-items: center;
 }
@@ -2460,14 +2463,32 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.standardName {
+  min-width: 0;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--color-ink) 86%, var(--checkmate-muted));
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .standardSchoolDate {
   display: contents;
 }
 .standardDesktopFields {
   display: contents;
 }
+.standardDesktopRow {
+  display: contents;
+}
 .standardMobileFields {
   display: none;
+}
+.mobileRow {
+  display: none;
+}
+.mobileMetadata {
+  min-width: 0;
 }
 .standardMajor {
   color: var(--color-ink);
@@ -2573,7 +2594,24 @@
   white-space: nowrap;
 }
 .standardNoteEmpty {
+  display: inline-block;
+  color: var(--checkmate-muted);
+  font-size: 0.78rem;
+  line-height: 1.25;
   min-width: 0;
+  text-align: left;
+}
+.standardDesktopFields .standardNotePopover,
+.standardDesktopFields .standardNoteEmpty {
+  grid-column: 9;
+  grid-row: 1;
+  justify-self: end;
+}
+.standardDesktopRow > .eliteDuration,
+.standardDesktopRow > .standardDuration {
+  grid-column: 8;
+  grid-row: 1;
+  justify-self: end;
 }
 .standardNotePopover {
   position: relative;
@@ -2601,16 +2639,19 @@
 }
 .standardNoteButton:hover,
 .standardNoteButton:focus-visible {
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--checkmate-accent) 7%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--checkmate-accent) 12%, transparent);
-  outline: none;
+  color: var(--checkmate-accent);
+}
+.standardNoteButton:focus-visible {
+  border-radius: 2px;
+  outline: 1px solid color-mix(in srgb, var(--checkmate-accent) 28%, transparent);
+  outline-offset: 2px;
 }
 .standardNotePanel {
   position: absolute;
   z-index: 20;
   top: calc(100% + 0.55rem);
-  left: 0;
+  right: 0;
+  left: auto;
   width: min(24rem, calc(100vw - 2rem));
   border: 1px solid var(--checkmate-border);
   border-radius: 12px;
@@ -2619,7 +2660,7 @@
   background: var(--checkmate-surface-strong);
   box-shadow: 0 12px 30px rgb(0 0 0 / 0.12);
   text-align: left;
-  transform-origin: top left;
+  transform-origin: top right;
   transition:
     opacity 140ms ease,
     transform 140ms ease;
@@ -3108,6 +3149,18 @@
     display: block;
     height: auto;
   }
+
+  .standardNotePanel {
+    top: auto;
+    right: 0;
+    bottom: calc(100% + 0.55rem);
+    left: auto;
+    transform-origin: bottom right;
+  }
+
+  .standardNotePanel[data-closed] {
+    transform: translateY(0.25rem) scale(0.98);
+  }
 }
 
 @media (max-width: 760px) {
@@ -3584,10 +3637,6 @@
   .eliteIdentity {
     gap: 0.45rem;
   }
-  .eliteDuration {
-    grid-column: 3;
-    grid-row: 1 / span 2;
-  }
   .eliteList {
     gap: 0.55rem;
   }
@@ -3639,11 +3688,6 @@
   .standardLocationDegree {
     min-width: 0;
   }
-  .eliteRow .standardDuration,
-  .standardRow .standardDuration {
-    grid-column: 3;
-    grid-row: 1;
-  }
   .standardSchool,
   .standardEndDate,
   .standardNotePopover {
@@ -3665,24 +3709,65 @@
     display: none;
   }
 
+  .standardDesktopRow {
+    display: none;
+  }
+
+  .mobileRow {
+    display: grid;
+    grid-template-columns: 2.8rem minmax(0, 1fr) max-content;
+    align-items: center;
+    column-gap: 0.65rem;
+    min-width: 0;
+  }
+
+  .eliteRow,
+  .standardRow {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 0;
+  }
+
   .standardMobileFields {
     display: grid;
     grid-column: 2 / -1;
-    grid-row: 1 / span 4;
+    grid-row: 1 / span 5;
     grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: repeat(4, minmax(0, auto));
+    grid-template-rows: repeat(5, minmax(0, auto));
     align-content: center;
     gap: 0.22rem 0.45rem;
     min-width: 0;
   }
 
-  .mobileLocationDegree {
-    display: flex;
-    grid-column: 1 / -1;
-    grid-row: 1;
-    min-width: 0;
+  .mobilePrimary {
+    display: inline-flex;
+    flex: 0 0 100%;
     align-items: baseline;
-    gap: 0.42rem;
+    gap: 0.45rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .mobileNickname {
+    flex: 0 0 64px;
+    width: 64px;
+    min-width: 64px;
+    overflow: hidden;
+    color: color-mix(in srgb, var(--color-ink) 86%, var(--checkmate-muted));
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobilePrimaryMeta {
+    display: inline-flex;
+    flex: 1 1 auto;
+    align-items: baseline;
+    gap: 0.45rem;
+    min-width: 0;
+    max-width: calc(100% - 64px - 0.45rem);
     overflow: hidden;
     color: var(--color-ink);
     font-size: 0.88rem;
@@ -3692,15 +3777,16 @@
     white-space: nowrap;
   }
 
-  .mobileLocationDegree > span {
+  .mobilePrimaryMeta > span {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .mobileLocationDegree > span + span::before {
+  .mobilePrimaryMeta > span + span::before {
     content: '·';
-    margin-right: 0.42rem;
+    margin-right: 0.45rem;
     color: var(--checkmate-muted);
   }
 
@@ -3732,44 +3818,37 @@
 
   .standardMobileFields[data-variant='standard'] .mobileMajorSchool {
     grid-column: 1 / -1;
-    grid-row: 2;
+    grid-row: 3;
   }
 
   .standardMobileFields[data-variant='standard'] .mobileDate {
     grid-column: 1 / -1;
-    grid-row: 3;
+    grid-row: 4;
   }
 
   .standardMobileFields[data-variant='elite'] .mobileMajor {
     grid-column: 1 / -1;
-    grid-row: 2;
+    grid-row: 3;
   }
 
   .standardMobileFields[data-variant='elite'] .mobileSchool {
     grid-column: 1;
-    grid-row: 3;
+    grid-row: 4;
   }
 
   .standardMobileFields[data-variant='elite'] .mobileDate {
     grid-column: 2;
-    grid-row: 3;
+    grid-row: 4;
     justify-self: end;
-  }
-
-  .mobileEndDate::before {
-    content: '·';
-    margin: 0 0.3rem;
-    color: var(--checkmate-muted);
   }
 
   .mobileNote {
     grid-column: 1 / -1;
-    grid-row: 4;
+    grid-row: 5;
     min-width: 0;
   }
 
-  .mobileNote .standardNote,
-  .mobileNote .standardNoteEmpty {
+  .mobileNote .standardNote {
     display: none;
   }
 
@@ -3780,20 +3859,17 @@
   }
 
   .mobileNote .standardNoteButton {
-    width: auto;
+    width: max-content;
     max-width: 100%;
-    border: 1px solid color-mix(in srgb, var(--checkmate-accent) 22%, var(--checkmate-border));
-    border-radius: 999px;
-    padding: 0.12rem 0.42rem;
+    border-radius: 0;
+    padding: 0;
     color: var(--checkmate-muted);
-    font-size: 0;
+    font-size: 0.68rem;
     line-height: 1.2;
-    text-overflow: clip;
   }
 
   .mobileNote .standardNoteButton::before {
-    content: '备注';
-    font-size: 0.68rem;
+    content: none;
   }
 
   .eliteRow,
@@ -3815,7 +3891,7 @@
     gap: 0.28rem 0.5rem;
   }
 
-  .eliteRow .mobileLocationDegree {
+  .eliteRow .mobilePrimaryMeta {
     font-size: 0.96rem;
   }
 
@@ -3832,20 +3908,7 @@
     padding-block: 0.14rem;
   }
 
-  .eliteRow .eliteRank,
-  .standardRow .standardRank {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: start;
-  }
-
-  .eliteRow .eliteDuration,
-  .standardRow .standardDuration {
-    grid-column: 3;
-    grid-row: 1;
-  }
-
-  .standardRow .mobileLocationDegree {
+  .standardRow .mobilePrimaryMeta {
     font-size: 0.86rem;
   }
 
@@ -3889,8 +3952,8 @@
   /* The mobile row is a two-line, wrapping leaderboard item. */
   .standardMobileFields {
     display: flex;
-    grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-column: auto;
+    grid-row: auto;
     flex-wrap: wrap;
     align-content: center;
     align-items: baseline;
@@ -3900,7 +3963,6 @@
     overflow: hidden;
   }
 
-  .mobileLocationDegree,
   .standardMobileFields .mobileMajor,
   .mobileSecondary {
     grid-column: auto;
@@ -3911,19 +3973,6 @@
     max-width: 100%;
   }
 
-  .mobileLocationDegree {
-    display: inline-flex;
-    gap: 0.38rem;
-    align-items: baseline;
-    overflow: hidden;
-    font-size: 0.8rem;
-    line-height: 1.2;
-  }
-
-  .mobileLocationDegree > span {
-    white-space: nowrap;
-  }
-
   .standardMobileFields .mobileMajor {
     display: inline-flex;
     align-items: baseline;
@@ -3931,12 +3980,6 @@
     font-size: 0.8rem;
     line-height: 1.2;
     white-space: nowrap;
-  }
-
-  .standardMobileFields .mobileMajor::before {
-    content: '·';
-    margin-right: 0.35rem;
-    color: var(--checkmate-muted);
   }
 
   .mobileSecondary {
@@ -3962,17 +4005,8 @@
     white-space: nowrap;
   }
 
-  .mobileSecondary .mobileSchool::before,
-  .mobileSecondary[data-has-school='true'] .mobileDate::before {
-    content: '·';
-    margin-right: 0.35rem;
-    color: var(--checkmate-muted);
-  }
-
-  .mobileSecondary .mobileEndDate::before {
-    content: '·';
-    margin: 0 0.25rem;
-    color: var(--checkmate-muted);
+  .mobileSecondary .mobileDate {
+    gap: 0.35rem;
   }
 
   .eliteRow .standardMobileFields {
@@ -3980,7 +4014,6 @@
     max-height: 3rem;
   }
 
-  .eliteRow .mobileLocationDegree,
   .eliteRow .mobileMajor {
     font-size: 0.88rem;
   }
@@ -3994,7 +4027,6 @@
     max-height: 2.7rem;
   }
 
-  .standardRow .mobileLocationDegree,
   .standardRow .mobileMajor {
     font-size: 0.76rem;
   }
@@ -4230,8 +4262,7 @@
 .pagination button,
 .contactIntentOption,
 .submitDialogClose,
-.textButton,
-.standardNoteButton {
+.textButton {
   transition-property:
     transform, box-shadow, border-color, background, background-color, color, outline-color;
   transition-duration: 220ms;
@@ -4297,8 +4328,6 @@
   .submitDialogClose:focus-visible,
   .textButton:hover,
   .textButton:focus-visible,
-  .standardNoteButton:hover,
-  .standardNoteButton:focus-visible,
   .submitCaseDialogPanel .submitPrimaryButton:hover:not(:disabled),
   .submitCaseDialogPanel .submitPrimaryButton:focus-visible,
   .contactDialogPanel .submitPrimaryButton:hover:not(:disabled),
@@ -4328,8 +4357,7 @@
 .pagination button:active:not(:disabled),
 .contactIntentOption:active,
 .submitDialogClose:active,
-.textButton:active,
-.standardNoteButton:active {
+.textButton:active {
   box-shadow: var(--jade-interaction-pressed), var(--jade-interaction-inset);
   transform: translateY(0);
 }
@@ -4352,8 +4380,7 @@
 .secondaryButton:focus-visible,
 .pagination button:focus-visible,
 .podiumCard[data-note-trigger='true']:focus-visible,
-.standardRow[data-note-trigger='true']:focus-visible,
-.standardNoteButton:focus-visible {
+.standardRow[data-note-trigger='true']:focus-visible {
   outline-color: var(--jade-interaction-border);
 }
 

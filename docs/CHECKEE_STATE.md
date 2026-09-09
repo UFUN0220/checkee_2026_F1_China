@@ -32,14 +32,14 @@
 
 ## 3. 页面与数据架构
 
-| 页面/系统 | 职责 | 当前主要实现 |
-| --- | --- | --- |
-| `/` | 名人堂：公开案例的荣誉展示与归档浏览 | `CheckmateExperience` 的 `HallOfFame` |
-| `/view` | 五城 F-1 数据统计、趋势与案例浏览 | `CheckmateExperience` 的城市视图 |
-| `/about` | 个人资料与联系入口 | 独立 About 页面 |
-| `/api/submissions` | 接收并校验用户投稿 | 仅服务端写入 Supabase |
-| `/admin` | 内部审核投稿 | 不进入公开导航或 sitemap |
-| `/admin/hall` | Hall 发布状态与 release 历史控制中心 | 只读本地发布文件，并查询 Supabase published 状态 |
+| 页面/系统          | 职责                                 | 当前主要实现                                     |
+| ------------------ | ------------------------------------ | ------------------------------------------------ |
+| `/`                | 名人堂：公开案例的荣誉展示与归档浏览 | `CheckmateExperience` 的 `HallOfFame`            |
+| `/view`            | 五城 F-1 数据统计、趋势与案例浏览    | `CheckmateExperience` 的城市视图                 |
+| `/about`           | 个人资料与联系入口                   | 独立 About 页面                                  |
+| `/api/submissions` | 接收并校验用户投稿                   | 仅服务端写入 Supabase                            |
+| `/admin`           | 内部审核投稿                         | 不进入公开导航或 sitemap                         |
+| `/admin/hall`      | Hall 发布状态与 release 历史控制中心 | 只读本地发布文件，并查询 Supabase published 状态 |
 
 公开名人堂只读取 `data/checkmate/hall-master.json` 中 `visibility = published` 的记录。用户投稿首先写入 Supabase 审核池，审核发布后经导出脚本冻结到 `published-submissions.json`，再合并生成带 `dataVersion` 的 `hall-master.json`，并将同一份数据保存到不可覆盖的 `data/checkmate/releases/YYYYMMDD-vXXX/`；页面不会直接读取 Supabase 或手工改写原始数据。
 
@@ -99,7 +99,7 @@ Top 3 → 4–10
 - `Master`、`master`、`MASTER` 显示为 `Ms`；其他学位保持原样。
 - `AP`、`ap`、`Approved`、`approved` 统一显示为 `AP`。
 - 已完成、AP、Issued 使用低饱和绿/玉感；`Refused` 使用低饱和朱砂红；等待中保持中性。
-- 等待天数表示面签日期至记录当前状态日期的差值；非 `Check` 且没有结束日期的历史记录保持空值，不能用当前日期补算。
+- 等待天数是 release 的派生值：有 `endDate` 时为 `endDate - startDate`，否则为固定 `snapshotDate - startDate`；不得使用 Excel 缓存值、系统时间、浏览器日期或 build 当日日期。
 - 状态颜色只影响展示，不得改写来源数据。
 
 ## 6. 数据发布边界
@@ -108,7 +108,7 @@ Top 3 → 4–10
 - 从 `pending` 发布为 `published` 时，由数据库触发器写入 `published_at`。
 - `hall-master.json` 是生成产物，不手工编辑；历史数据来源标为 `legacy_excel`，用户投稿标为 `submission_user`。
 - 每次正式导出都创建新的 release 目录，版本格式为 `YYYYMMDD-vXXX`；release 内保存 Hall、published submissions 与 `release-meta.json`，历史版本不自动删除或覆盖。
-- 维护数据时使用 `scripts/convert-checkee-data.py`、`scripts/export-hall-master.py` 与 `scripts/verify-hall-data.py`，并检查来源、可见性、日期、重复 ID 与历史记录一致性。
+- 维护数据时使用 `scripts/convert-checkee-data.py`、`scripts/export-hall-master.py` 与 `scripts/verify-hall-data.py`，并检查来源、可见性、日期、等待天数派生规则、重复 ID 与历史记录一致性。
 
 ## 7. 受保护区域
 
@@ -156,17 +156,17 @@ git diff --check
 
 ## 10. 最近检查（2026-09-07）
 
-| 检查项 | 结论 | 依据 |
-| --- | --- | --- |
-| 名次分层与排序 | 符合 | `HallOfFame` 过滤 `published` 后按等待天数排序，明确切分 Top 3、4–10、11+。 |
-| 控制入口数量与职责 | 符合 | `HallControlNav` 仅渲染投稿与“修改/说明”；后者合并数据说明与反馈。 |
-| 数据发布边界 | 符合 | 页面读取 `hall-master.json`；发布快照、release 目录、导出与校验脚本共同保持审核池到静态发布文件的边界。 |
-| Hall release 版本 | 符合 | `data/checkmate/releases/20260907-v001/` 保存三件发布文件，`dataVersion` 与最新 release 一致。 |
-| Admin Hall 控制中心 | 符合 | `/admin/hall` 继承 Admin 登录保护，只读本地 release 与 Supabase published 状态，不执行发布或部署。 |
-| Admin 审核体验 | 符合 | 投稿详情显示 ID、来源、案例字段、发布状态与时间；审核确认和成功反馈保持在现有 Admin 流程内。 |
-| 状态与学位展示归一化 | 符合 | 行展示层对 AP/Approved 与 Refused 进行归一化；学位格式化在展示函数中处理。 |
-| Top 3 形态 | 符合当前决策 | 三张圆形等尺寸卡片；桌面端冠军提升变量为 `--podium-lift`，移动端为 `0px`；铭牌采用“地点 → 合并信息行 → 主体名称 → 等待天数”的统一层级。 |
-| 移动端榜单密度 | 符合当前决策 | 4–10 与 11+ 使用单行优先、最多两行的紧凑榜单条目；等待天数固定靠右，备注不在移动端展示；桌面字段布局保持不变。 |
-| 移动端五城卡片 | 符合当前决策 | 移动端仅保留五城 Grid 的排列响应式规则；城市卡片内部继续复用桌面端比例、标题、案例数、分割线与 Q1/Median/Q3 样式。 |
-| 分章文案 | 符合 | Top 3 → 4–10 使用“但愿人长久，千里共Check娟。”；4–10 → 11+ 使用“曲径通幽处，Check房花木深。”。 |
-| 空状态与反馈流程 | 已实现 | `/view` 初始与无匹配状态提供下一步和案例总数；名人堂无记录时引导投稿；“修改/说明”按诉求分流，并明确反馈确认后才会更新榜单。 |
+| 检查项               | 结论         | 依据                                                                                                                                    |
+| -------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| 名次分层与排序       | 符合         | `HallOfFame` 过滤 `published` 后按等待天数排序，明确切分 Top 3、4–10、11+。                                                             |
+| 控制入口数量与职责   | 符合         | `HallControlNav` 仅渲染投稿与“修改/说明”；后者合并数据说明与反馈。                                                                      |
+| 数据发布边界         | 符合         | 页面读取 `hall-master.json`；发布快照、release 目录、导出与校验脚本共同保持审核池到静态发布文件的边界。                                 |
+| Hall release 版本    | 符合         | `data/checkmate/releases/20260907-v001/` 保存三件发布文件，`dataVersion` 与最新 release 一致。                                          |
+| Admin Hall 控制中心  | 符合         | `/admin/hall` 继承 Admin 登录保护，只读本地 release 与 Supabase published 状态，不执行发布或部署。                                      |
+| Admin 审核体验       | 符合         | 投稿详情显示 ID、来源、案例字段、发布状态与时间；审核确认和成功反馈保持在现有 Admin 流程内。                                            |
+| 状态与学位展示归一化 | 符合         | 行展示层对 AP/Approved 与 Refused 进行归一化；学位格式化在展示函数中处理。                                                              |
+| Top 3 形态           | 符合当前决策 | 三张圆形等尺寸卡片；桌面端冠军提升变量为 `--podium-lift`，移动端为 `0px`；铭牌采用“地点 → 合并信息行 → 主体名称 → 等待天数”的统一层级。 |
+| 移动端榜单密度       | 符合当前决策 | 4–10 与 11+ 使用单行优先、最多两行的紧凑榜单条目；等待天数固定靠右，备注不在移动端展示；桌面字段布局保持不变。                          |
+| 移动端五城卡片       | 符合当前决策 | 移动端仅保留五城 Grid 的排列响应式规则；城市卡片内部继续复用桌面端比例、标题、案例数、分割线与 Q1/Median/Q3 样式。                      |
+| 分章文案             | 符合         | Top 3 → 4–10 使用“但愿人长久，千里共Check娟。”；4–10 → 11+ 使用“曲径通幽处，Check房花木深。”。                                          |
+| 空状态与反馈流程     | 已实现       | `/view` 初始与无匹配状态提供下一步和案例总数；名人堂无记录时引导投稿；“修改/说明”按诉求分流，并明确反馈确认后才会更新榜单。             |

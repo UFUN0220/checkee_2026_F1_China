@@ -1,7 +1,11 @@
-import type { CheckmateLocation } from '~/data/checkmate/types'
+import {
+  normalizeSubmissionLocation,
+  type SubmissionLocation,
+} from '~/lib/validations/case-submission'
 
 export type SubmissionPayload = {
-  location: CheckmateLocation
+  name?: string | null
+  location: SubmissionLocation
   degree: string
   major: string
   interviewDate: string
@@ -13,8 +17,9 @@ export type SubmissionPayload = {
 
 const SUBMISSION_STATUSES = ['Check', 'Approved', 'Issued', 'Refused'] as const
 
-function validateSubmission(payload: SubmissionPayload) {
-  if (!payload.location || !payload.degree || !payload.major || !payload.interviewDate || !payload.status) {
+function normalizePayload(payload: SubmissionPayload) {
+  const location = normalizeSubmissionLocation(String(payload.location ?? ''))
+  if (!location || !payload.degree || !payload.major || !payload.interviewDate || !payload.status) {
     throw new Error('Required fields are missing')
   }
 
@@ -25,15 +30,17 @@ function validateSubmission(payload: SubmissionPayload) {
   if (payload.status !== 'Check' && payload.endDate && payload.endDate < payload.interviewDate) {
     throw new Error('End date cannot be earlier than interview date')
   }
+
+  return { ...payload, location }
 }
 
 export async function submitCase(payload: SubmissionPayload) {
-  validateSubmission(payload)
+  const normalizedPayload = normalizePayload(payload)
 
   const response = await fetch('/api/submissions', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(normalizedPayload),
   })
 
   if (!response.ok) {

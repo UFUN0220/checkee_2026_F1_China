@@ -31,11 +31,7 @@ const LOCATION_NAMES: Record<CheckmateLocation, string> = {
   wuhan: '武汉',
 }
 
-const PODIUM_NICKNAMES = [
-  '影',
-  '碎碎念慈悲喜',
-  '？',
-] as const
+const PODIUM_NICKNAMES = ['影', 'Mo', '碎碎念慈悲喜'] as const
 
 function formatDays(value: number | null) {
   if (value === null) return '—'
@@ -93,11 +89,7 @@ function FeatureTitle({ children, trailing }: { children: ReactNode; trailing?: 
   )
 }
 
-function WhiteHouseSelection({
-  snapshot,
-}: {
-  snapshot: CheckmateSnapshot
-}) {
+function WhiteHouseSelection({ snapshot }: { snapshot: CheckmateSnapshot }) {
   const [page, setPage] = useState(1)
   const [selectedCity, setSelectedCity] = useState<CheckmateLocation | null>(null)
   const selectedCases = useMemo(
@@ -143,10 +135,7 @@ function WhiteHouseSelection({
         })}
       </div>
       <div className={styles.citiesContent}>
-        <Trend
-          trends={snapshot.monthlyF1Trends}
-          stats={snapshot.national.waitStats}
-        />
+        <Trend trends={snapshot.monthlyF1Trends} stats={snapshot.national.waitStats} />
         <CityDetail
           city={selectedCity}
           cases={visibleCases}
@@ -224,7 +213,7 @@ function Trend({
           <span>Pending</span>
           <span>Clear</span>
           <span>Total</span>
-          <span>平均</span>
+          <span>中位数</span>
         </div>
         {trends.map((trend) => (
           <div className={styles.trendRow} role="row" key={trend.month}>
@@ -232,7 +221,7 @@ function Trend({
             <span>{trend.pendingCount}</span>
             <span>{trend.clearCount}</span>
             <span>{trend.totalCount}</span>
-            <span>{formatDays(trend.averageWaitingDays)} 天</span>
+            <span>{formatDays(trend.medianWaitingDays)} 天</span>
           </div>
         ))}
       </div>
@@ -263,7 +252,8 @@ function CityDetail({
     () =>
       [...cases].sort(
         (left, right) =>
-          left.checkDate.localeCompare(right.checkDate) || left.publicId.localeCompare(right.publicId)
+          left.checkDate.localeCompare(right.checkDate) ||
+          left.publicId.localeCompare(right.publicId)
       ),
     [cases]
   )
@@ -306,10 +296,12 @@ function CityDetail({
       className={`${styles.panel} ${styles.cityDetail}`}
       aria-labelledby="checkmate-city-title"
     >
-        <div className={`${styles.panelHeading} ${styles.cityDetailHeading}`}>
-          <div className={styles.cityDetailTitle}>
-            <h2 id="checkmate-city-title">{LOCATION_NAMES[city]} · 最新案例 · {totalCases}条</h2>
-          </div>
+      <div className={`${styles.panelHeading} ${styles.cityDetailHeading}`}>
+        <div className={styles.cityDetailTitle}>
+          <h2 id="checkmate-city-title">
+            {LOCATION_NAMES[city]} · 最新案例 · {totalCases}条
+          </h2>
+        </div>
         <button type="button" className={styles.textButton} onClick={onClose}>
           关闭
         </button>
@@ -357,7 +349,13 @@ function HallSectionDivider({ children }: { children: string }) {
   )
 }
 
-function CityCaseRow({ item, compact = false }: { item: CheckmateSnapshot['cases'][number]; compact?: boolean }) {
+function CityCaseRow({
+  item,
+  compact = false,
+}: {
+  item: CheckmateSnapshot['cases'][number]
+  compact?: boolean
+}) {
   const category = item.majorCategory.trim()
   const firstCategoryWord = category.split(/\s+/)[0] ?? ''
   const hasMultipleCategoryWords = firstCategoryWord !== category
@@ -419,7 +417,11 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
         <header className={styles.hallIntro}>
           <div className={styles.hallIntroCopy}>
             <h1>
-              2026年度<span className={styles.hallMobileTitleBreak} aria-hidden="true"><br /></span>白宫严选中国硕博
+              2026年度
+              <span className={styles.hallMobileTitleBreak} aria-hidden="true">
+                <br />
+              </span>
+              白宫严选中国硕博
             </h1>
           </div>
         </header>
@@ -431,11 +433,11 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
       </div>
     )
   const podiumCases = [cases[1], cases[0], cases[2]].filter(Boolean)
-  const eliteCases = cases.slice(3, 10)
-  const standardCases = cases.slice(10)
+  const midCases = cases.slice(3, 30)
+  const restCases = cases.slice(30)
   const pageSize = 10
-  const totalPages = Math.max(1, Math.ceil(standardCases.length / pageSize))
-  const visibleCases = standardCases.slice((page - 1) * pageSize, page * pageSize)
+  const totalPages = Math.max(1, Math.ceil(restCases.length / pageSize))
+  const visibleCases = restCases.slice((page - 1) * pageSize, page * pageSize)
 
   return (
     <div className={`${styles.view} ${styles.hallView}`}>
@@ -443,7 +445,11 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
       <header className={styles.hallIntro}>
         <div className={styles.hallIntroCopy}>
           <h1>
-            2026年度<span className={styles.hallMobileTitleBreak} aria-hidden="true"><br /></span>白宫严选中国硕博
+            2026年度
+            <span className={styles.hallMobileTitleBreak} aria-hidden="true">
+              <br />
+            </span>
+            白宫严选中国硕博
           </h1>
         </div>
       </header>
@@ -455,20 +461,8 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
         <div className={styles.podiumGrid}>
           {podiumCases.map((item) => {
             const rank = cases.indexOf(item) + 1
-            return (
-              rank === 1 ? (
-                <div className={styles.podiumChampion} key={item.id}>
-                  <PodiumCard
-                    item={item}
-                    rank={rank}
-                    expanded={expandedNoteId === item.id}
-                    onToggle={() =>
-                      setExpandedNoteId((current) => (current === item.id ? null : item.id))
-                    }
-                  />
-                  <HallControlNav notice={notice} updatedAt={dataset.snapshotDate} />
-                </div>
-              ) : (
+            return rank === 1 ? (
+              <div className={styles.podiumChampion} key={item.id}>
                 <PodiumCard
                   item={item}
                   rank={rank}
@@ -476,9 +470,19 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
                   onToggle={() =>
                     setExpandedNoteId((current) => (current === item.id ? null : item.id))
                   }
-                  key={item.id}
                 />
-              )
+                <HallControlNav notice={notice} updatedAt={dataset.snapshotDate} />
+              </div>
+            ) : (
+              <PodiumCard
+                item={item}
+                rank={rank}
+                expanded={expandedNoteId === item.id}
+                onToggle={() =>
+                  setExpandedNoteId((current) => (current === item.id ? null : item.id))
+                }
+                key={item.id}
+              />
             )
           })}
         </div>
@@ -486,26 +490,21 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
 
       <HallSectionDivider>但愿人长久，千里共Check娟</HallSectionDivider>
 
-      <section className={styles.eliteSection} aria-label="等待时长排名">
+      <section className={styles.eliteSection} aria-label="第4至30名">
         <div className={styles.eliteList}>
-          {eliteCases.map((item, index) => (
-            <HallRowContent
-              item={item}
-              rank={index + 4}
-              variant="elite"
-              key={item.id}
-            />
+          {midCases.map((item, index) => (
+            <HallRowContent item={item} rank={index + 4} variant="elite" key={item.id} />
           ))}
         </div>
       </section>
 
-      <section className={styles.standardSection} aria-label="完整案例列表">
+      <section className={styles.standardSection} aria-label="第31名及以后">
         <HallSectionDivider>曲径通幽处，Check房花木深</HallSectionDivider>
         <div className={styles.standardList}>
           {visibleCases.map((item, index) => (
             <HallRowContent
               item={item}
-              rank={10 + (page - 1) * pageSize + index + 1}
+              rank={30 + (page - 1) * pageSize + index + 1}
               variant="standard"
               key={item.id}
             />
@@ -568,7 +567,14 @@ function HallWait({
   return (
     <strong className={`${className} ${styles.hallWait}`}>
       <span className={styles.hallWaitValue}>
-        {item.waitingDays === null ? '—' : <>{item.waitingDays}<small>天</small></>}
+        {item.waitingDays === null ? (
+          '—'
+        ) : (
+          <>
+            {item.waitingDays}
+            <small>天</small>
+          </>
+        )}
       </span>
       {showApBadge && outcomeLabel ? <span className={styles.apBadge}>{outcomeLabel}</span> : null}
     </strong>
@@ -646,49 +652,58 @@ function HallRowContent({
   const hasEndDate = Boolean(item.endDate?.trim())
   const isRefused = normalizedStatus === 'refused' || normalizedEndDate === 'refused'
   const outcomeLabel = getOutcomeLabel(item)
-  const stateClass = isRefused
-    ? styles.refusedRow
-    : hasEndDate
-      ? styles.completedRow
-      : ''
+  const stateClass = isRefused ? styles.refusedRow : hasEndDate ? styles.completedRow : ''
 
   return (
     <article className={`${rowClass} ${stateClass}`}>
-      <strong className={rankClass}>{String(rank).padStart(2, '0')}</strong>
-      <div className={styles.standardDesktopFields}>
-        <span className={styles.standardLocationDegree}>
-          <span>{item.location || '\u00a0'}</span>
-          <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
-        </span>
-        <span className={styles.standardMajor}>{item.major || '\u00a0'}</span>
-        <span className={styles.standardSchool}>{item.school || '\u00a0'}</span>
-        <span className={styles.standardDates}>{formatDate(item.startDate)}</span>
-        <span className={`${styles.standardEndDate} ${isRefused ? styles.refusedText : ''}`}>
-          {hasEndDate ? formatDate(item.endDate) : '\u00a0'}
-          {outcomeLabel ? <span className={styles.apInline}>{outcomeLabel}</span> : null}
-        </span>
-        <HallNotePopover item={item} />
-      </div>
-      <div className={styles.standardMobileFields} data-variant={variant}>
-        <span className={styles.mobileLocationDegree}>
-          <span>{item.location || '\u00a0'}</span>
-          <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
-        </span>
-        <span className={styles.mobileMajor}>{item.major || '\u00a0'}</span>
-        <span className={styles.mobileSecondary} data-has-school={item.school ? 'true' : 'false'}>
-          {item.school ? <span className={styles.mobileSchool}>{item.school}</span> : null}
-          <span className={styles.mobileDate}>
-            {formatDate(item.startDate)}
-            {hasEndDate ? (
-              <span className={`${styles.mobileEndDate} ${isRefused ? styles.refusedText : ''}`}>
-                {formatDate(item.endDate)}
-                {outcomeLabel ? <span className={styles.apInline}>{outcomeLabel}</span> : null}
-              </span>
-            ) : null}
+      <div className={styles.standardDesktopRow}>
+        <strong className={rankClass}>{String(rank).padStart(2, '0')}</strong>
+        <div className={styles.standardDesktopFields}>
+          <span className={styles.standardName}>{item.nickname?.trim() || '\u00a0'}</span>
+          <span className={styles.standardLocationDegree}>
+            <span>{item.location || '\u00a0'}</span>
+            <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
           </span>
-        </span>
+          <span className={styles.standardMajor}>{item.major || '\u00a0'}</span>
+          <span className={styles.standardSchool}>{item.school || '\u00a0'}</span>
+          <span className={styles.standardDates}>{formatDate(item.startDate)}</span>
+          <span className={`${styles.standardEndDate} ${isRefused ? styles.refusedText : ''}`}>
+            {hasEndDate ? formatDate(item.endDate) : '\u00a0'}
+            {outcomeLabel ? <span className={styles.apInline}>{outcomeLabel}</span> : null}
+          </span>
+          <HallNotePopover item={item} />
+        </div>
+        <HallWait item={item} className={waitClass} showApBadge={false} />
       </div>
-      <HallWait item={item} className={waitClass} showApBadge={false} />
+      <div className={styles.mobileRow}>
+        <strong className={rankClass}>{String(rank).padStart(2, '0')}</strong>
+        <div
+          className={`${styles.standardMobileFields} ${styles.mobileMetadata}`}
+          data-variant={variant}
+        >
+          <span className={styles.mobilePrimary}>
+            <span className={styles.mobileNickname}>{item.nickname?.trim() || ''}</span>
+            <span className={styles.mobilePrimaryMeta}>
+              <span>{item.location || '\u00a0'}</span>
+              <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
+            </span>
+          </span>
+          {item.major?.trim() ? <span className={styles.mobileMajor}>{item.major}</span> : null}
+          <span className={styles.mobileSecondary} data-has-school={item.school ? 'true' : 'false'}>
+            {item.school ? <span className={styles.mobileSchool}>{item.school}</span> : null}
+            <span className={styles.mobileDate}>
+              {formatDate(item.startDate)}
+              {hasEndDate ? (
+                <span className={`${styles.mobileEndDate} ${isRefused ? styles.refusedText : ''}`}>
+                  {formatDate(item.endDate)}
+                  {outcomeLabel ? <span className={styles.apInline}>{outcomeLabel}</span> : null}
+                </span>
+              ) : null}
+            </span>
+          </span>
+        </div>
+        <HallWait item={item} className={waitClass} showApBadge={false} />
+      </div>
     </article>
   )
 }
@@ -696,21 +711,23 @@ function HallRowContent({
 function HallNotePopover({ item }: { item: CheckeeRecord }) {
   const compactNote = item.compactNote?.trim() || ''
   const detailNote = item.detailNote?.trim() || ''
-  const hasDetail = Boolean(detailNote && detailNote !== compactNote)
-  const displayNote = compactNote || detailNote
+  const displayNote = detailNote || compactNote
 
-  if (!displayNote) return <span className={styles.standardNoteEmpty} aria-hidden="true" />
-  if (!hasDetail) return <span className={styles.standardNote}>{displayNote}</span>
+  if (!displayNote) return <span className={styles.standardNoteEmpty}>—</span>
 
   return (
     <Popover className={styles.standardNotePopover}>
-      <PopoverButton type="button" className={styles.standardNoteButton}>
-        {displayNote}
-      </PopoverButton>
-      <PopoverPanel transition className={styles.standardNotePanel}>
-        <strong>备注</strong>
-        <p>{detailNote}</p>
-      </PopoverPanel>
+      {({ open }) => (
+        <>
+          <PopoverButton type="button" className={styles.standardNoteButton} aria-expanded={open}>
+            {open ? '收起' : '查看'}
+          </PopoverButton>
+          <PopoverPanel transition className={styles.standardNotePanel}>
+            <strong>备注</strong>
+            <p>{displayNote}</p>
+          </PopoverPanel>
+        </>
+      )}
     </Popover>
   )
 }

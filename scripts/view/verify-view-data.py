@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 import json
+from math import ceil
 import re
 from datetime import date
 from pathlib import Path
@@ -43,6 +44,16 @@ def valid_date(value: object, label: str, allow_none: bool = False) -> None:
     if not isinstance(value, str) or not ISO_DATE.fullmatch(value):
         raise ValueError(f"{label} must be YYYY-MM-DD")
     date.fromisoformat(value)
+
+
+def median_ceiling(values: list[int]) -> int | None:
+    if not values:
+        return None
+    ordered = sorted(values)
+    middle = len(ordered) // 2
+    if len(ordered) % 2:
+        return ordered[middle]
+    return ceil((ordered[middle - 1] + ordered[middle]) / 2)
 
 
 def validate(path: Path) -> dict[str, object]:
@@ -106,6 +117,17 @@ def validate(path: Path) -> dict[str, object]:
         raise ValueError("monthlyF1Trends total exceeds case count")
     case_months = Counter(case.get("sourceMonth") for case in cases)
     trend_months = Counter({item.get("month"): item.get("totalCount", 0) for item in trends})
+    for index, trend in enumerate(trends, start=1):
+        if not isinstance(trend, dict):
+            raise ValueError(f"monthlyF1Trends[{index}] must be an object")
+        month = trend.get("month")
+        durations = [
+            int(case["durationDays"])
+            for case in cases
+            if case.get("sourceMonth") == month and case.get("durationDays") is not None
+        ]
+        if trend.get("medianWaitingDays") != median_ceiling(durations):
+            raise ValueError(f"monthlyF1Trends[{index}].medianWaitingDays is inconsistent")
     monthly_mismatches = {
         month: {"cases": case_months[month], "trend": trend_months[month]}
         for month in sorted(set(case_months) | set(trend_months))

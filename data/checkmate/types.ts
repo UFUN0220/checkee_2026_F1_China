@@ -40,6 +40,7 @@ export type CheckmateSnapshot = {
     clearCount: number
     totalCount: number
     averageWaitingDays: number | null
+    medianWaitingDays: number | null
   }>
   cases: CheckmateCase[]
 }
@@ -56,6 +57,7 @@ export type HallSource = 'legacy_excel' | 'submission_user' | 'admin_import'
 
 export type HallRecord = {
   id: string
+  nickname?: string | null
   location: string
   degree: string
   major: string

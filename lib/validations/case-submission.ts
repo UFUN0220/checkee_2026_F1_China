@@ -2,15 +2,41 @@ import { z } from 'zod'
 
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u
 
-const LOCATIONS = ['beijing', 'shanghai', 'guangzhou', 'shenyang', 'wuhan'] as const
+export const SUBMISSION_LOCATIONS = ['北京', '上海', '广州', '沈阳', '武汉'] as const
+export type SubmissionLocation = (typeof SUBMISSION_LOCATIONS)[number]
 const DEGREES = ['Bachelor', 'Master', 'PhD'] as const
-const STATUSES = ['Check', 'Approved', 'Issued', 'Refused'] as const
+export const STATUSES = ['Check', 'Approved', 'Issued', 'Refused'] as const
+export type CaseSubmissionStatus = (typeof STATUSES)[number]
 
-const selectionField = <T extends readonly [string, ...string[]]>(
-  options: T,
-  message: string
-) =>
-  z.string().trim().refine((value): value is T[number] => options.includes(value), { message })
+export function normalizeSubmissionStatus(
+  status: CaseSubmissionStatus,
+  endDate: string | null | undefined
+): CaseSubmissionStatus {
+  return status === 'Refused' && !endDate ? 'Check' : status
+}
+
+const LEGACY_LOCATION_ALIASES: Record<string, SubmissionLocation> = {
+  beijing: '北京',
+  shanghai: '上海',
+  guangzhou: '广州',
+  shenyang: '沈阳',
+  wuhan: '武汉',
+}
+
+export function normalizeSubmissionLocation(value: string): SubmissionLocation | null {
+  const normalized = value.trim()
+  if (!normalized) return null
+  if ((SUBMISSION_LOCATIONS as readonly string[]).includes(normalized)) {
+    return normalized as SubmissionLocation
+  }
+  return LEGACY_LOCATION_ALIASES[normalized.toLowerCase()] ?? null
+}
+
+const selectionField = <T extends readonly [string, ...string[]]>(options: T, message: string) =>
+  z
+    .string()
+    .trim()
+    .refine((value): value is T[number] => options.includes(value), { message })
 
 function isRealIsoDate(value: string) {
   if (!ISO_DATE_PATTERN.test(value)) return false
@@ -19,9 +45,7 @@ function isRealIsoDate(value: string) {
   const date = new Date(Date.UTC(year, month - 1, day))
 
   return (
-    date.getUTCFullYear() === year &&
-    date.getUTCMonth() === month - 1 &&
-    date.getUTCDate() === day
+    date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
   )
 }
 
@@ -36,7 +60,8 @@ const dateField = z
 
 export const caseSubmissionSchema = z
   .object({
-    location: selectionField(LOCATIONS, '请选择面签地点'),
+    name: z.string().trim().max(120, { message: '名字不能超过 120 个字符' }),
+    location: selectionField(SUBMISSION_LOCATIONS, '请选择面签地点'),
     degree: selectionField(DEGREES, '请选择学位'),
     major: requiredText('请填写专业', 120, '专业不能超过 120 个字符'),
     interviewDate: dateField,
@@ -65,14 +90,21 @@ export const caseSubmissionSchema = z
       })
     }
   })
-  .transform((values) => ({
-    ...values,
-    endDate: values.status === 'Check' || values.endDate === '' ? null : values.endDate,
-    school: values.school === '' ? null : values.school,
-    note: values.note === '' ? null : values.note,
-  }))
+  .transform((values) => {
+    const endDate = values.endDate === '' ? null : values.endDate
+    const status = normalizeSubmissionStatus(values.status, endDate)
+
+    return {
+      ...values,
+      name: values.name === '' ? null : values.name,
+      status,
+      endDate: status === 'Check' ? null : endDate,
+      school: values.school === '' ? null : values.school,
+      note: values.note === '' ? null : values.note,
+    }
+  })
 
 export type CaseSubmissionFormValues = z.input<typeof caseSubmissionSchema>
 export type CaseSubmissionValues = z.output<typeof caseSubmissionSchema>
 
-export { DEGREES, LOCATIONS, STATUSES }
+export { DEGREES }
