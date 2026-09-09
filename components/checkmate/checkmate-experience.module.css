@@ -213,14 +213,17 @@
   opacity: 0.16;
   transform: translate3d(0, 0, 0) scale(1);
 }
-@media (hover: hover) and (pointer: fine) {
-  button.cityCard.cityCard:hover,
-  button.cityCard.cityCard:focus-visible {
-    border-color: color-mix(in srgb, var(--checkmate-border) 74%, white 26%);
+@media (min-width: 761px) and (hover: hover) and (pointer: fine) {
+  .citiesView .cityGrid > button.cityCard.cityCard:hover,
+  .citiesView .cityGrid > button.cityCard.cityCard:focus-visible {
     box-shadow:
-      0 5px 12px rgb(73 68 58 / 0.07),
-      0 18px 34px color-mix(in srgb, var(--city-tint) 18%, transparent);
+      0 0 28px 4px color-mix(in srgb, var(--city-tint) 24%, transparent),
+      0 14px 38px color-mix(in srgb, var(--city-tint) 18%, transparent);
     transform: translateY(-3px);
+  }
+
+  .citiesView .cityGrid > button.cityCard.cityCard:hover {
+    border-color: transparent;
   }
 
   .cityCard:hover::before,
@@ -231,13 +234,16 @@
     transform: translate3d(0, 0, 0) scale(1.01);
   }
 
-  button.cityCardActive.cityCardActive:hover,
-  button.cityCardActive.cityCardActive:focus-visible {
-    border-color: color-mix(in srgb, var(--checkmate-border) 68%, white 32%);
+  .citiesView .cityGrid > button.cityCardActive.cityCardActive:hover,
+  .citiesView .cityGrid > button.cityCardActive.cityCardActive:focus-visible {
     box-shadow:
-      0 6px 14px rgb(73 68 58 / 0.08),
-      0 20px 38px color-mix(in srgb, var(--city-tint) 22%, transparent);
+      0 0 30px 4px color-mix(in srgb, var(--city-tint) 28%, transparent),
+      0 16px 42px color-mix(in srgb, var(--city-tint) 22%, transparent);
     transform: translateY(-3px);
+  }
+
+  .citiesView .cityGrid > button.cityCardActive.cityCardActive:hover {
+    border-color: transparent;
   }
 }
 .cityHeader {
@@ -297,11 +303,11 @@
 }
 .cityCard:nth-child(1),
 .cityCardActive:nth-child(1) {
-  --city-tint: #dfb0bd;
+  --city-tint: #a9c8d8;
 }
 .cityCard:nth-child(2),
 .cityCardActive:nth-child(2) {
-  --city-tint: #a9c8d8;
+  --city-tint: #dfb0bd;
 }
 .cityCard:nth-child(3),
 .cityCardActive:nth-child(3) {
@@ -1800,8 +1806,9 @@
 }
 .podiumRecord {
   display: inline-flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: baseline;
+  align-content: center;
   justify-content: center;
   width: 100%;
   min-width: 0;
@@ -1810,18 +1817,18 @@
   font-size: clamp(0.86rem, 1.2vw, 0.98rem);
   font-weight: 400;
   line-height: 1.24;
+  column-gap: clamp(0.3rem, 1.3vw, 0.55rem);
+  row-gap: 0.12rem;
   overflow: hidden;
-  white-space: nowrap;
+  white-space: normal;
 }
 .podiumRecord > span {
+  flex: 0 1 auto;
   min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.podiumRecord > span + span::before {
-  margin: 0 0.3rem;
-  color: var(--checkmate-muted);
-  content: '·';
+  white-space: nowrap;
 }
 .podiumContent .standardNote {
   align-self: center;
@@ -2450,11 +2457,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.standardLocationDegree > span + span::before {
-  margin-right: 0.35rem;
-  color: var(--checkmate-muted);
-  content: '·';
-}
 .standardMajor,
 .standardSchool,
 .standardDates {
@@ -2563,6 +2565,34 @@
   font-weight: 400;
   letter-spacing: 0.08em;
 }
+.eliteRow .standardName,
+.eliteRow .standardLocationDegree,
+.eliteRow .standardMajor,
+.eliteRow .standardSchool,
+.eliteRow .standardDates,
+.eliteRow .standardEndDate,
+.standardRow .standardName,
+.standardRow .standardLocationDegree,
+.standardRow .standardMajor,
+.standardRow .standardSchool,
+.standardRow .standardDates,
+.standardRow .standardEndDate {
+  font-family: 'FangSong', '仿宋', 'FangSong_GB2312', 'STFangsong', serif;
+  font-size: 0.84rem;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+.eliteRow .apInline,
+.standardRow .apInline {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+}
+
 .eliteRow.completedRow {
   background:
     radial-gradient(circle at 90% 15%, rgb(80 160 100 / 0.14), transparent 46%),
@@ -3784,12 +3814,6 @@
     white-space: nowrap;
   }
 
-  .mobilePrimaryMeta > span + span::before {
-    content: '·';
-    margin-right: 0.45rem;
-    color: var(--checkmate-muted);
-  }
-
   .mobileMajorSchool,
   .mobileMajor,
   .mobileSchool,
@@ -4043,6 +4067,56 @@
   .standardRow {
     min-height: 4.25rem;
     padding: 0.44rem 0.62rem;
+  }
+
+  /* Mobile keeps its existing three-column layout; only metadata typography is shared. */
+  .eliteRow .mobileNickname,
+  .eliteRow .mobilePrimaryMeta,
+  .eliteRow .mobileMajor,
+  .eliteRow .mobileSecondary,
+  .eliteRow .mobileSchool,
+  .eliteRow .mobileDate,
+  .eliteRow .mobileEndDate,
+  .standardRow .mobileNickname,
+  .standardRow .mobilePrimaryMeta,
+  .standardRow .mobileMajor,
+  .standardRow .mobileSecondary,
+  .standardRow .mobileSchool,
+  .standardRow .mobileDate,
+  .standardRow .mobileEndDate {
+    font-family: 'FangSong', '仿宋', 'FangSong_GB2312', 'STFangsong', serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+  }
+
+  .eliteRow .apInline,
+  .standardRow .apInline {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+  }
+
+  /* Reserve the first row's stable location/degree column before truncating nicknames. */
+  .standardMobileFields .mobilePrimary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(min-content, max-content);
+    width: 100%;
+  }
+
+  .standardMobileFields .mobileNickname {
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .standardMobileFields .mobilePrimaryMeta {
+    width: auto;
+    max-width: 100%;
+    justify-self: end;
   }
 
   .citiesView .caseRow {

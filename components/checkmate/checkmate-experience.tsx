@@ -31,7 +31,7 @@ const LOCATION_NAMES: Record<CheckmateLocation, string> = {
   wuhan: '武汉',
 }
 
-const PODIUM_NICKNAMES = ['影', 'Mo', '碎碎念慈悲喜'] as const
+const PODIUM_NICKNAMES = [ 'momo','影', 'Mo'] as const
 
 function formatDays(value: number | null) {
   if (value === null) return '—'
