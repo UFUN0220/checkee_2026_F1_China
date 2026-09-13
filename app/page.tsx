@@ -4,7 +4,7 @@ import { CheckmatePage } from '~/components/checkmate/checkmate-page'
 import { PageTheme } from '~/components/ui/page-theme'
 
 export const metadata: Metadata = {
-  title: '名人堂',
+  title: 'Hall of Fame',
 }
 
 export default function HomePage() {
