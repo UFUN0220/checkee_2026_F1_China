@@ -1114,14 +1114,32 @@
   text-align: left;
 }
 .hallWelcomeDialogPanel {
-  width: min(100%, 31rem);
+  width: min(100%, 42rem);
   border-color: color-mix(in srgb, var(--checkmate-border) 72%, var(--checkmate-accent) 28%);
   background: var(--checkmate-surface-strong);
+  scrollbar-color: rgb(119 116 107 / 0.38) transparent;
+  scrollbar-width: thin;
+}
+.hallWelcomeDialogPanel::-webkit-scrollbar {
+  width: 0.45rem;
+}
+.hallWelcomeDialogPanel::-webkit-scrollbar-track {
+  background: transparent;
+}
+.hallWelcomeDialogPanel::-webkit-scrollbar-thumb {
+  border: 0.12rem solid transparent;
+  border-radius: 999px;
+  background: rgb(119 116 107 / 0.34);
+  background-clip: padding-box;
+}
+.hallWelcomeDialogPanel::-webkit-scrollbar-thumb:hover {
+  background: rgb(119 116 107 / 0.5);
+  background-clip: padding-box;
 }
 .hallWelcomeIntro {
   display: grid;
   gap: 0.45rem;
-  margin-bottom: 1.1rem;
+  margin-bottom: 1rem;
 }
 .hallWelcomeIntro p {
   margin: 0;
@@ -1129,11 +1147,43 @@
   font-size: 0.8rem;
   line-height: 1.65;
 }
+.hallWelcomeSections {
+  display: grid;
+  gap: 1.05rem;
+}
+.hallWelcomeSection {
+  display: grid;
+  gap: 0.38rem;
+}
+.hallWelcomeSection h2 {
+  margin: 0 0 0.08rem;
+  color: var(--color-ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.hallWelcomeSection p {
+  margin: 0;
+  color: var(--checkmate-muted);
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+.hallWelcomeLink {
+  overflow-wrap: anywhere;
+}
+.hallWelcomeUpdateNotice {
+  margin: 1.05rem 0 1.1rem;
+  border-top: 1px solid var(--checkmate-rule);
+  border-bottom: 1px solid var(--checkmate-rule);
+  padding: 0.7rem 0;
+  color: var(--checkmate-muted);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
 .hallWelcomeStats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.65rem;
-  margin-bottom: 1.2rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-bottom: 1.25rem;
 }
 .hallWelcomeStats > div {
   display: grid;
@@ -1189,6 +1239,9 @@
   justify-content: flex-end;
   margin-top: 1.25rem;
 }
+.submitDialogPanel.hallWelcomeDialogPanel {
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
 .submitCaseDialogPanel {
   --checkmate-surface: rgb(255 255 255 / 0.7);
   --checkmate-surface-strong: rgb(255 255 255 / 0.88);
@@ -1224,6 +1277,21 @@
   justify-content: space-between;
   gap: 0.7rem;
   margin-bottom: 1.2rem;
+}
+.submitDialogPanel.hallWelcomeDialogPanel .submitDialogHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr) minmax(0, 1fr);
+  align-items: start;
+}
+.submitDialogPanel.hallWelcomeDialogPanel .submitDialogHeader > div {
+  grid-column: 2;
+  min-width: 0;
+  text-align: center;
+}
+.submitDialogPanel.hallWelcomeDialogPanel .submitDialogClose {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
 }
 .submitDialogTitle {
   margin: 0;
@@ -3212,6 +3280,27 @@
 
   .hallWelcomeDialogPanel {
     border-radius: 24px;
+  }
+
+  .submitDialogPanel.hallWelcomeDialogPanel {
+    padding: 0.95rem 0.9rem calc(0.95rem + env(safe-area-inset-bottom));
+  }
+
+  .submitDialogPanel.hallWelcomeDialogPanel .submitDialogHeader {
+    column-gap: 0.45rem;
+    margin-bottom: 1rem;
+  }
+
+  .submitDialogPanel.hallWelcomeDialogPanel .submitDialogTitle {
+    font-size: 1.1rem;
+  }
+
+  .hallWelcomeStats {
+    gap: 0.35rem;
+  }
+
+  .hallWelcomeStats strong {
+    font-size: 0.9rem;
   }
 
   .contactDialogPanel {

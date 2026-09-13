@@ -11,11 +11,6 @@ import {
   type CheckmateSnapshot,
   type WaitStats,
 } from '~/data/checkmate/types'
-import {
-  CHECKMATE_DATA_NOTICES,
-  type CheckmateDataNotice,
-  type CheckmatePageKey,
-} from '~/data/checkmate/config'
 import { ContactCaseDialogButton } from './contact-case-dialog'
 import { HallWelcomeDialog } from './hall-welcome-dialog'
 import { SubmitCaseButton } from './submit-case-dialog'
@@ -64,15 +59,12 @@ export function CheckmateExperience({
   checkeeDataset: CheckeeDataset
   view: CheckmateView
 }) {
-  const pageKey: CheckmatePageKey = view === 'peers' ? 'hall-of-fame' : 'white-house'
-  const notice = CHECKMATE_DATA_NOTICES[pageKey]
-
   return (
     <section className={styles.feature} aria-label="Checkmate F-1 公开样本">
       {view === 'cities' ? (
         <WhiteHouseSelection snapshot={checkeeSnapshot} />
       ) : (
-        <HallOfFame dataset={checkeeDataset} notice={notice} />
+        <HallOfFame dataset={checkeeDataset} />
       )}
     </section>
   )
@@ -396,7 +388,7 @@ function CityCaseRow({
   )
 }
 
-function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: CheckmateDataNotice }) {
+function HallOfFame({ dataset }: { dataset: CheckeeDataset }) {
   const [page, setPage] = useState(1)
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null)
   const cases = useMemo(
@@ -471,7 +463,7 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
                     setExpandedNoteId((current) => (current === item.id ? null : item.id))
                   }
                 />
-                <HallControlNav notice={notice} updatedAt={dataset.snapshotDate} />
+                <HallControlNav caseCount={cases.length} updatedAt={dataset.snapshotDate} />
               </div>
             ) : (
               <PodiumCard
@@ -540,11 +532,11 @@ function HallFields({ item, rank }: { item: CheckeeRecord; rank: number }) {
   )
 }
 
-function HallControlNav({ notice, updatedAt }: { notice: CheckmateDataNotice; updatedAt: string }) {
+function HallControlNav({ caseCount, updatedAt }: { caseCount: number; updatedAt: string }) {
   return (
     <nav className={styles.podiumActions} aria-label="名人堂操作">
       <SubmitCaseButton />
-      <ContactCaseDialogButton notice={notice} updatedAt={updatedAt} />
+      <ContactCaseDialogButton caseCount={caseCount} updatedAt={updatedAt} />
     </nav>
   )
 }

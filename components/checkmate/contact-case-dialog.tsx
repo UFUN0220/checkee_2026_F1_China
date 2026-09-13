@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
-import type { CheckmateDataNotice } from '~/data/checkmate/config'
 import { FieldError, FormWrapper, SubmitButton } from '~/components/forms'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -19,6 +18,7 @@ import {
   type OtherFeedbackFormValues,
   type OtherFeedbackValues,
 } from '~/lib/validations/other-feedback'
+import { HallAnnouncementContent } from './hall-announcement-content'
 import styles from './checkmate-experience.module.css'
 
 const DEVELOPER_EMAIL = 'fyou@wustl.edu'
@@ -26,10 +26,10 @@ const DEVELOPER_EMAIL = 'fyou@wustl.edu'
 type ContactDialogView = 'menu' | 'info' | 'update' | 'other'
 
 export function ContactCaseDialogButton({
-  notice,
+  caseCount,
   updatedAt,
 }: {
-  notice: CheckmateDataNotice
+  caseCount: number
   updatedAt: string
 }) {
   const [open, setOpen] = useState(false)
@@ -117,7 +117,7 @@ export function ContactCaseDialogButton({
     : view === 'menu'
       ? '更新/说明'
       : view === 'info'
-        ? '数据说明'
+        ? '公告'
         : view === 'update'
         ? '更新数据'
         : '其他反馈'
@@ -165,8 +165,8 @@ export function ContactCaseDialogButton({
                       data-intent="info"
                       onClick={() => setView('info')}
                     >
-                      <strong>数据说明</strong>
-                      <span>查看数据来源与展示边界</span>
+                      <strong>公告</strong>
+                      <span>查看名人堂与统计看板公告</span>
                     </button>
                     <button
                       type="button"
@@ -196,14 +196,11 @@ export function ContactCaseDialogButton({
               </>
             ) : view === 'info' ? (
               <>
-                <section
-                  className={styles.contactDataNotice}
-                  aria-labelledby="contact-data-notice-title"
-                >
-                  <h3 id="contact-data-notice-title">数据说明</h3>
-                  <p>{notice.content}</p>
-                  <p className={styles.contactDataNoticeUpdated}>更新时间：{updatedAt}</p>
-                </section>
+                <HallAnnouncementContent
+                  caseCount={caseCount}
+                  hallUpdatedAt={updatedAt}
+                  guideTitleId="contact-announcement-guide-title"
+                />
                 <div className={styles.submitFormActions}>
                   <button
                     type="button"
