@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "dataVersion": "20260917-v002",
+  "dataVersion": "20260917-v001",
   "generatedAt": "2026-09-17",
   "sourceDescription": "UFUN Hall curated visa cases",
   "sourceName": "hall_fame.xlsx",
@@ -66,7 +66,7 @@
       "nickname": "喜羊羊",
       "location": "北京",
       "degree": "PhD",
-      "major": "ChBE",
+      "major": "CHBE",
       "school": "GT",
       "startDate": "2026-04-16",
       "endDate": null,

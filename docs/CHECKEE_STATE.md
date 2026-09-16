@@ -41,7 +41,7 @@
 | `/admin`           | 内部审核投稿                         | 不进入公开导航或 sitemap                         |
 | `/admin/hall`      | Hall 发布状态与 release 历史控制中心 | 只读本地发布文件，并查询 Supabase published 状态 |
 
-公开名人堂只读取 `data/checkmate/hall-master.json` 中 `visibility = published` 的记录。用户投稿首先写入 Supabase 审核池，审核发布后经导出脚本冻结到 `published-submissions.json`，再合并生成带 `dataVersion` 的 `hall-master.json`，并将同一份数据保存到不可覆盖的 `data/checkmate/releases/YYYYMMDD-vXXX/`；页面不会直接读取 Supabase 或手工改写原始数据。
+公开名人堂只读取 `data/checkmate/hall-master.json` 中 `visibility = published` 的记录。用户投稿首先写入 Supabase 审核池，审核发布后同步进入 `hall_cases_master`；正式导出从 master 生成 `published-submissions.json`、带 `dataVersion` 的 `hall-master.json`，并将同一份数据保存到不可覆盖的 `data/checkmate/releases/YYYYMMDD-vXXX/`。页面不会直接读取 Supabase 或手工改写原始数据，legacy XLSX 与历史 snapshot 仅作为审计和回滚来源。
 
 ## Navigation
 
@@ -108,7 +108,7 @@ Top 3 → 4–10
 - 从 `pending` 发布为 `published` 时，由数据库触发器写入 `published_at`。
 - `hall-master.json` 是生成产物，不手工编辑；历史数据来源标为 `legacy_excel`，用户投稿标为 `submission_user`。
 - 每次正式导出都创建新的 release 目录，版本格式为 `YYYYMMDD-vXXX`；release 内保存 Hall、published submissions 与 `release-meta.json`，历史版本不自动删除或覆盖。
-- 维护数据时使用 `scripts/convert-checkee-data.py`、`scripts/export-hall-master.py` 与 `scripts/verify-hall-data.py`，并检查来源、可见性、日期、等待天数派生规则、重复 ID 与历史记录一致性。
+- 维护数据时使用 `scripts/export-hall-master.py` 与 `scripts/verify-hall-data.py`，正式导出默认读取 `hall_cases_master`；`--source legacy` 保留 legacy XLSX + snapshot 回滚路径。发布前检查来源、可见性、日期、等待天数派生规则、重复 ID 与历史记录一致性。
 
 ## 7. 受保护区域
 

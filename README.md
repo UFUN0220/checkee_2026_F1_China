@@ -77,18 +77,18 @@ pnpm dev
 
 - `json/checkmate/checkee-static-snapshot.json`：五城统计、月度趋势和案例明细。
 - `/view` 数据生产链路：将 Checkee HTML 快照归档到 `data/checkmate/view/raw/`，运行 `scripts/view/import-checkee-html.py` 生成上述 JSON，再用 `scripts/view/verify-view-data.py` 校验。该链路与 Hall 的 Excel/Release 链路独立。
-- `data/checkmate/published-submissions.json`：从 Supabase 导出的已审核发布投稿冻结快照，只包含 `visibility=published` 的记录。
+- `data/checkmate/published-submissions.json`：正式 release 随 master 导出的已审核发布投稿快照，只包含 `visibility=published` 的记录；历史 release 中的快照用于审计与回滚。
 - `data/checkmate/releases/`：每次正式发布的不可覆盖版本目录，保存 Hall、投稿快照和 `release-meta.json`，用于追踪、比较和恢复。
 - `data/checkmate/hall-master.json`：名人堂唯一运行时数据源；页面只读取 `visibility=published` 的精选案例。这是由导出脚本生成的产物，不建议手工编辑，`dataVersion` 标识当前发布版本。
-- `data/checkmate/hall_fame.xlsx`：当前 Hall legacy 生产输入源；旧的 `ufun_checkee_pure_processed.xlsx` 与对应 JSON 保留为历史核对参考。
+- `data/checkmate/hall_fame.xlsx`：Hall legacy 审计与回滚输入源；旧的 `ufun_checkee_pure_processed.xlsx` 与对应 JSON 保留为历史核对参考。
 
-`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。`scripts/export-hall-master.py --submissions <supabase-export.json>` 会先筛选并冻结 Supabase 中已发布的投稿到 `published-submissions.json`，再将当前 legacy Excel 与该快照合并生成 `hall-master.json`；不传 `--submissions` 时只读取已有快照，不重新读取 Supabase。历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 用于生成后检查新 Excel、JSON schema、字段、日期、来源、可见性、重复 ID、合并数量、release 完整性及与上一版 legacy 数据的 Added/Removed/Changed。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。每个 release 都从日期重新计算 `waitingDays`：有 `endDate` 时为 `endDate - startDate`，否则为该 release 的 `snapshotDate - startDate`；Excel 或投稿快照中的同名列只可作为缓存，不能覆盖最终 Hall 值。
+`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。正式执行 `scripts/export-hall-master.py` 默认只读 Supabase `hall_cases_master` 并生成静态 Hall 与 release；`--source legacy` 可显式使用 legacy Excel + 已冻结 snapshot 进行回滚或审计。历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 用于生成后检查 JSON schema、字段、日期、来源、可见性、重复 ID、合并数量和 release 完整性。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。每个 release 都从日期重新计算 `waitingDays`：有 `endDate` 时为 `endDate - startDate`，否则为该 release 的 `snapshotDate - startDate`；数据库、Excel 或投稿快照中的同名列只可作为输入，不能覆盖最终 Hall 值。
 
 当前正式发布链路为：
 
 ```text
 Source Layer
-legacy Excel + Supabase published submissions
+Supabase hall_cases_master
 
 Transform Layer
 scripts/export-hall-master.py
@@ -109,13 +109,19 @@ Frontend
 python scripts/export-hall-master.py
 ```
 
-默认使用当天日期。
+默认从 `hall_cases_master` 读取并使用当天日期。
 
 ```bash
 python scripts/export-hall-master.py --snapshot-date 2026-09-10
 ```
 
-手动指定 `snapshotDate`。无论使用哪种方式，导出脚本都会根据本次发布的 `snapshotDate` 重新计算 `waitingDays`，不会沿用 Excel、投稿快照或已有 JSON 中的缓存值。
+手动指定 `snapshotDate`。无论使用哪种方式，导出脚本都会根据本次发布的 `snapshotDate` 重新计算 `waitingDays`，不会沿用数据库、Excel、投稿快照或已有 JSON 中的缓存值。
+
+如需使用旧链路回滚：
+
+```bash
+python scripts/export-hall-master.py --source legacy --published-snapshot data/checkmate/published-submissions.json
+```
 
 更新数据后，请核对快照日期、样本范围与页面的数据说明，再执行构建验证。
 

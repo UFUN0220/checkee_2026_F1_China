@@ -1,0 +1,130 @@
+{
+  "snapshotDate": "2026-09-17",
+  "canonicalParity": false,
+  "completeParity": false,
+  "productionCount": 190,
+  "masterCount": 190,
+  "sourceCounts": {
+    "production": {
+      "legacy_excel": 112,
+      "submission_user": 78
+    },
+    "master": {
+      "legacy_excel": 112,
+      "submission_user": 78
+    }
+  },
+  "added": [],
+  "removed": [],
+  "changedCount": 1,
+  "changed": [
+    {
+      "case_id": "ufun-checkee-004",
+      "field": "major",
+      "production": "CHBE",
+      "master": "ChBE"
+    }
+  ],
+  "unchanged": 189,
+  "metadataDifferences": [],
+  "sorting": {
+    "productionExportRecordOrder": "legacy Excel input order followed by published snapshot order; exporter does not sort records",
+    "hallRankingComparator": "waitingDays DESC, then startDate ASC (stable for exact ties)",
+    "rankKeysMatch": true,
+    "rankedIdOrderMatch": true,
+    "tieOrderDifferences": [],
+    "productionRawOrderMatchMasterRawOrder": true,
+    "orderDifferences": []
+  },
+  "specialCaseIds": [
+    {
+      "case_id": "submission-18",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-31",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-57",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-70",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-74",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-75",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-82",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-87",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-88",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-89",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-90",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-91",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "submission-92",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    },
+    {
+      "case_id": "ufun-checkee-040",
+      "present_in_production": true,
+      "present_in_master": true,
+      "differing_fields": []
+    }
+  ],
+  "ignoredMetadata": [
+    "generatedAt",
+    "candidate file paths",
+    "temporary compare timestamp"
+  ]
+}

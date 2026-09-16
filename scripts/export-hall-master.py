@@ -1,8 +1,8 @@
-"""Freeze published submissions, then merge the frozen data into Hall data.
+"""Export the Hall dataset and create an immutable release.
 
-The Supabase export is deliberately treated as an input to this development-time
-utility.  The checked-in published-submissions.json file is the stable boundary
-between the dynamic review database and the generated Hall master dataset.
+The production source is public.hall_cases_master.  The legacy XLSX plus frozen
+published snapshot path remains available through ``--source legacy`` for
+rollback and audit.
 """
 
 from __future__ import annotations
@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import os
 import re
 import shutil
 from datetime import date
@@ -69,6 +70,34 @@ def load_converter():
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def load_supabase_exporter():
+    path = Path(__file__).with_name("export-hall-master-from-supabase.py")
+    spec = importlib.util.spec_from_file_location("export_hall_master_from_supabase", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Unable to load Supabase exporter: {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_supabase_env():
+    """Load local Supabase CLI credentials only when the process lacks them."""
+    if os.environ.get("SUPABASE_URL") and os.environ.get("SUPABASE_SECRET_KEY"):
+        return
+
+    env_path = ROOT / ".env.local"
+    if not env_path.is_file():
+        return
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        match = re.match(r"^\s*(SUPABASE_URL|SUPABASE_SECRET_KEY)\s*=\s*(.*?)\s*$", line)
+        if not match:
+            continue
+        value = match.group(2).strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            value = value[1:-1]
+        os.environ.setdefault(match.group(1), value)
 
 
 def validate_iso_date(value, label):
@@ -182,6 +211,54 @@ def build_release_meta(version, generated_at, legacy_records, snapshot_records, 
         "totalCount": len(hall_records),
         "source": release_sources(hall_records),
     }
+
+
+def export_hall_master_from_supabase(
+    output,
+    snapshot_date,
+    generated_at,
+    published_snapshot=DEFAULT_PUBLISHED_SNAPSHOT,
+    releases_dir=DEFAULT_RELEASES_DIR,
+):
+    load_supabase_env()
+    supabase_exporter = load_supabase_exporter()
+    rows = supabase_exporter.fetch_rows()
+    records = [supabase_exporter.map_record(row, snapshot_date) for row in rows]
+    source_priority = {"legacy_excel": 0, "submission_user": 1, "admin_import": 2}
+    records.sort(key=lambda record: (source_priority[record["source"]], record["_sourceOrder"]))
+    for record in records:
+        record.pop("_sourceOrder")
+
+    snapshot_records = [record for record in records if record["source"] == "submission_user"]
+    converter = load_converter()
+    converter.write_dataset(build_published_snapshot(snapshot_records, generated_at), published_snapshot)
+    print(f"Exported {len(records)} records from public.hall_cases_master")
+    print(f"Wrote {len(snapshot_records)} published submissions to {published_snapshot}")
+
+    version = next_release_version(releases_dir, generated_at)
+    dataset_without_version = converter.build_dataset(
+        records,
+        snapshot_date,
+        generated_at,
+        source_name=DEFAULT_LEGACY_INPUT.name,
+    )
+    dataset = {
+        "schemaVersion": dataset_without_version["schemaVersion"],
+        "dataVersion": version,
+        **{key: value for key, value in dataset_without_version.items() if key != "schemaVersion"},
+    }
+    release_meta = build_release_meta(
+        version,
+        generated_at,
+        [record for record in records if record["source"] == "legacy_excel"],
+        snapshot_records,
+        records,
+    )
+    release_dir = releases_dir / version
+    write_release(release_dir, dataset, release_meta, published_snapshot)
+    converter.write_dataset(dataset, output)
+    print(f"Created release {version} at {release_dir}")
+    print(f"Exported {len(records)} records to {output}")
 
 
 def write_release(release_dir, hall_dataset, release_meta, snapshot_path):
@@ -383,11 +460,17 @@ def export_hall_master(
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--source",
+        choices=("master", "legacy"),
+        default="master",
+        help="Hall input source (default: hall_cases_master; use legacy for rollback)",
+    )
     parser.add_argument("--legacy-input", type=Path, default=DEFAULT_LEGACY_INPUT)
     parser.add_argument(
         "--submissions",
         type=Path,
-        help="A fresh JSON export from Supabase; published rows are frozen into the snapshot",
+        help="Legacy rollback input: a fresh JSON export; published rows are frozen into the snapshot",
     )
     parser.add_argument(
         "--published-snapshot",
@@ -406,16 +489,27 @@ def main():
     parser.add_argument("--generated-at", default=DEFAULT_GENERATED_AT)
     parser.add_argument("--published-at", default="2026-09-06")
     args = parser.parse_args()
-    export_hall_master(
-        args.legacy_input,
-        args.submissions,
-        args.output,
-        args.snapshot_date,
-        args.generated_at,
-        args.published_at,
-        args.published_snapshot,
-        args.releases_dir,
-    )
+    if args.source == "master":
+        if args.submissions:
+            parser.error("--submissions is only valid with --source legacy")
+        export_hall_master_from_supabase(
+            args.output,
+            args.snapshot_date,
+            args.generated_at,
+            args.published_snapshot,
+            args.releases_dir,
+        )
+    else:
+        export_hall_master(
+            args.legacy_input,
+            args.submissions,
+            args.output,
+            args.snapshot_date,
+            args.generated_at,
+            args.published_at,
+            args.published_snapshot,
+            args.releases_dir,
+        )
 
 
 if __name__ == "__main__":
