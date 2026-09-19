@@ -77,12 +77,28 @@ pnpm dev
 
 - `json/checkmate/checkee-static-snapshot.json`：五城统计、月度趋势和案例明细。
 - `/view` 数据生产链路：将 Checkee HTML 快照归档到 `data/checkmate/view/raw/`，运行 `scripts/view/import-checkee-html.py` 生成上述 JSON，再用 `scripts/view/verify-view-data.py` 校验。该链路与 Hall 的 Excel/Release 链路独立。
-- `data/checkmate/published-submissions.json`：正式 release 随 master 导出的已审核发布投稿快照，只包含 `visibility=published` 的记录；历史 release 中的快照用于审计与回滚。
+- `data/checkmate/published-submissions.json`：随正式 release 保存的已审核投稿快照，只包含 `visibility=published` 的记录；它是 release auxiliary / historical audit artifact，不是 Hall 当前字段的 source of truth。
 - `data/checkmate/releases/`：每次正式发布的不可覆盖版本目录，保存 Hall、投稿快照和 `release-meta.json`，用于追踪、比较和恢复。
-- `data/checkmate/hall-master.json`：名人堂唯一运行时数据源；页面只读取 `visibility=published` 的精选案例。这是由导出脚本生成的产物，不建议手工编辑，`dataVersion` 标识当前发布版本。
+- `data/checkmate/hall-master.json`：名人堂唯一运行时数据源；页面只读取 `visibility=published` 的精选案例。这是由 `hall_cases_master` 生成的静态产物，不建议手工编辑，`dataVersion` 标识当前发布版本。
 - `data/checkmate/hall_fame.xlsx`：Hall legacy 审计与回滚输入源；旧的 `ufun_checkee_pure_processed.xlsx` 与对应 JSON 保留为历史核对参考。
 
-`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。正式执行 `scripts/export-hall-master.py` 默认只读 Supabase `hall_cases_master` 并生成静态 Hall 与 release；`--source legacy` 可显式使用 legacy Excel + 已冻结 snapshot 进行回滚或审计。历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 用于生成后检查 JSON schema、字段、日期、来源、可见性、重复 ID、合并数量和 release 完整性。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。每个 release 都从日期重新计算 `waitingDays`：有 `endDate` 时为 `endDate - startDate`，否则为该 release 的 `snapshotDate - startDate`；数据库、Excel 或投稿快照中的同名列只可作为输入，不能覆盖最终 Hall 值。
+`scripts/convert-checkee-data.py` 是开发期转换工具，可将符合既定表头的 Excel 快照转换为 Hall 记录。正式执行 `scripts/export-hall-master.py` 默认只读 Supabase `hall_cases_master` 并生成静态 Hall 与 release；`--source legacy` 可显式使用 legacy Excel + 已冻结 snapshot 进行回滚或审计。历史记录使用 `source=legacy_excel`，用户投稿使用 `source=submission_user`。`scripts/verify-hall-data.py` 默认只验证 Master-driven production chain；`--source legacy-audit` 单独报告 Legacy 的缺失、字段差异和顺序差异，Legacy 内容落后不会阻塞生产 CI，但 Legacy 文件损坏、重复 ID 或解析失败仍会失败。生产构建和线上请求只读取生成后的 JSON，不会解析 Excel 文件。每个 release 都从日期重新计算 `waitingDays`：有 `endDate` 时为 `endDate - startDate`，否则为该 release 的 `snapshotDate - startDate`；数据库、Excel 或投稿快照中的同名列只可作为输入，不能覆盖最终 Hall 值。
+
+Hall 的数据职责如下：
+
+```text
+case_submissions
+  用户投稿 / 审核队列 / 历史审计
+        ↓ approve
+hall_cases_master
+  Hall 唯一正式 canonical source
+        ↓
+scripts/export-hall-master.py
+        ↓
+Release → hall-master.json → 前端
+```
+
+案例进入 `hall_cases_master` 后，后续 Hall 维护直接修改 Master。原始 `case_submissions`、Legacy XLSX 和历史 published snapshot 可以保留审计差异；它们不再参与当前 Hall 的逐字段 production parity，也不建立反向同步。
 
 当前正式发布链路为：
 
@@ -145,6 +161,9 @@ pnpm typecheck
 
 # Hall 数据验证
 python scripts/verify-hall-data.py
+
+# Legacy 审计（内容差异允许，结构损坏仍失败）
+python scripts/verify-hall-data.py --source legacy-audit
 ```
 
 ## CI 质量门禁
@@ -157,6 +176,7 @@ pnpm lint
 pnpm typecheck
 pnpm build
 python scripts/verify-hall-data.py
+python scripts/verify-hall-data.py --source legacy-audit
 ```
 
 CI 只负责质量检查，不会自动部署、发布 Release 或修改 Supabase 数据。Release 仍由人工审核和发布。

@@ -1,6 +1,6 @@
 import styles from './checkmate-experience.module.css'
 
-const STATISTICS_UPDATED_AT = '2026.09.14'
+const STATISTICS_UPDATED_AT = '2026.09.20'
 
 function formatUpdateDate(value: string) {
   return value.replaceAll('-', '.')

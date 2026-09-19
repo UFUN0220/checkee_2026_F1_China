@@ -1,0 +1,12 @@
+{
+  "version": "20260920-v001",
+  "generatedAt": "2026-09-20",
+  "schemaVersion": 1,
+  "legacyCount": 112,
+  "submissionCount": 78,
+  "totalCount": 190,
+  "source": [
+    "legacy_excel",
+    "submission_user"
+  ]
+}

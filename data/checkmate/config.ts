@@ -8,10 +8,10 @@ export type CheckmateDataNotice = {
 export const CHECKMATE_DATA_NOTICES: Record<CheckmatePageKey, CheckmateDataNotice> = {
   'white-house': {
     title: '白宫严选 · 数据说明',
-    content: '统计与名人堂数据异步更新。当前统计数据截至 2026.09.14，名人堂数据截至 2026.09.14。',
+    content: '统计与名人堂数据异步更新。当前统计数据截至 2026.09.20，名人堂数据截至 2026.09.20。',
   },
   'hall-of-fame': {
     title: '名人堂 · 数据说明',
-    content: '统计与名人堂数据异步更新。当前统计数据截至 2026.09.14，名人堂数据截至 2026.09.14。',
+    content: '统计与名人堂数据异步更新。当前统计数据截至 2026.09.20，名人堂数据截至 2026.09.20。',
   },
 }

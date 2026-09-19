@@ -5,7 +5,7 @@
   "sourceDescription": "UFUN Hall curated visa cases",
   "sourceName": "hall_fame.xlsx",
   "snapshotDate": "2026-09-20",
-  "recordCount": 198,
+  "recordCount": 190,
   "records": [
     {
       "id": "ufun-checkee-099",
@@ -19,11 +19,11 @@
       "waitingDays": 186,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-002",
@@ -37,11 +37,11 @@
       "waitingDays": 181,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-003",
@@ -55,11 +55,11 @@
       "waitingDays": 166,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-004",
@@ -73,11 +73,11 @@
       "waitingDays": 157,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-005",
@@ -91,11 +91,11 @@
       "waitingDays": 156,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-006",
@@ -109,11 +109,11 @@
       "waitingDays": 151,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-007",
@@ -123,15 +123,15 @@
       "major": "Pathology",
       "school": "UVA",
       "startDate": "2026-04-30",
-      "endDate": "2026-09-17",
-      "waitingDays": 140,
-      "status": "Issued",
-      "note": "9.17ap",
-      "compactNote": null,
-      "detailNote": null,
+      "endDate": null,
+      "waitingDays": 143,
+      "status": "Check",
+      "note": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-008",
@@ -145,11 +145,11 @@
       "waitingDays": 143,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-009",
@@ -163,11 +163,11 @@
       "waitingDays": 138,
       "status": "Check",
       "note": "renew",
-      "compactNote": "renew",
-      "detailNote": "renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "renew",
+      "detailNote": "renew"
     },
     {
       "id": "ufun-checkee-010",
@@ -181,11 +181,11 @@
       "waitingDays": 138,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-011",
@@ -199,11 +199,11 @@
       "waitingDays": 137,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-012",
@@ -217,11 +217,11 @@
       "waitingDays": 135,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-013",
@@ -235,11 +235,11 @@
       "waitingDays": 132,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-014",
@@ -253,11 +253,11 @@
       "waitingDays": 131,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-015",
@@ -271,11 +271,11 @@
       "waitingDays": 131,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-016",
@@ -289,11 +289,11 @@
       "waitingDays": 131,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-017",
@@ -307,11 +307,11 @@
       "waitingDays": 130,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-019",
@@ -325,11 +325,11 @@
       "waitingDays": 124,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-020",
@@ -343,11 +343,11 @@
       "waitingDays": 124,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-021",
@@ -361,11 +361,11 @@
       "waitingDays": 124,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-022",
@@ -379,11 +379,11 @@
       "waitingDays": 122,
       "status": "Check",
       "note": "renew",
-      "compactNote": "renew",
-      "detailNote": "renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "renew",
+      "detailNote": "renew"
     },
     {
       "id": "ufun-checkee-023",
@@ -397,11 +397,11 @@
       "waitingDays": 122,
       "status": "Check",
       "note": "UIUC BS CHEM 2025, UIUC MS MSE 2027",
-      "compactNote": "UIUC BS CHEM 2025, UIUC MS…",
-      "detailNote": "UIUC BS CHEM 2025, UIUC MS MSE 2027",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "UIUC BS CHEM 2025, UIUC MS…",
+      "detailNote": "UIUC BS CHEM 2025, UIUC MS MSE 2027"
     },
     {
       "id": "ufun-checkee-024",
@@ -415,11 +415,11 @@
       "waitingDays": 121,
       "status": "Check",
       "note": "Renew",
-      "compactNote": "Renew",
-      "detailNote": "Renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "Renew",
+      "detailNote": "Renew"
     },
     {
       "id": "ufun-checkee-025",
@@ -433,11 +433,11 @@
       "waitingDays": 117,
       "status": "Check",
       "note": "加个v哥们？同cmu\nre: vx15157563315",
-      "compactNote": "加个v哥们？同cmu\nre: vx15157563315",
-      "detailNote": "加个v哥们？同cmu\nre: vx15157563315",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "加个v哥们？同cmu\nre: vx15157563315",
+      "detailNote": "加个v哥们？同cmu\nre: vx15157563315"
     },
     {
       "id": "ufun-checkee-026",
@@ -451,11 +451,11 @@
       "waitingDays": 116,
       "status": "Check",
       "note": "6.3app，7.27check",
-      "compactNote": "6.3app，7.27check",
-      "detailNote": "6.3app，7.27check",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "6.3app，7.27check",
+      "detailNote": "6.3app，7.27check"
     },
     {
       "id": "ufun-checkee-027",
@@ -469,11 +469,11 @@
       "waitingDays": 116,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-028",
@@ -487,11 +487,11 @@
       "waitingDays": 115,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-029",
@@ -505,11 +505,11 @@
       "waitingDays": 115,
       "status": "Check",
       "note": "6.30update, refused",
-      "compactNote": "6.30update, refused",
-      "detailNote": "6.30update, refused",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "6.30update, refused",
+      "detailNote": "6.30update, refused"
     },
     {
       "id": "ufun-checkee-030",
@@ -523,11 +523,11 @@
       "waitingDays": 115,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-031",
@@ -541,11 +541,11 @@
       "waitingDays": 88,
       "status": "Approved",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-032",
@@ -559,11 +559,11 @@
       "waitingDays": 110,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-033",
@@ -577,11 +577,11 @@
       "waitingDays": 110,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-034",
@@ -595,11 +595,11 @@
       "waitingDays": 110,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-035",
@@ -613,11 +613,11 @@
       "waitingDays": 109,
       "status": "Check",
       "note": "renew",
-      "compactNote": "renew",
-      "detailNote": "renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "renew",
+      "detailNote": "renew"
     },
     {
       "id": "ufun-checkee-036",
@@ -631,11 +631,11 @@
       "waitingDays": 108,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-115",
@@ -649,11 +649,11 @@
       "waitingDays": 104,
       "status": "Check",
       "note": "Environmental Science,9.1第一次update,9.2被打电话要求更新i20之后无动静",
-      "compactNote": "Environmental Science,9.1第一…",
-      "detailNote": "Environmental Science,9.1第一次update,9.2被打电话要求更新i20之后无动静",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "Environmental Science,9.1第一…",
+      "detailNote": "Environmental Science,9.1第一次update,9.2被打电话要求更新i20之后无动静"
     },
     {
       "id": "ufun-checkee-037",
@@ -667,29 +667,29 @@
       "waitingDays": 104,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-038",
-      "nickname": "杰西",
+      "nickname": null,
       "location": "广州",
       "degree": "Master",
       "major": "ECE",
       "school": null,
       "startDate": "2026-06-09",
-      "endDate": "2026-09-14",
-      "waitingDays": 97,
-      "status": "Issued",
-      "note": "9.11ap，中间无update",
-      "compactNote": null,
-      "detailNote": null,
+      "endDate": null,
+      "waitingDays": 103,
+      "status": "Check",
+      "note": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-039",
@@ -703,11 +703,11 @@
       "waitingDays": 103,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-040",
@@ -721,11 +721,11 @@
       "waitingDays": 97,
       "status": "Check",
       "note": "9.1updated接使馆电话更新i20，9.11ap，9.14is",
-      "compactNote": "9.1updated接使馆电话更新i20，9.11ap…",
-      "detailNote": "9.1updated接使馆电话更新i20，9.11ap，9.14is",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "9.1updated接使馆电话更新i20，9.11ap…",
+      "detailNote": "9.1updated接使馆电话更新i20，9.11ap，9.14is"
     },
     {
       "id": "ufun-checkee-041",
@@ -739,11 +739,11 @@
       "waitingDays": 103,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-042",
@@ -757,11 +757,11 @@
       "waitingDays": 103,
       "status": "Check",
       "note": "renew",
-      "compactNote": "renew",
-      "detailNote": "renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "renew",
+      "detailNote": "renew"
     },
     {
       "id": "ufun-checkee-043",
@@ -775,11 +775,11 @@
       "waitingDays": 85,
       "status": "Issued",
       "note": "9.2adp-ap-9.3issue",
-      "compactNote": "9.2adp-ap-9.3issue",
-      "detailNote": "9.2adp-ap-9.3issue",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "9.2adp-ap-9.3issue",
+      "detailNote": "9.2adp-ap-9.3issue"
     },
     {
       "id": "ufun-checkee-044",
@@ -793,11 +793,11 @@
       "waitingDays": 101,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-045",
@@ -811,11 +811,11 @@
       "waitingDays": 101,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-046",
@@ -829,11 +829,11 @@
       "waitingDays": 101,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-047",
@@ -847,11 +847,11 @@
       "waitingDays": 100,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-048",
@@ -865,11 +865,11 @@
       "waitingDays": 81,
       "status": "Approved",
       "note": "renew 9.1转为approve，中间状态无变化",
-      "compactNote": "renew 9.1转为approve，中间状态无变化",
-      "detailNote": "renew 9.1转为approve，中间状态无变化",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "renew 9.1转为approve，中间状态无变化",
+      "detailNote": "renew 9.1转为approve，中间状态无变化"
     },
     {
       "id": "ufun-checkee-049",
@@ -883,11 +883,11 @@
       "waitingDays": 100,
       "status": "Check",
       "note": "7/30 lr",
-      "compactNote": "7/30 lr",
-      "detailNote": "7/30 lr",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "7/30 lr",
+      "detailNote": "7/30 lr"
     },
     {
       "id": "ufun-checkee-050",
@@ -901,11 +901,11 @@
       "waitingDays": 100,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-051",
@@ -919,11 +919,11 @@
       "waitingDays": 100,
       "status": "Check",
       "note": "renew",
-      "compactNote": "renew",
-      "detailNote": "renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "renew",
+      "detailNote": "renew"
     },
     {
       "id": "ufun-checkee-052",
@@ -937,11 +937,11 @@
       "waitingDays": 100,
       "status": "Check",
       "note": "7.30 lr",
-      "compactNote": "7.30 lr",
-      "detailNote": "7.30 lr",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "7.30 lr",
+      "detailNote": "7.30 lr"
     },
     {
       "id": "ufun-checkee-053",
@@ -955,11 +955,11 @@
       "waitingDays": 97,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-054",
@@ -973,11 +973,11 @@
       "waitingDays": 96,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-055",
@@ -991,11 +991,11 @@
       "waitingDays": 96,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-057",
@@ -1009,11 +1009,11 @@
       "waitingDays": 96,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-058",
@@ -1027,11 +1027,11 @@
       "waitingDays": 96,
       "status": "Check",
       "note": "CEE bioinformatics方向 (有无校友聊聊？）yz786@duke.edu 卡在7.30依然refused,第三次renew了，前两次都是2-3周过，很无语",
-      "compactNote": "CEE bioinformatics方向 (有无校友聊…",
-      "detailNote": "CEE bioinformatics方向 (有无校友聊聊？）yz786@duke.edu 卡在7.30依然refused,第三次renew了，前两次都是2-3周过，很无语",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "CEE bioinformatics方向 (有无校友聊…",
+      "detailNote": "CEE bioinformatics方向 (有无校友聊聊？）yz786@duke.edu 卡在7.30依然refused,第三次renew了，前两次都是2-3周过，很无语"
     },
     {
       "id": "ufun-checkee-059",
@@ -1045,11 +1045,11 @@
       "waitingDays": 95,
       "status": "Check",
       "note": "7月30 lr，已Defer",
-      "compactNote": "7月30 lr，已Defer",
-      "detailNote": "7月30 lr，已Defer",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "7月30 lr，已Defer",
+      "detailNote": "7月30 lr，已Defer"
     },
     {
       "id": "ufun-checkee-060",
@@ -1063,11 +1063,11 @@
       "waitingDays": 94,
       "status": "Approved",
       "note": "未提供ap日期",
-      "compactNote": "未提供ap日期",
-      "detailNote": "未提供ap日期",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "未提供ap日期",
+      "detailNote": "未提供ap日期"
     },
     {
       "id": "ufun-checkee-061",
@@ -1081,11 +1081,11 @@
       "waitingDays": 94,
       "status": "Check",
       "note": "7.30日",
-      "compactNote": "7.30日",
-      "detailNote": "7.30日",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "7.30日",
+      "detailNote": "7.30日"
     },
     {
       "id": "ufun-checkee-062",
@@ -1099,11 +1099,11 @@
       "waitingDays": 94,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-063",
@@ -1117,11 +1117,11 @@
       "waitingDays": 94,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-064",
@@ -1135,11 +1135,11 @@
       "waitingDays": 94,
       "status": "Check",
       "note": "7.30以后无变化",
-      "compactNote": "7.30以后无变化",
-      "detailNote": "7.30以后无变化",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "7.30以后无变化",
+      "detailNote": "7.30以后无变化"
     },
     {
       "id": "ufun-checkee-065",
@@ -1153,11 +1153,11 @@
       "waitingDays": 94,
       "status": "Check",
       "note": "renew",
-      "compactNote": "renew",
-      "detailNote": "renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "renew",
+      "detailNote": "renew"
     },
     {
       "id": "ufun-checkee-066",
@@ -1171,11 +1171,11 @@
       "waitingDays": 91,
       "status": "Check",
       "note": "7月30",
-      "compactNote": "7月30",
-      "detailNote": "7月30",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "7月30",
+      "detailNote": "7月30"
     },
     {
       "id": "ufun-checkee-067",
@@ -1189,11 +1189,11 @@
       "waitingDays": 90,
       "status": "Check",
       "note": "Renew",
-      "compactNote": "Renew",
-      "detailNote": "Renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "Renew",
+      "detailNote": "Renew"
     },
     {
       "id": "ufun-checkee-068",
@@ -1207,11 +1207,11 @@
       "waitingDays": 89,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-069",
@@ -1225,11 +1225,11 @@
       "waitingDays": 89,
       "status": "Check",
       "note": "7.30update, refused,materials science & engineering",
-      "compactNote": "7.30update, refused,materia…",
-      "detailNote": "7.30update, refused,materials science & engineering",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "7.30update, refused,materia…",
+      "detailNote": "7.30update, refused,materials science & engineering"
     },
     {
       "id": "ufun-checkee-070",
@@ -1243,11 +1243,11 @@
       "waitingDays": 89,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-071",
@@ -1261,11 +1261,11 @@
       "waitingDays": 89,
       "status": "Check",
       "note": "已defer",
-      "compactNote": "已defer",
-      "detailNote": "已defer",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "已defer",
+      "detailNote": "已defer"
     },
     {
       "id": "ufun-checkee-072",
@@ -1279,11 +1279,11 @@
       "waitingDays": 87,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-073",
@@ -1297,11 +1297,11 @@
       "waitingDays": 55,
       "status": "Approved",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-074",
@@ -1315,11 +1315,11 @@
       "waitingDays": 87,
       "status": "Check",
       "note": "Renew",
-      "compactNote": "Renew",
-      "detailNote": "Renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "Renew",
+      "detailNote": "Renew"
     },
     {
       "id": "ufun-checkee-075",
@@ -1333,11 +1333,11 @@
       "waitingDays": 87,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-076",
@@ -1351,11 +1351,11 @@
       "waitingDays": 50,
       "status": "Approved",
       "note": "8.18adp几十分钟后直接ap",
-      "compactNote": "8.18adp几十分钟后直接ap",
-      "detailNote": "8.18adp几十分钟后直接ap",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "8.18adp几十分钟后直接ap",
+      "detailNote": "8.18adp几十分钟后直接ap"
     },
     {
       "id": "ufun-checkee-077",
@@ -1369,11 +1369,11 @@
       "waitingDays": 83,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-078",
@@ -1387,11 +1387,11 @@
       "waitingDays": 82,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-079",
@@ -1405,11 +1405,11 @@
       "waitingDays": 82,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-080",
@@ -1423,11 +1423,11 @@
       "waitingDays": 82,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-081",
@@ -1441,11 +1441,11 @@
       "waitingDays": 81,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-082",
@@ -1459,11 +1459,11 @@
       "waitingDays": 81,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-083",
@@ -1477,11 +1477,11 @@
       "waitingDays": 81,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-084",
@@ -1495,11 +1495,11 @@
       "waitingDays": 80,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-085",
@@ -1513,11 +1513,11 @@
       "waitingDays": 75,
       "status": "Approved",
       "note": "未提供ap日期",
-      "compactNote": "未提供ap日期",
-      "detailNote": "未提供ap日期",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "未提供ap日期",
+      "detailNote": "未提供ap日期"
     },
     {
       "id": "ufun-checkee-086",
@@ -1531,11 +1531,11 @@
       "waitingDays": 74,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-087",
@@ -1549,11 +1549,11 @@
       "waitingDays": 73,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-088",
@@ -1567,11 +1567,11 @@
       "waitingDays": 73,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-089",
@@ -1585,11 +1585,11 @@
       "waitingDays": 47,
       "status": "Approved",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-090",
@@ -1603,11 +1603,11 @@
       "waitingDays": 46,
       "status": "Approved",
       "note": "Biomedical Sciences",
-      "compactNote": "Biomedical Sciences",
-      "detailNote": "Biomedical Sciences",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "Biomedical Sciences",
+      "detailNote": "Biomedical Sciences"
     },
     {
       "id": "ufun-checkee-091",
@@ -1621,11 +1621,11 @@
       "waitingDays": 47,
       "status": "Issued",
       "note": "美本，renew",
-      "compactNote": "美本，renew",
-      "detailNote": "美本，renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "美本，renew",
+      "detailNote": "美本，renew"
     },
     {
       "id": "ufun-checkee-092",
@@ -1639,11 +1639,11 @@
       "waitingDays": 73,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-093",
@@ -1657,11 +1657,11 @@
       "waitingDays": 69,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-094",
@@ -1675,11 +1675,11 @@
       "waitingDays": 69,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-095",
@@ -1693,11 +1693,11 @@
       "waitingDays": 66,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-096",
@@ -1711,11 +1711,11 @@
       "waitingDays": 46,
       "status": "Issued",
       "note": "8.26adp,8.27ap，renew",
-      "compactNote": "8.26adp,8.27ap，renew",
-      "detailNote": "8.26adp,8.27ap，renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "8.26adp,8.27ap，renew",
+      "detailNote": "8.26adp,8.27ap，renew"
     },
     {
       "id": "ufun-checkee-097",
@@ -1729,11 +1729,11 @@
       "waitingDays": 62,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-098",
@@ -1747,11 +1747,11 @@
       "waitingDays": 62,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-101",
@@ -1765,11 +1765,11 @@
       "waitingDays": 61,
       "status": "Check",
       "note": "8.27adp转lr",
-      "compactNote": "8.27adp转lr",
-      "detailNote": "8.27adp转lr",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "8.27adp转lr",
+      "detailNote": "8.27adp转lr"
     },
     {
       "id": "ufun-checkee-102",
@@ -1783,11 +1783,11 @@
       "waitingDays": 50,
       "status": "Issued",
       "note": "renew,7.29 update看到补交资料, 9.3ap",
-      "compactNote": "renew,7.29 update看到补交资料, 9.…",
-      "detailNote": "renew,7.29 update看到补交资料, 9.3ap",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "renew,7.29 update看到补交资料, 9.…",
+      "detailNote": "renew,7.29 update看到补交资料, 9.3ap"
     },
     {
       "id": "ufun-checkee-100",
@@ -1801,11 +1801,11 @@
       "waitingDays": 28,
       "status": "Approved",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-103",
@@ -1819,11 +1819,11 @@
       "waitingDays": 58,
       "status": "Check",
       "note": "7.30lr，renew",
-      "compactNote": "7.30lr，renew",
-      "detailNote": "7.30lr，renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "7.30lr，renew",
+      "detailNote": "7.30lr，renew"
     },
     {
       "id": "ufun-checkee-104",
@@ -1837,11 +1837,11 @@
       "waitingDays": 58,
       "status": "Check",
       "note": "面签当天lr",
-      "compactNote": "面签当天lr",
-      "detailNote": "面签当天lr",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "面签当天lr",
+      "detailNote": "面签当天lr"
     },
     {
       "id": "ufun-checkee-105",
@@ -1855,11 +1855,11 @@
       "waitingDays": 58,
       "status": "Check",
       "note": "8.26 update lr，renew",
-      "compactNote": "8.26 update lr，renew",
-      "detailNote": "8.26 update lr，renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "8.26 update lr，renew",
+      "detailNote": "8.26 update lr，renew"
     },
     {
       "id": "ufun-checkee-106",
@@ -1873,11 +1873,11 @@
       "waitingDays": 54,
       "status": "Check",
       "note": "7.31-8.5-8.10 update lr,Renew， (/量化社科类的.....)",
-      "compactNote": "7.31-8.5-8.10 update lr,Ren…",
-      "detailNote": "7.31-8.5-8.10 update lr,Renew， (/量化社科类的.....)",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "7.31-8.5-8.10 update lr,Ren…",
+      "detailNote": "7.31-8.5-8.10 update lr,Renew， (/量化社科类的.....)"
     },
     {
       "id": "ufun-checkee-107",
@@ -1891,11 +1891,11 @@
       "waitingDays": 53,
       "status": "Check",
       "note": "被迫defer",
-      "compactNote": "被迫defer",
-      "detailNote": "被迫defer",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "被迫defer",
+      "detailNote": "被迫defer"
     },
     {
       "id": "ufun-checkee-108",
@@ -1909,11 +1909,11 @@
       "waitingDays": 52,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-109",
@@ -1927,11 +1927,11 @@
       "waitingDays": 52,
       "status": "Approved",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-110",
@@ -1945,11 +1945,11 @@
       "waitingDays": 41,
       "status": "Check",
       "note": "renew",
-      "compactNote": "renew",
-      "detailNote": "renew",
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": "renew",
+      "detailNote": "renew"
     },
     {
       "id": "ufun-checkee-111",
@@ -1963,11 +1963,11 @@
       "waitingDays": 38,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-112",
@@ -1981,11 +1981,11 @@
       "waitingDays": 38,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-113",
@@ -1999,11 +1999,11 @@
       "waitingDays": 37,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "ufun-checkee-114",
@@ -2017,11 +2017,11 @@
       "waitingDays": 34,
       "status": "Check",
       "note": null,
-      "compactNote": null,
-      "detailNote": null,
       "publishedAt": "2026-09-06",
       "source": "legacy_excel",
-      "visibility": "published"
+      "visibility": "published",
+      "compactNote": null,
+      "detailNote": null
     },
     {
       "id": "submission-16",
@@ -3213,16 +3213,16 @@
     },
     {
       "id": "submission-83",
-      "nickname": "der...",
+      "nickname": "1111",
       "location": "北京",
       "degree": "Master",
       "major": "baai",
       "school": null,
       "startDate": "2026-07-23",
-      "endDate": "2026-09-17",
-      "waitingDays": 56,
-      "status": "Issued",
-      "note": "9.15ap",
+      "endDate": null,
+      "waitingDays": 59,
+      "status": "Check",
+      "note": null,
       "compactNote": null,
       "detailNote": null,
       "publishedAt": "2026-09-13",
@@ -3398,11 +3398,11 @@
       "degree": "PhD",
       "major": "bio",
       "school": null,
-      "startDate": "2026-03-19",
-      "endDate": "2026-07-20",
+      "startDate": "2025-03-19",
+      "endDate": "2025-07-20",
       "waitingDays": 123,
       "status": "Issued",
-      "note": "病毒方向,25fall",
+      "note": "病毒方向",
       "compactNote": "病毒方向",
       "detailNote": "病毒方向",
       "publishedAt": "2026-09-16",
@@ -3424,150 +3424,6 @@
       "compactNote": "中间无update，9.2adp，9.3ap，9.4is",
       "detailNote": "中间无update，9.2adp，9.3ap，9.4is",
       "publishedAt": "2026-09-16",
-      "source": "submission_user",
-      "visibility": "published"
-    },
-    {
-      "id": "submission-99",
-      "nickname": "JE",
-      "location": "武汉",
-      "degree": "PhD",
-      "major": "Econ",
-      "school": null,
-      "startDate": "2026-05-05",
-      "endDate": null,
-      "waitingDays": 138,
-      "status": "Check",
-      "note": null,
-      "compactNote": null,
-      "detailNote": null,
-      "publishedAt": "2026-09-17",
-      "source": "submission_user",
-      "visibility": "published"
-    },
-    {
-      "id": "submission-98",
-      "nickname": null,
-      "location": "沈阳",
-      "degree": "PhD",
-      "major": "EE",
-      "school": null,
-      "startDate": "2026-05-20",
-      "endDate": null,
-      "waitingDays": 123,
-      "status": "Check",
-      "note": null,
-      "compactNote": null,
-      "detailNote": null,
-      "publishedAt": "2026-09-17",
-      "source": "submission_user",
-      "visibility": "published"
-    },
-    {
-      "id": "submission-101",
-      "nickname": null,
-      "location": "北京",
-      "degree": "PhD",
-      "major": "CEE",
-      "school": null,
-      "startDate": "2026-06-13",
-      "endDate": null,
-      "waitingDays": 99,
-      "status": "Check",
-      "note": null,
-      "compactNote": null,
-      "detailNote": null,
-      "publishedAt": "2026-09-17",
-      "source": "submission_user",
-      "visibility": "published"
-    },
-    {
-      "id": "submission-100",
-      "nickname": "momo",
-      "location": "广州",
-      "degree": "Master",
-      "major": "ai",
-      "school": "cmu",
-      "startDate": "2026-07-28",
-      "endDate": "2026-09-17",
-      "waitingDays": 51,
-      "status": "Issued",
-      "note": "9.9收到邮件更新sevis start date，9.17lr转adp转ap。已defer",
-      "compactNote": "9.9收到邮件更新sevis start date，9…",
-      "detailNote": "9.9收到邮件更新sevis start date，9.17lr转adp转ap。已defer",
-      "publishedAt": "2026-09-17",
-      "source": "submission_user",
-      "visibility": "published"
-    },
-    {
-      "id": "submission-102",
-      "nickname": null,
-      "location": "沈阳",
-      "degree": "PhD",
-      "major": "Computer Science",
-      "school": null,
-      "startDate": "2026-07-10",
-      "endDate": null,
-      "waitingDays": 72,
-      "status": "Check",
-      "note": "last update 7/30",
-      "compactNote": "last update 7/30",
-      "detailNote": "last update 7/30",
-      "publishedAt": "2026-09-18",
-      "source": "submission_user",
-      "visibility": "published"
-    },
-    {
-      "id": "submission-104",
-      "nickname": null,
-      "location": "广州",
-      "degree": "Master",
-      "major": "ECE",
-      "school": "USC",
-      "startDate": "2026-07-28",
-      "endDate": "2026-09-18",
-      "waitingDays": 52,
-      "status": "Issued",
-      "note": null,
-      "compactNote": null,
-      "detailNote": null,
-      "publishedAt": "2026-09-19",
-      "source": "submission_user",
-      "visibility": "published"
-    },
-    {
-      "id": "submission-103",
-      "nickname": null,
-      "location": "广州",
-      "degree": "Master",
-      "major": "ECE",
-      "school": "USC",
-      "startDate": "2026-07-21",
-      "endDate": "2026-09-14",
-      "waitingDays": 55,
-      "status": "Issued",
-      "note": null,
-      "compactNote": null,
-      "detailNote": null,
-      "publishedAt": "2026-09-19",
-      "source": "submission_user",
-      "visibility": "published"
-    },
-    {
-      "id": "submission-105",
-      "nickname": "透彻",
-      "location": "广州",
-      "degree": "PhD",
-      "major": "APMA(Math)",
-      "school": "Brown",
-      "startDate": "2026-06-09",
-      "endDate": "2026-09-02",
-      "waitingDays": 85,
-      "status": "Approved",
-      "note": "第三年phd续签，9.9收到护照",
-      "compactNote": "第三年phd续签，9.9收到护照",
-      "detailNote": "第三年phd续签，9.9收到护照",
-      "publishedAt": "2026-09-19",
       "source": "submission_user",
       "visibility": "published"
     }

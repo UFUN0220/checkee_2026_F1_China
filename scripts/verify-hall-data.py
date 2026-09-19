@@ -1,4 +1,4 @@
-"""Verify the published snapshot, generated Hall master, and legacy migration."""
+"""Verify the Master-driven Hall production chain or audit the legacy source."""
 
 from __future__ import annotations
 
@@ -12,7 +12,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_LEGACY_INPUT = Path("data/checkmate/hall_fame.xlsx")
-DEFAULT_PREVIOUS_LEGACY = Path("data/checkmate/ufun_checkee_pure_processed.json")
 
 
 REQUIRED_FIELDS = {
@@ -35,6 +34,7 @@ REQUIRED_FIELDS = {
 STATUSES = {"Check", "Approved", "Issued", "Refused"}
 SOURCES = {"legacy_excel", "submission_user", "admin_import"}
 VISIBILITIES = {"draft", "pending", "published", "rejected"}
+LOCATIONS = {"北京", "上海", "广州", "沈阳", "武汉"}
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 RELEASE_VERSION = re.compile(r"^\d{8}-v\d{3}$")
 RELEASE_FILES = ("hall-master.json", "published-submissions.json", "release-meta.json")
@@ -48,8 +48,13 @@ COMPARISON_FIELDS = (
     "startDate",
     "endDate",
     "waitingDays",
+    "status",
+    "note",
     "compactNote",
     "detailNote",
+    "publishedAt",
+    "source",
+    "visibility",
 )
 
 
@@ -86,7 +91,7 @@ def sort_records(records):
     )
 
 
-def verify_dataset(dataset, verify_waiting_days=True, require_nickname=True):
+def verify_dataset(dataset, verify_waiting_days=True, require_nickname=True, enforce_locations=True):
     if not isinstance(dataset, dict):
         raise ValueError("Hall dataset must be an object")
     if dataset.get("schemaVersion") != 1:
@@ -119,8 +124,8 @@ def verify_dataset(dataset, verify_waiting_days=True, require_nickname=True):
             raise ValueError(f"Record {index} is missing: nickname")
         if "nickname" in item and item["nickname"] is not None and not isinstance(item["nickname"], str):
             raise ValueError(f"Record {index}.nickname must be a string or null")
-        if not item["location"]:
-            raise ValueError(f"Record {index} has no location")
+        if enforce_locations and item["location"] not in LOCATIONS:
+            raise ValueError(f"Record {index} has invalid location: {item['location']!r}")
         start = valid_date(item["startDate"], f"records[{index}].startDate")
         end = valid_date(item["endDate"], f"records[{index}].endDate") if item["endDate"] else None
         if end and end < start:
@@ -184,95 +189,77 @@ def verify_published_snapshot(snapshot, require_nickname=True):
     return records
 
 
-def compare_legacy(expected_records, records):
-    current_legacy = [item for item in records if item["source"] == "legacy_excel"]
-    if len(current_legacy) != len(expected_records):
-        raise ValueError(
-            f"Legacy record count mismatch: expected {len(expected_records)}, found {len(current_legacy)}"
-        )
-    for expected, current in zip(expected_records, current_legacy):
-        for field in COMPARISON_FIELDS:
-            if current.get(field) != expected.get(field):
-                raise ValueError(f"Legacy field mismatch: {expected['id']}.{field}")
-
-    def top_three(items):
-        return [item["id"] for item in sort_records(items)[:3]]
-
-    if top_three(expected_records) != top_three(current_legacy):
-        raise ValueError("Top 3 changed while exporting the new legacy source")
-
-
 def comparable_field(record, field):
     value = record.get(field)
     return None if field == "nickname" and value == "" else value
 
 
-def report_legacy_changes(previous_dataset, current_records):
-    previous_records = previous_dataset.get("records", [])
-    previous_by_id = {item["id"]: item for item in previous_records}
-    current_by_id = {item["id"]: item for item in current_records}
-    added = sorted(set(current_by_id) - set(previous_by_id))
-    removed = sorted(set(previous_by_id) - set(current_by_id))
-    changed = sorted(
-        record_id
-        for record_id in set(previous_by_id) & set(current_by_id)
-        if any(
-            comparable_field(previous_by_id[record_id], field)
-            != comparable_field(current_by_id[record_id], field)
-            for field in COMPARISON_FIELDS
-        )
+def audit_legacy(master_records, legacy_records):
+    """Report legacy drift without treating canonical divergence as failure."""
+    master_legacy = [record for record in master_records if record["source"] == "legacy_excel"]
+    master_by_id = {record["id"]: record for record in master_legacy}
+    legacy_by_id = {record["id"]: record for record in legacy_records}
+    master_ids = set(master_by_id)
+    legacy_ids = set(legacy_by_id)
+    master_only = sorted(master_ids - legacy_ids)
+    legacy_only = sorted(legacy_ids - master_ids)
+    changed = []
+    for case_id in sorted(master_ids & legacy_ids):
+        for field in COMPARISON_FIELDS:
+            master_value = comparable_field(master_by_id[case_id], field)
+            legacy_value = comparable_field(legacy_by_id[case_id], field)
+            if master_value != legacy_value:
+                changed.append(
+                    {
+                        "case_id": case_id,
+                        "field": field,
+                        "master": master_value,
+                        "legacy": legacy_value,
+                    }
+                )
+
+    master_order = [record["id"] for record in master_legacy]
+    legacy_order = [record["id"] for record in legacy_records]
+    order_differences = [
+        {
+            "index": index + 1,
+            "master": master_id,
+            "legacy": legacy_id,
+        }
+        for index, (master_id, legacy_id) in enumerate(zip(master_order, legacy_order))
+        if master_id != legacy_id
+    ]
+    order_differences.extend(
+        {"index": index + 1, "master": master_id, "legacy": None}
+        for index, master_id in enumerate(master_order[len(legacy_order):], start=len(legacy_order))
+    )
+    order_differences.extend(
+        {"index": index + 1, "master": None, "legacy": legacy_id}
+        for index, legacy_id in enumerate(legacy_order[len(master_order):], start=len(master_order))
     )
 
-    def top_three(items):
-        return [item["id"] for item in sort_records(items)[:3]]
-
-    print(f"Legacy source comparison: previous={len(previous_records)} current={len(current_records)}")
-    print(f"Added: {len(added)}; Removed: {len(removed)}; Changed: {len(changed)}")
-    print("Previous Top 3: " + ", ".join(top_three(previous_records)))
-    print("Current Top 3: " + ", ".join(top_three(current_records)))
-    if added:
-        print("Added IDs: " + ", ".join(added))
-    if removed:
-        print("Removed IDs: " + ", ".join(removed))
+    report = {
+        "masterLegacyCount": len(master_legacy),
+        "legacyCount": len(legacy_records),
+        "masterOnly": master_only,
+        "legacyOnly": legacy_only,
+        "changed": changed,
+        "orderDifferences": order_differences,
+        "contentParity": not (master_only or legacy_only or changed),
+        "orderParity": not order_differences,
+    }
+    print(
+        f"Legacy audit: master legacy={len(master_legacy)}; legacy input={len(legacy_records)}; "
+        f"master-only={len(master_only)}; legacy-only={len(legacy_only)}; "
+        f"changed fields={len(changed)}; order differences={len(order_differences)}"
+    )
+    if master_only:
+        print("Master-only IDs: " + ", ".join(master_only))
+    if legacy_only:
+        print("Legacy-only IDs: " + ", ".join(legacy_only))
     if changed:
-        print("Changed IDs: " + ", ".join(changed))
-
-
-def compare_published_snapshot(snapshot_records, legacy_records, hall_records, snapshot_date):
-    legacy_ids = {item["id"] for item in legacy_records}
-    snapshot_ids = {item["id"] for item in snapshot_records}
-    if legacy_ids & snapshot_ids:
-        duplicate = sorted(legacy_ids & snapshot_ids)[0]
-        raise ValueError(f"Published snapshot id overlaps legacy record: {duplicate}")
-
-    hall_ids = {item["id"] for item in hall_records}
-    expected_ids = legacy_ids | snapshot_ids
-    missing = expected_ids - hall_ids
-    extra = hall_ids - expected_ids
-    if missing:
-        raise ValueError(f"Hall master is missing merged record: {sorted(missing)[0]}")
-    if extra:
-        raise ValueError(f"Hall master contains an unexpected record: {sorted(extra)[0]}")
-    if len(hall_records) - len(legacy_records) != len(snapshot_records):
-        raise ValueError(
-            "Hall merge count changed unexpectedly: "
-            f"legacy={len(legacy_records)}, snapshot={len(snapshot_records)}, hall={len(hall_records)}"
-        )
-
-    by_id = {item["id"]: item for item in hall_records}
-    for snapshot_record in snapshot_records:
-        start = valid_date(snapshot_record["startDate"], f"published snapshot {snapshot_record['id']}.startDate")
-        end = (
-            valid_date(snapshot_record["endDate"], f"published snapshot {snapshot_record['id']}.endDate")
-            if snapshot_record["endDate"]
-            else None
-        )
-        expected_record = {
-            **snapshot_record,
-            "waitingDays": ((end or snapshot_date) - start).days,
-        }
-        if by_id[snapshot_record["id"]] != expected_record:
-            raise ValueError(f"Published snapshot record differs in Hall master: {snapshot_record['id']}")
+        print("Changed fields: " + ", ".join(f"{item['case_id']}.{item['field']}" for item in changed))
+    return report
 
 
 def release_sort_key(path):
@@ -307,15 +294,10 @@ def verify_release_meta(meta, release_dir, snapshot_records, hall_records):
             raise ValueError(f"{release_dir.name} {field} does not match release contents")
     if meta.get("source") != expected_sources:
         raise ValueError(f"{release_dir.name} source does not match release contents")
-    if len(hall_records) != legacy_count + len(snapshot_records):
-        raise ValueError(f"{release_dir.name} total count does not equal legacy plus submissions")
-
     hall_by_id = {record["id"]: record for record in hall_records}
     for snapshot_record in snapshot_records:
         if snapshot_record["id"] not in hall_by_id:
             raise ValueError(f"{release_dir.name} is missing snapshot record {snapshot_record['id']}")
-        if hall_by_id[snapshot_record["id"]] != snapshot_record:
-            raise ValueError(f"{release_dir.name} snapshot record differs from Hall master")
 
 
 def verify_release_history(releases_dir, current_master, current_snapshot):
@@ -345,8 +327,12 @@ def verify_release_history(releases_dir, current_master, current_snapshot):
         )
         hall_records, _ = verify_dataset(
             load_json(release_dir / "hall-master.json"),
+            # Historical releases are immutable audit artifacts. The current
+            # production dataset above is checked against its snapshotDate;
+            # old releases may predate the current derivation rules.
             verify_waiting_days=False,
             require_nickname=False,
+            enforce_locations=False,
         )
         verify_release_meta(meta, release_dir, snapshot_records, hall_records)
         release_hall = load_json(release_dir / "hall-master.json")
@@ -368,8 +354,14 @@ def verify_release_history(releases_dir, current_master, current_snapshot):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("master", type=Path, nargs="?", default=Path("data/checkmate/hall-master.json"))
+    parser.add_argument(
+        "--source",
+        choices=("master", "legacy-audit"),
+        default="master",
+        help="Verify the Master-driven production chain (default) or audit Legacy without content-failure",
+    )
     parser.add_argument("--legacy-input", type=Path, default=DEFAULT_LEGACY_INPUT)
-    parser.add_argument("--previous-legacy", type=Path, default=DEFAULT_PREVIOUS_LEGACY)
+    parser.add_argument("--report", type=Path, help="Optional JSON output path for legacy-audit results")
     parser.add_argument(
         "--published-snapshot",
         type=Path,
@@ -383,6 +375,23 @@ def main():
     args = parser.parse_args()
     dataset = load_json(args.master)
     records, anomalies = verify_dataset(dataset)
+
+    if args.source == "master":
+        current_snapshot = load_json(args.published_snapshot)
+        snapshot_records = verify_published_snapshot(current_snapshot)
+        latest_version = verify_release_history(args.releases_dir, dataset, current_snapshot)
+        sorted_records = sort_records(records)
+        print(
+            f"Verified Master-driven Hall: published-snapshot-artifact={len(snapshot_records)}; "
+            f"hall={len(records)}; latest-release={latest_version}"
+        )
+        print("Top 3: " + ", ".join(f"{item['id']} ({item['waitingDays']})" for item in sorted_records[:3]))
+        if anomalies:
+            print("Warnings:")
+            for anomaly in anomalies:
+                print(f"- {anomaly}")
+        return
+
     converter = load_converter()
     conversion_warnings = []
     legacy_records = converter.convert_records(
@@ -399,33 +408,11 @@ def main():
         require_case_id=True,
         warnings=conversion_warnings,
     )
-    if dataset.get("sourceName") != args.legacy_input.name:
-        raise ValueError(
-            f"Hall master sourceName must match legacy input: {dataset.get('sourceName')} != {args.legacy_input.name}"
-        )
-    compare_legacy(legacy_records, records)
-    previous_dataset = load_json(args.previous_legacy)
-    report_legacy_changes(previous_dataset, legacy_records)
-    current_snapshot = load_json(args.published_snapshot)
-    snapshot_records = verify_published_snapshot(current_snapshot)
-    compare_published_snapshot(
-        snapshot_records,
-        legacy_records,
-        records,
-        valid_date(dataset["snapshotDate"], "snapshotDate"),
-    )
-    latest_version = verify_release_history(args.releases_dir, dataset, current_snapshot)
-    sorted_records = sort_records(records)
-    print(
-        f"Verified published-submissions={len(snapshot_records)}; "
-        f"legacy={len(legacy_records)}; hall={len(records)}; "
-        f"latest-release={latest_version}; pending=0; rejected=0"
-    )
-    print("Top 3: " + ", ".join(f"{item['id']} ({item['waitingDays']})" for item in sorted_records[:3]))
-    if anomalies:
-        print("Warnings (preserved legacy anomalies):")
-        for anomaly in anomalies:
-            print(f"- {anomaly}")
+    audit_report = audit_legacy(records, legacy_records)
+    if args.report:
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(json.dumps(audit_report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"Legacy audit report: {args.report}")
     if conversion_warnings:
         print("Warnings (legacy Excel identity checks):")
         for warning in conversion_warnings:

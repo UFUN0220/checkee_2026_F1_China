@@ -166,6 +166,19 @@ def map_record(row: dict, snapshot_date: str) -> dict:
     }
 
 
+def validate_source_order_uniqueness(records: list[dict]) -> None:
+    seen: dict[tuple[str, int], str] = {}
+    for record in records:
+        key = (record["source"], record["_sourceOrder"])
+        previous_case_id = seen.get(key)
+        if previous_case_id is not None:
+            raise ValueError(
+                "Duplicate (source, source_order) in hall_cases_master: "
+                f"{key[0]} / {key[1]} used by {previous_case_id} and {record['id']}"
+            )
+        seen[key] = record["id"]
+
+
 def cli_snapshot_date(value: str) -> str:
     try:
         date.fromisoformat(value)
@@ -187,6 +200,7 @@ def main() -> int:
     try:
         rows = fetch_rows()
         records = [map_record(row, args.snapshot_date) for row in rows]
+        validate_source_order_uniqueness(records)
         records.sort(key=lambda record: (SOURCE_PRIORITY[record["source"]], record["_sourceOrder"]))
         for record in records:
             record.pop("_sourceOrder")

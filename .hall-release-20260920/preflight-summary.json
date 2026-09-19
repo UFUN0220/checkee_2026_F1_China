@@ -1,0 +1,14 @@
+{
+  "total": 198,
+  "source_counts": {
+    "legacy_excel": 112,
+    "submission_user": 86
+  },
+  "duplicate_case_id": 0,
+  "missing_case_id": 0,
+  "duplicate_source_order": 0,
+  "null_source_order": 0,
+  "published_submission_count": 86,
+  "published_submission_missing_from_master": [],
+  "master_submission_without_published_row": []
+}

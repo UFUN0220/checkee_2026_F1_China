@@ -53,3 +53,6 @@ jobs:
 
       - name: Verify Hall data
         run: python scripts/verify-hall-data.py
+
+      - name: Audit Hall legacy source
+        run: python scripts/verify-hall-data.py --source legacy-audit

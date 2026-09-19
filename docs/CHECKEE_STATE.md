@@ -41,7 +41,7 @@
 | `/admin`           | 内部审核投稿                         | 不进入公开导航或 sitemap                         |
 | `/admin/hall`      | Hall 发布状态与 release 历史控制中心 | 只读本地发布文件，并查询 Supabase published 状态 |
 
-公开名人堂只读取 `data/checkmate/hall-master.json` 中 `visibility = published` 的记录。用户投稿首先写入 Supabase 审核池，审核发布后同步进入 `hall_cases_master`；正式导出从 master 生成 `published-submissions.json`、带 `dataVersion` 的 `hall-master.json`，并将同一份数据保存到不可覆盖的 `data/checkmate/releases/YYYYMMDD-vXXX/`。页面不会直接读取 Supabase 或手工改写原始数据，legacy XLSX 与历史 snapshot 仅作为审计和回滚来源。
+公开名人堂只读取 `data/checkmate/hall-master.json` 中 `visibility = published` 的记录。用户投稿首先写入 Supabase 审核池，审核发布后同步进入 `hall_cases_master`；正式导出从 master 生成 `published-submissions.json`、带 `dataVersion` 的 `hall-master.json`，并将同一份数据保存到不可覆盖的 `data/checkmate/releases/YYYYMMDD-vXXX/`。页面不会直接读取 Supabase 或手工改写原始数据。`hall_cases_master` 是 Hall 唯一正式 canonical source；`case_submissions`、legacy XLSX 与历史 snapshot 仅作为投稿审计、历史核对与回滚来源，后续 Master 维护不要求与它们逐字段一致。
 
 ## Navigation
 
@@ -106,9 +106,21 @@ Top 3 → 4–10
 
 - `visibility` 描述是否可进入名人堂；`review_status` 仍描述投稿审核记录状态，两者不能互相替代。
 - 从 `pending` 发布为 `published` 时，由数据库触发器写入 `published_at`。
-- `hall-master.json` 是生成产物，不手工编辑；历史数据来源标为 `legacy_excel`，用户投稿标为 `submission_user`。
+- `hall-master.json` 是生成产物，不手工编辑；历史数据来源标为 `legacy_excel`，用户投稿标为 `submission_user`。`published-submissions.json` 是 release auxiliary / historical audit artifact，不是当前 Hall 字段的 canonical source。
 - 每次正式导出都创建新的 release 目录，版本格式为 `YYYYMMDD-vXXX`；release 内保存 Hall、published submissions 与 `release-meta.json`，历史版本不自动删除或覆盖。
-- 维护数据时使用 `scripts/export-hall-master.py` 与 `scripts/verify-hall-data.py`，正式导出默认读取 `hall_cases_master`；`--source legacy` 保留 legacy XLSX + snapshot 回滚路径。发布前检查来源、可见性、日期、等待天数派生规则、重复 ID 与历史记录一致性。
+- 维护数据时使用 `scripts/export-hall-master.py` 与 `scripts/verify-hall-data.py`，正式导出默认读取 `hall_cases_master`；`--source legacy` 保留 legacy XLSX + snapshot 回滚路径。默认 verifier 只检查 Master → Hall / Release；`--source legacy-audit` 单独报告 Legacy 与 Master 的差异，内容差异不会阻塞生产 CI，Legacy 结构损坏仍会失败。发布前检查来源、可见性、日期、等待天数派生规则、重复 ID、`(source, source_order)` 唯一性与 release 完整性。
+
+职责边界：
+
+```text
+case_submissions        投稿 intake / 审核队列 / 历史审计
+        ↓ approve
+hall_cases_master       Hall 唯一正式 canonical source
+        ↓
+export → Release → hall-master.json → 前端
+```
+
+案例进入 `hall_cases_master` 后，后续 Hall 维护直接修改 Master；不建立 `hall_cases_master → case_submissions` 反向同步，也不要求已审批 submission 与 Master 长期逐字段一致。
 
 ## 7. 受保护区域
 
@@ -154,7 +166,16 @@ git diff --check
 
 后续优先级：可用性、数据可信度、性能与无障碍；避免只为视觉而新增内容或动效。
 
-## 10. 最近检查（2026-09-07）
+## 11. 最近检查（2026-09-20）
+
+| 检查项 | 结论 | 依据 |
+| ------ | ---- | ---- |
+| Master canonical source | 符合 | `hall_cases_master` 是 Hall 唯一正式数据源；`20260920-v001` 包含 198 条记录。 |
+| Production verifier | 符合 | `scripts/verify-hall-data.py` 默认只验证 Master → Hall / Release，不再要求 Legacy 或 submission 字段逐条一致。 |
+| Legacy audit | 已拆分 | `--source legacy-audit` 报告 Legacy 缺失、字段和顺序差异；内容漂移不阻塞 CI，结构损坏仍失败。 |
+| Release parity | 通过 | `20260920-v001` 与当前 `hall-master.json` 保持 Master-driven release 一致。 |
+
+## 12. 历史检查（2026-09-07）
 
 | 检查项               | 结论         | 依据                                                                                                                                    |
 | -------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
