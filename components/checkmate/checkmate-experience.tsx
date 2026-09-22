@@ -26,7 +26,7 @@ const LOCATION_NAMES: Record<CheckmateLocation, string> = {
   wuhan: '武汉',
 }
 
-const PODIUM_NICKNAMES = [ 'momo','影', 'Mo'] as const
+const PODIUM_NICKNAMES = [ 'momo','momo', 'Mo'] as const
 
 function formatDays(value: number | null) {
   if (value === null) return '—'
@@ -44,6 +44,17 @@ function ceilWaitStats(stats: WaitStats): WaitStats {
 
 function formatDate(value: string | null) {
   return value ? value.replace(/^2026-/, '').replace('-', '.') : '—'
+}
+
+function formatPodiumDate(value: string | null) {
+  if (!value) return '—'
+
+  const normalized = value.replaceAll('-', '.')
+  const [year, month, day] = normalized.split('.')
+
+  if (!month || !day) return normalized
+  if (year === '2026') return `${month}.${day}`
+  return `${year}.${month}.${day}`
 }
 
 function formatHallDegree(value: string) {
@@ -523,8 +534,14 @@ function HallFields({ item, rank }: { item: CheckeeRecord; rank: number }) {
         <span>{formatHallDegree(item.degree) || '\u00a0'}</span>
         <span>{item.major || '\u00a0'}</span>
         {item.school ? <span>{item.school}</span> : null}
-        <span>{formatDate(item.startDate)}</span>
+        <span>{formatPodiumDate(item.startDate)}</span>
       </span>
+      {item.status === 'Issued' && item.endDate?.trim() ? (
+        <span className={styles.podiumOutcome}>
+          <span>{formatPodiumDate(item.endDate)}</span>
+          <span>{item.status}</span>
+        </span>
+      ) : null}
       <span className={styles.podiumNickname}>
         {PODIUM_NICKNAMES[rank - 1] ?? PODIUM_NICKNAMES[0]}
       </span>
@@ -622,7 +639,7 @@ function PodiumCard({
         <HallFields item={item} rank={rank} />
         <HallNote note={note} expanded={expanded} />
       </div>
-      <HallWait item={item} className={styles.podiumDuration} />
+      <HallWait item={item} className={styles.podiumDuration} showApBadge={false} />
     </article>
   )
 }
