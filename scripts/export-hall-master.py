@@ -240,7 +240,7 @@ def export_hall_master_from_supabase(
         records,
         snapshot_date,
         generated_at,
-        source_name=DEFAULT_LEGACY_INPUT.name,
+        source_name="public.hall_cases_master",
     )
     dataset = {
         "schemaVersion": dataset_without_version["schemaVersion"],
@@ -254,6 +254,7 @@ def export_hall_master_from_supabase(
         snapshot_records,
         records,
     )
+    release_meta["inputSource"] = "public.hall_cases_master"
     release_dir = releases_dir / version
     write_release(release_dir, dataset, release_meta, published_snapshot)
     converter.write_dataset(dataset, output)
