@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-26",
+  "generatedAt": "2026-09-23",
   "records": [
     {
       "id": "submission-16",
@@ -11,14 +11,14 @@
       "school": null,
       "startDate": "2026-06-09",
       "endDate": null,
-      "waitingDays": 109,
+      "waitingDays": 106,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-17",
@@ -29,14 +29,14 @@
       "school": "MIT",
       "startDate": "2026-05-14",
       "endDate": null,
-      "waitingDays": 135,
+      "waitingDays": 132,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-18",
@@ -47,14 +47,14 @@
       "school": null,
       "startDate": "2026-05-15",
       "endDate": null,
-      "waitingDays": 134,
+      "waitingDays": 131,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-19",
@@ -65,14 +65,14 @@
       "school": null,
       "startDate": "2026-07-02",
       "endDate": null,
-      "waitingDays": 86,
+      "waitingDays": 83,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-20",
@@ -83,14 +83,14 @@
       "school": "ASU",
       "startDate": "2026-05-12",
       "endDate": null,
-      "waitingDays": 137,
+      "waitingDays": 134,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-21",
@@ -101,14 +101,14 @@
       "school": null,
       "startDate": "2026-08-06",
       "endDate": null,
-      "waitingDays": 51,
+      "waitingDays": 48,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-22",
@@ -119,14 +119,14 @@
       "school": null,
       "startDate": "2026-06-09",
       "endDate": null,
-      "waitingDays": 109,
+      "waitingDays": 106,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-23",
@@ -140,11 +140,11 @@
       "waitingDays": 55,
       "status": "Refused",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-24",
@@ -155,14 +155,14 @@
       "school": "UMich",
       "startDate": "2026-06-02",
       "endDate": null,
-      "waitingDays": 116,
+      "waitingDays": 113,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-25",
@@ -173,14 +173,14 @@
       "school": "UMich",
       "startDate": "2026-07-16",
       "endDate": null,
-      "waitingDays": 72,
+      "waitingDays": 69,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-26",
@@ -190,15 +190,15 @@
       "major": "EE",
       "school": null,
       "startDate": "2026-06-05",
-      "endDate": null,
-      "waitingDays": 113,
-      "status": "Check",
+      "endDate": "2026-09-22",
+      "waitingDays": 109,
+      "status": "Issued",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-27",
@@ -209,14 +209,14 @@
       "school": null,
       "startDate": "2026-07-06",
       "endDate": null,
-      "waitingDays": 82,
+      "waitingDays": 79,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-28",
@@ -230,11 +230,11 @@
       "waitingDays": 1,
       "status": "Issued",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-29",
@@ -245,14 +245,14 @@
       "school": null,
       "startDate": "2026-09-01",
       "endDate": null,
-      "waitingDays": 25,
+      "waitingDays": 22,
       "status": "Check",
       "note": "加签也安调一年多了，换国家的大家也慎重选择加拿大🫰",
+      "compactNote": "加签也安调一年多了，换国家的大家也慎重选择加拿大🫰",
+      "detailNote": "加签也安调一年多了，换国家的大家也慎重选择加拿大🫰",
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "加签也安调一年多了，换国家的大家也慎重选择加拿大🫰",
-      "detailNote": "加签也安调一年多了，换国家的大家也慎重选择加拿大🫰"
+      "visibility": "published"
     },
     {
       "id": "submission-30",
@@ -263,14 +263,14 @@
       "school": "PSU",
       "startDate": "2026-05-14",
       "endDate": null,
-      "waitingDays": 135,
+      "waitingDays": 132,
       "status": "Check",
       "note": "中间无任何update",
+      "compactNote": "中间无任何update",
+      "detailNote": "中间无任何update",
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "中间无任何update",
-      "detailNote": "中间无任何update"
+      "visibility": "published"
     },
     {
       "id": "submission-31",
@@ -284,11 +284,11 @@
       "waitingDays": 46,
       "status": "Issued",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-32",
@@ -299,14 +299,14 @@
       "school": null,
       "startDate": "2026-05-21",
       "endDate": null,
-      "waitingDays": 128,
+      "waitingDays": 125,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-33",
@@ -317,14 +317,14 @@
       "school": "NYU",
       "startDate": "2026-08-21",
       "endDate": null,
-      "waitingDays": 36,
+      "waitingDays": 33,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-34",
@@ -338,11 +338,11 @@
       "waitingDays": 76,
       "status": "Approved",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-35",
@@ -353,14 +353,14 @@
       "school": "NYU",
       "startDate": "2026-07-03",
       "endDate": null,
-      "waitingDays": 85,
+      "waitingDays": 82,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-36",
@@ -371,14 +371,14 @@
       "school": "Duke",
       "startDate": "2026-05-06",
       "endDate": null,
-      "waitingDays": 143,
+      "waitingDays": 140,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-37",
@@ -389,14 +389,14 @@
       "school": null,
       "startDate": "2026-07-29",
       "endDate": null,
-      "waitingDays": 59,
+      "waitingDays": 56,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-38",
@@ -410,11 +410,11 @@
       "waitingDays": 62,
       "status": "Approved",
       "note": "还是5年",
+      "compactNote": "还是5年",
+      "detailNote": "还是5年",
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "还是5年",
-      "detailNote": "还是5年"
+      "visibility": "published"
     },
     {
       "id": "submission-39",
@@ -425,14 +425,14 @@
       "school": null,
       "startDate": "2026-06-03",
       "endDate": null,
-      "waitingDays": 115,
+      "waitingDays": 112,
       "status": "Check",
       "note": "renewal，已loa",
+      "compactNote": "renewal，已loa",
+      "detailNote": "renewal，已loa",
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "renewal，已loa",
-      "detailNote": "renewal，已loa"
+      "visibility": "published"
     },
     {
       "id": "submission-40",
@@ -446,11 +446,11 @@
       "waitingDays": 52,
       "status": "Approved",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-41",
@@ -461,14 +461,14 @@
       "school": null,
       "startDate": "2026-05-28",
       "endDate": null,
-      "waitingDays": 121,
+      "waitingDays": 118,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-42",
@@ -479,14 +479,14 @@
       "school": "Northwestern",
       "startDate": "2026-08-18",
       "endDate": null,
-      "waitingDays": 39,
+      "waitingDays": 36,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-43",
@@ -500,11 +500,11 @@
       "waitingDays": 70,
       "status": "Issued",
       "note": "已失学，学校不让晚到，导师没钱defer，难绷",
+      "compactNote": "已失学，学校不让晚到，导师没钱defer，难绷",
+      "detailNote": "已失学，学校不让晚到，导师没钱defer，难绷",
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "已失学，学校不让晚到，导师没钱defer，难绷",
-      "detailNote": "已失学，学校不让晚到，导师没钱defer，难绷"
+      "visibility": "published"
     },
     {
       "id": "submission-44",
@@ -515,14 +515,14 @@
       "school": null,
       "startDate": "2026-07-02",
       "endDate": null,
-      "waitingDays": 86,
+      "waitingDays": 83,
       "status": "Check",
       "note": "7.14 case update然后又无消息了",
+      "compactNote": "7.14 case update然后又无消息了",
+      "detailNote": "7.14 case update然后又无消息了",
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "7.14 case update然后又无消息了",
-      "detailNote": "7.14 case update然后又无消息了"
+      "visibility": "published"
     },
     {
       "id": "submission-45",
@@ -536,11 +536,11 @@
       "waitingDays": 69,
       "status": "Issued",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-46",
@@ -551,14 +551,14 @@
       "school": null,
       "startDate": "2026-06-05",
       "endDate": null,
-      "waitingDays": 113,
+      "waitingDays": 110,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-47",
@@ -569,14 +569,14 @@
       "school": "Harvard",
       "startDate": "2026-02-09",
       "endDate": null,
-      "waitingDays": 229,
+      "waitingDays": 226,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-48",
@@ -587,14 +587,14 @@
       "school": null,
       "startDate": "2026-06-09",
       "endDate": null,
-      "waitingDays": 109,
+      "waitingDays": 106,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-49",
@@ -605,14 +605,14 @@
       "school": null,
       "startDate": "2026-07-06",
       "endDate": null,
-      "waitingDays": 82,
+      "waitingDays": 79,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-50",
@@ -623,14 +623,14 @@
       "school": null,
       "startDate": "2026-06-12",
       "endDate": null,
-      "waitingDays": 106,
+      "waitingDays": 103,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-51",
@@ -644,11 +644,11 @@
       "waitingDays": 5,
       "status": "Refused",
       "note": "三拒",
+      "compactNote": "三拒",
+      "detailNote": "三拒",
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "三拒",
-      "detailNote": "三拒"
+      "visibility": "published"
     },
     {
       "id": "submission-52",
@@ -659,14 +659,14 @@
       "school": "JHU",
       "startDate": "2026-07-29",
       "endDate": null,
-      "waitingDays": 59,
+      "waitingDays": 56,
       "status": "Check",
       "note": "已被迫defer",
+      "compactNote": "已被迫defer",
+      "detailNote": "已被迫defer",
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "已被迫defer",
-      "detailNote": "已被迫defer"
+      "visibility": "published"
     },
     {
       "id": "submission-53",
@@ -677,14 +677,14 @@
       "school": null,
       "startDate": "2026-05-14",
       "endDate": null,
-      "waitingDays": 135,
+      "waitingDays": 132,
       "status": "Check",
       "note": "续签",
+      "compactNote": "续签",
+      "detailNote": "续签",
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "续签",
-      "detailNote": "续签"
+      "visibility": "published"
     },
     {
       "id": "submission-54",
@@ -698,11 +698,11 @@
       "waitingDays": 81,
       "status": "Refused",
       "note": "214b真refused",
+      "compactNote": "214b真refused",
+      "detailNote": "214b真refused",
       "publishedAt": "2026-09-09",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "214b真refused",
-      "detailNote": "214b真refused"
+      "visibility": "published"
     },
     {
       "id": "submission-55",
@@ -713,14 +713,14 @@
       "school": "MIT",
       "startDate": "2026-05-26",
       "endDate": null,
-      "waitingDays": 123,
+      "waitingDays": 120,
       "status": "Check",
       "note": "会赢的",
+      "compactNote": "会赢的",
+      "detailNote": "会赢的",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "会赢的",
-      "detailNote": "会赢的"
+      "visibility": "published"
     },
     {
       "id": "submission-56",
@@ -731,14 +731,14 @@
       "school": null,
       "startDate": "2026-05-15",
       "endDate": null,
-      "waitingDays": 134,
+      "waitingDays": 131,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-57",
@@ -752,11 +752,11 @@
       "waitingDays": 82,
       "status": "Issued",
       "note": "9.10转adp",
+      "compactNote": "昨天转adp",
+      "detailNote": "9.10转adp",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "昨天转adp",
-      "detailNote": "9.10转adp"
+      "visibility": "published"
     },
     {
       "id": "submission-58",
@@ -767,14 +767,14 @@
       "school": null,
       "startDate": "2026-08-13",
       "endDate": null,
-      "waitingDays": 44,
+      "waitingDays": 41,
       "status": "Check",
       "note": "滴个搭子年底一起学单板啊！q：2361815532",
+      "compactNote": "滴个搭子年底一起学单板啊！q：2361815532",
+      "detailNote": "滴个搭子年底一起学单板啊！q：2361815532",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "滴个搭子年底一起学单板啊！q：2361815532",
-      "detailNote": "滴个搭子年底一起学单板啊！q：2361815532"
+      "visibility": "published"
     },
     {
       "id": "submission-59",
@@ -785,14 +785,14 @@
       "school": null,
       "startDate": "2026-06-01",
       "endDate": null,
-      "waitingDays": 117,
+      "waitingDays": 114,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-60",
@@ -803,14 +803,14 @@
       "school": "pton",
       "startDate": "2026-05-19",
       "endDate": null,
-      "waitingDays": 130,
+      "waitingDays": 127,
       "status": "Check",
       "note": "博一结束续签",
+      "compactNote": "博一结束续签",
+      "detailNote": "博一结束续签",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "博一结束续签",
-      "detailNote": "博一结束续签"
+      "visibility": "published"
     },
     {
       "id": "submission-61",
@@ -824,11 +824,11 @@
       "waitingDays": 72,
       "status": "Issued",
       "note": "6.22面签，中间没update，一个月催签一次，六周催第二次，没adp，没ap，直接is",
+      "compactNote": "6.22面签，中间没update，一个月催签一次，六周…",
+      "detailNote": "6.22面签，中间没update，一个月催签一次，六周催第二次，没adp，没ap，直接is",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "6.22面签，中间没update，一个月催签一次，六周…",
-      "detailNote": "6.22面签，中间没update，一个月催签一次，六周催第二次，没adp，没ap，直接is"
+      "visibility": "published"
     },
     {
       "id": "submission-62",
@@ -842,11 +842,11 @@
       "waitingDays": 43,
       "status": "Issued",
       "note": "8.20上午adp下午ap，8.21is",
+      "compactNote": "8.20上午adp下午ap，8.21is",
+      "detailNote": "8.20上午adp下午ap，8.21is",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "8.20上午adp下午ap，8.21is",
-      "detailNote": "8.20上午adp下午ap，8.21is"
+      "visibility": "published"
     },
     {
       "id": "submission-63",
@@ -860,11 +860,11 @@
       "waitingDays": 55,
       "status": "Issued",
       "note": "各种方法催签无用，9.22adp随后is，9.3收到单号，ems下午寄出，9.4收到护照",
+      "compactNote": "各种方法催签无用，9.22adp随后is，9.3收到单…",
+      "detailNote": "各种方法催签无用，9.22adp随后is，9.3收到单号，ems下午寄出，9.4收到护照",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "各种方法催签无用，9.22adp随后is，9.3收到单…",
-      "detailNote": "各种方法催签无用，9.22adp随后is，9.3收到单号，ems下午寄出，9.4收到护照"
+      "visibility": "published"
     },
     {
       "id": "submission-64",
@@ -878,11 +878,11 @@
       "waitingDays": 40,
       "status": "Issued",
       "note": "8.21adp，9.1ap，9.2is",
+      "compactNote": "8.21adp，9.1ap，9.2is",
+      "detailNote": "8.21adp，9.1ap，9.2is",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "8.21adp，9.1ap，9.2is",
-      "detailNote": "8.21adp，9.1ap，9.2is"
+      "visibility": "published"
     },
     {
       "id": "submission-65",
@@ -893,14 +893,14 @@
       "school": "CMU",
       "startDate": "2026-05-05",
       "endDate": null,
-      "waitingDays": 144,
+      "waitingDays": 141,
       "status": "Check",
       "note": "sysu的哥们",
+      "compactNote": "sysu的哥们",
+      "detailNote": "sysu的哥们",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "sysu的哥们",
-      "detailNote": "sysu的哥们"
+      "visibility": "published"
     },
     {
       "id": "submission-66",
@@ -914,11 +914,11 @@
       "waitingDays": 110,
       "status": "Issued",
       "note": "8.11defer，8.28ap，8.31is，9.3收到护照一年签。国内药学本硕",
+      "compactNote": "8.11defer，8.28ap，8.31is，9.3…",
+      "detailNote": "8.11defer，8.28ap，8.31is，9.3收到护照一年签。国内药学本硕",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "8.11defer，8.28ap，8.31is，9.3…",
-      "detailNote": "8.11defer，8.28ap，8.31is，9.3收到护照一年签。国内药学本硕"
+      "visibility": "published"
     },
     {
       "id": "submission-67",
@@ -929,14 +929,14 @@
       "school": "Harvard",
       "startDate": "2026-05-28",
       "endDate": null,
-      "waitingDays": 121,
+      "waitingDays": 118,
       "status": "Check",
       "note": "没动过，已defer",
+      "compactNote": "没动过，已defer",
+      "detailNote": "没动过，已defer",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "没动过，已defer",
-      "detailNote": "没动过，已defer"
+      "visibility": "published"
     },
     {
       "id": "submission-68",
@@ -950,11 +950,11 @@
       "waitingDays": 78,
       "status": "Issued",
       "note": "8.31adp，9.1ap，ubc 2024，mtrl eng",
+      "compactNote": "8.31adp，9.1ap，ubc 2024，mtrl…",
+      "detailNote": "8.31adp，9.1ap，ubc 2024，mtrl eng",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "8.31adp，9.1ap，ubc 2024，mtrl…",
-      "detailNote": "8.31adp，9.1ap，ubc 2024，mtrl eng"
+      "visibility": "published"
     },
     {
       "id": "submission-69",
@@ -965,14 +965,14 @@
       "school": null,
       "startDate": "2026-06-02",
       "endDate": null,
-      "waitingDays": 116,
+      "waitingDays": 113,
       "status": "Check",
       "note": "8.26defer，8.28收新i20，9.2adp后转lr",
+      "compactNote": "8.26defer，8.28收新i20，9.2adp后…",
+      "detailNote": "8.26defer，8.28收新i20，9.2adp后转lr",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "8.26defer，8.28收新i20，9.2adp后…",
-      "detailNote": "8.26defer，8.28收新i20，9.2adp后转lr"
+      "visibility": "published"
     },
     {
       "id": "submission-70",
@@ -986,11 +986,11 @@
       "waitingDays": 76,
       "status": "Issued",
       "note": "8.26adp，8.28ap，8.31is，9.2ems发邮件，9.3收到护照一年签",
+      "compactNote": "8.26adp，8.28ap，8.31is，9.2em…",
+      "detailNote": "8.26adp，8.28ap，8.31is，9.2ems发邮件，9.3收到护照一年签",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "8.26adp，8.28ap，8.31is，9.2em…",
-      "detailNote": "8.26adp，8.28ap，8.31is，9.2ems发邮件，9.3收到护照一年签"
+      "visibility": "published"
     },
     {
       "id": "submission-71",
@@ -1004,11 +1004,11 @@
       "waitingDays": 117,
       "status": "Issued",
       "note": "9.8ap，9.9is",
+      "compactNote": "9.8ap，9.9is",
+      "detailNote": "9.8ap，9.9is",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "9.8ap，9.9is",
-      "detailNote": "9.8ap，9.9is"
+      "visibility": "published"
     },
     {
       "id": "submission-72",
@@ -1022,11 +1022,11 @@
       "waitingDays": 33,
       "status": "Issued",
       "note": "8.17ap，8.18ap，8.20ems到家五年签",
+      "compactNote": "8.17ap，8.18ap，8.20ems到家五年签",
+      "detailNote": "8.17ap，8.18ap，8.20ems到家五年签",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "8.17ap，8.18ap，8.20ems到家五年签",
-      "detailNote": "8.17ap，8.18ap，8.20ems到家五年签"
+      "visibility": "published"
     },
     {
       "id": "submission-73",
@@ -1037,14 +1037,14 @@
       "school": "CMU",
       "startDate": "2026-07-10",
       "endDate": null,
-      "waitingDays": 78,
+      "waitingDays": 75,
       "status": "Check",
       "note": "8.21adp",
+      "compactNote": "8.21adp",
+      "detailNote": "8.21adp",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "8.21adp",
-      "detailNote": "8.21adp"
+      "visibility": "published"
     },
     {
       "id": "submission-74",
@@ -1058,11 +1058,11 @@
       "waitingDays": 52,
       "status": "Issued",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-75",
@@ -1076,11 +1076,11 @@
       "waitingDays": 62,
       "status": "Issued",
       "note": "8.31adp，9.3ems发出护照一年签",
+      "compactNote": "8.31adp，9.3ems发出护照一年签",
+      "detailNote": "8.31adp，9.3ems发出护照一年签",
       "publishedAt": "2026-09-11",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "8.31adp，9.3ems发出护照一年签",
-      "detailNote": "8.31adp，9.3ems发出护照一年签"
+      "visibility": "published"
     },
     {
       "id": "submission-76",
@@ -1091,14 +1091,14 @@
       "school": null,
       "startDate": "2026-06-04",
       "endDate": null,
-      "waitingDays": 114,
+      "waitingDays": 111,
       "status": "Check",
       "note": "6-5补5件套 紫单221g 没收护照，6-12 case updated but still long refusal",
+      "compactNote": "6-5补5件套 紫单221g 没收护照，6-12 ca…",
+      "detailNote": "6-5补5件套 紫单221g 没收护照，6-12 case updated but still long refusal",
       "publishedAt": "2026-09-13",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "6-5补5件套 紫单221g 没收护照，6-12 ca…",
-      "detailNote": "6-5补5件套 紫单221g 没收护照，6-12 case updated but still long refusal"
+      "visibility": "published"
     },
     {
       "id": "submission-77",
@@ -1109,14 +1109,14 @@
       "school": null,
       "startDate": "2026-06-02",
       "endDate": null,
-      "waitingDays": 116,
+      "waitingDays": 113,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-13",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-78",
@@ -1127,14 +1127,14 @@
       "school": null,
       "startDate": "2026-06-10",
       "endDate": null,
-      "waitingDays": 108,
+      "waitingDays": 105,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-13",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-80",
@@ -1145,14 +1145,14 @@
       "school": null,
       "startDate": "2026-06-04",
       "endDate": null,
-      "waitingDays": 114,
+      "waitingDays": 111,
       "status": "Check",
       "note": "renew",
+      "compactNote": "renew",
+      "detailNote": "renew",
       "publishedAt": "2026-09-13",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "renew",
-      "detailNote": "renew"
+      "visibility": "published"
     },
     {
       "id": "submission-81",
@@ -1166,11 +1166,11 @@
       "waitingDays": 95,
       "status": "Issued",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-13",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-82",
@@ -1184,29 +1184,29 @@
       "waitingDays": 12,
       "status": "Approved",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-13",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-83",
-      "nickname": "1111",
+      "nickname": "der...",
       "location": "北京",
       "degree": "Master",
       "major": "baai",
       "school": null,
       "startDate": "2026-07-23",
-      "endDate": null,
-      "waitingDays": 65,
-      "status": "Check",
-      "note": null,
+      "endDate": "2026-09-17",
+      "waitingDays": 56,
+      "status": "Issued",
+      "note": "9.15ap",
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-13",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-84",
@@ -1217,14 +1217,14 @@
       "school": null,
       "startDate": "2026-06-16",
       "endDate": null,
-      "waitingDays": 102,
+      "waitingDays": 99,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-13",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-85",
@@ -1235,14 +1235,14 @@
       "school": "USC",
       "startDate": "2026-06-30",
       "endDate": null,
-      "waitingDays": 88,
+      "waitingDays": 85,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-13",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-86",
@@ -1253,14 +1253,14 @@
       "school": null,
       "startDate": "2026-04-20",
       "endDate": null,
-      "waitingDays": 159,
+      "waitingDays": 156,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-13",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-87",
@@ -1271,14 +1271,14 @@
       "school": "UMich",
       "startDate": "2026-05-19",
       "endDate": null,
-      "waitingDays": 130,
+      "waitingDays": 127,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-15",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-88",
@@ -1289,14 +1289,14 @@
       "school": null,
       "startDate": "2026-05-21",
       "endDate": null,
-      "waitingDays": 128,
+      "waitingDays": 125,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-15",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-89",
@@ -1307,14 +1307,14 @@
       "school": null,
       "startDate": "2026-09-09",
       "endDate": null,
-      "waitingDays": 17,
+      "waitingDays": 14,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-15",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-90",
@@ -1325,14 +1325,14 @@
       "school": "PSU",
       "startDate": "2026-07-31",
       "endDate": null,
-      "waitingDays": 57,
+      "waitingDays": 54,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-15",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-91",
@@ -1343,14 +1343,14 @@
       "school": null,
       "startDate": "2026-07-13",
       "endDate": null,
-      "waitingDays": 75,
+      "waitingDays": 72,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-15",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-92",
@@ -1361,14 +1361,32 @@
       "school": null,
       "startDate": "2026-05-14",
       "endDate": null,
-      "waitingDays": 135,
+      "waitingDays": 132,
       "status": "Check",
       "note": "续签",
+      "compactNote": "续签",
+      "detailNote": "续签",
       "publishedAt": "2026-09-15",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "续签",
-      "detailNote": "续签"
+      "visibility": "published"
+    },
+    {
+      "id": "submission-95",
+      "nickname": "爪梨",
+      "location": "北京",
+      "degree": "PhD",
+      "major": "bio",
+      "school": null,
+      "startDate": "2026-03-19",
+      "endDate": "2026-07-20",
+      "waitingDays": 123,
+      "status": "Issued",
+      "note": "病毒方向,25fall",
+      "compactNote": "病毒方向",
+      "detailNote": "病毒方向",
+      "publishedAt": "2026-09-16",
+      "source": "submission_user",
+      "visibility": "published"
     },
     {
       "id": "submission-94",
@@ -1382,47 +1400,11 @@
       "waitingDays": 46,
       "status": "Issued",
       "note": "中间无update，9.2adp，9.3ap，9.4is",
-      "publishedAt": "2026-09-16",
-      "source": "submission_user",
-      "visibility": "published",
       "compactNote": "中间无update，9.2adp，9.3ap，9.4is",
-      "detailNote": "中间无update，9.2adp，9.3ap，9.4is"
-    },
-    {
-      "id": "submission-95",
-      "nickname": "爪梨",
-      "location": "北京",
-      "degree": "PhD",
-      "major": "bio",
-      "school": null,
-      "startDate": "2025-03-19",
-      "endDate": "2025-07-20",
-      "waitingDays": 123,
-      "status": "Issued",
-      "note": "病毒方向",
+      "detailNote": "中间无update，9.2adp，9.3ap，9.4is",
       "publishedAt": "2026-09-16",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "病毒方向",
-      "detailNote": "病毒方向"
-    },
-    {
-      "id": "submission-98",
-      "nickname": null,
-      "location": "沈阳",
-      "degree": "PhD",
-      "major": "EE",
-      "school": null,
-      "startDate": "2026-05-20",
-      "endDate": null,
-      "waitingDays": 129,
-      "status": "Check",
-      "note": null,
-      "publishedAt": "2026-09-17",
-      "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-99",
@@ -1433,14 +1415,50 @@
       "school": null,
       "startDate": "2026-05-05",
       "endDate": null,
-      "waitingDays": 144,
+      "waitingDays": 141,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-17",
       "source": "submission_user",
-      "visibility": "published",
+      "visibility": "published"
+    },
+    {
+      "id": "submission-98",
+      "nickname": null,
+      "location": "沈阳",
+      "degree": "PhD",
+      "major": "EE",
+      "school": null,
+      "startDate": "2026-05-20",
+      "endDate": null,
+      "waitingDays": 126,
+      "status": "Check",
+      "note": null,
       "compactNote": null,
-      "detailNote": null
+      "detailNote": null,
+      "publishedAt": "2026-09-17",
+      "source": "submission_user",
+      "visibility": "published"
+    },
+    {
+      "id": "submission-101",
+      "nickname": null,
+      "location": "北京",
+      "degree": "PhD",
+      "major": "CEE",
+      "school": null,
+      "startDate": "2026-06-13",
+      "endDate": null,
+      "waitingDays": 102,
+      "status": "Check",
+      "note": null,
+      "compactNote": null,
+      "detailNote": null,
+      "publishedAt": "2026-09-17",
+      "source": "submission_user",
+      "visibility": "published"
     },
     {
       "id": "submission-100",
@@ -1454,29 +1472,11 @@
       "waitingDays": 51,
       "status": "Issued",
       "note": "9.9收到邮件更新sevis start date，9.17lr转adp转ap。已defer",
-      "publishedAt": "2026-09-17",
-      "source": "submission_user",
-      "visibility": "published",
       "compactNote": "9.9收到邮件更新sevis start date，9…",
-      "detailNote": "9.9收到邮件更新sevis start date，9.17lr转adp转ap。已defer"
-    },
-    {
-      "id": "submission-101",
-      "nickname": null,
-      "location": "北京",
-      "degree": "PhD",
-      "major": "CEE",
-      "school": null,
-      "startDate": "2026-06-13",
-      "endDate": null,
-      "waitingDays": 105,
-      "status": "Check",
-      "note": null,
+      "detailNote": "9.9收到邮件更新sevis start date，9.17lr转adp转ap。已defer",
       "publishedAt": "2026-09-17",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-102",
@@ -1487,32 +1487,14 @@
       "school": null,
       "startDate": "2026-07-10",
       "endDate": null,
-      "waitingDays": 78,
+      "waitingDays": 75,
       "status": "Check",
       "note": "last update 7/30",
+      "compactNote": "last update 7/30",
+      "detailNote": "last update 7/30",
       "publishedAt": "2026-09-18",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "last update 7/30",
-      "detailNote": "last update 7/30"
-    },
-    {
-      "id": "submission-103",
-      "nickname": null,
-      "location": "广州",
-      "degree": "Master",
-      "major": "ECE",
-      "school": "USC",
-      "startDate": "2026-07-21",
-      "endDate": "2026-09-14",
-      "waitingDays": 55,
-      "status": "Issued",
-      "note": null,
-      "publishedAt": "2026-09-19",
-      "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-104",
@@ -1526,11 +1508,29 @@
       "waitingDays": 52,
       "status": "Issued",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-19",
       "source": "submission_user",
-      "visibility": "published",
+      "visibility": "published"
+    },
+    {
+      "id": "submission-103",
+      "nickname": null,
+      "location": "广州",
+      "degree": "Master",
+      "major": "ECE",
+      "school": "USC",
+      "startDate": "2026-07-21",
+      "endDate": "2026-09-14",
+      "waitingDays": 55,
+      "status": "Issued",
+      "note": null,
       "compactNote": null,
-      "detailNote": null
+      "detailNote": null,
+      "publishedAt": "2026-09-19",
+      "source": "submission_user",
+      "visibility": "published"
     },
     {
       "id": "submission-105",
@@ -1544,11 +1544,11 @@
       "waitingDays": 85,
       "status": "Approved",
       "note": "第三年phd续签，9.9收到护照",
+      "compactNote": "第三年phd续签，9.9收到护照",
+      "detailNote": "第三年phd续签，9.9收到护照",
       "publishedAt": "2026-09-19",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "第三年phd续签，9.9收到护照",
-      "detailNote": "第三年phd续签，9.9收到护照"
+      "visibility": "published"
     },
     {
       "id": "submission-106",
@@ -1562,11 +1562,11 @@
       "waitingDays": 74,
       "status": "Issued",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-20",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-107",
@@ -1577,14 +1577,14 @@
       "school": "UCB",
       "startDate": "2026-08-18",
       "endDate": null,
-      "waitingDays": 39,
+      "waitingDays": 36,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-20",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-108",
@@ -1595,14 +1595,14 @@
       "school": null,
       "startDate": "2025-09-19",
       "endDate": null,
-      "waitingDays": 372,
+      "waitingDays": 369,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-20",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-109",
@@ -1613,14 +1613,14 @@
       "school": null,
       "startDate": "2026-07-09",
       "endDate": null,
-      "waitingDays": 79,
+      "waitingDays": 76,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-20",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-110",
@@ -1631,14 +1631,14 @@
       "school": null,
       "startDate": "2026-05-15",
       "endDate": null,
-      "waitingDays": 134,
+      "waitingDays": 131,
       "status": "Check",
       "note": null,
+      "compactNote": null,
+      "detailNote": null,
       "publishedAt": "2026-09-22",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
+      "visibility": "published"
     },
     {
       "id": "submission-111",
@@ -1646,17 +1646,17 @@
       "location": "北京",
       "degree": "PhD",
       "major": "CS",
-      "school": null,
+      "school": "NU",
       "startDate": "2026-07-16",
       "endDate": "2026-09-22",
       "waitingDays": 68,
       "status": "Issued",
       "note": "7.17交材料，9.3adp，9.22ap",
+      "compactNote": "7.17交材料，9.3adp，9.22ap",
+      "detailNote": "7.17交材料，9.3adp，9.22ap",
       "publishedAt": "2026-09-22",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "7.17交材料，9.3adp，9.22ap",
-      "detailNote": "7.17交材料，9.3adp，9.22ap"
+      "visibility": "published"
     },
     {
       "id": "submission-112",
@@ -1667,86 +1667,14 @@
       "school": null,
       "startDate": "2026-06-08",
       "endDate": null,
-      "waitingDays": 110,
+      "waitingDays": 107,
       "status": "Check",
       "note": "临床本科，6.8面签不补材料，6.16电话补四件套后无update",
+      "compactNote": "临床本科，6.8面签不补材料，6.16电话补四件套后无…",
+      "detailNote": "临床本科，6.8面签不补材料，6.16电话补四件套后无update",
       "publishedAt": "2026-09-22",
       "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "临床本科，6.8面签不补材料，6.16电话补四件套后无…",
-      "detailNote": "临床本科，6.8面签不补材料，6.16电话补四件套后无update"
-    },
-    {
-      "id": "submission-113",
-      "nickname": "呵呵哈哈",
-      "location": "上海",
-      "degree": "Master",
-      "major": "Journalism",
-      "school": "Columbia",
-      "startDate": "2026-06-02",
-      "endDate": "2026-09-18",
-      "waitingDays": 108,
-      "status": "Issued",
-      "note": "917ap 918issued",
-      "publishedAt": "2026-09-23",
-      "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "917ap 918issued",
-      "detailNote": "917ap 918issued"
-    },
-    {
-      "id": "submission-114",
-      "nickname": "柴米",
-      "location": "广州",
-      "degree": "Master",
-      "major": "AI",
-      "school": null,
-      "startDate": "2026-06-12",
-      "endDate": null,
-      "waitingDays": 106,
-      "status": "Check",
-      "note": null,
-      "publishedAt": "2026-09-24",
-      "source": "submission_user",
-      "visibility": "published",
-      "compactNote": null,
-      "detailNote": null
-    },
-    {
-      "id": "submission-115",
-      "nickname": "Leoooo",
-      "location": "上海",
-      "degree": "Bachelor",
-      "major": "undecided",
-      "school": null,
-      "startDate": "2026-06-22",
-      "endDate": null,
-      "waitingDays": 96,
-      "status": "Check",
-      "note": "8月last update, long refused",
-      "publishedAt": "2026-09-25",
-      "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "8月last update, long refused",
-      "detailNote": "8月last update, long refused"
-    },
-    {
-      "id": "submission-116",
-      "nickname": "pang",
-      "location": "广州",
-      "degree": "Master",
-      "major": "ME",
-      "school": "WashU",
-      "startDate": "2026-07-23",
-      "endDate": "2026-09-11",
-      "waitingDays": 50,
-      "status": "Issued",
-      "note": "9.10ap, 9.11is, 9.24拿到护照",
-      "publishedAt": "2026-09-25",
-      "source": "submission_user",
-      "visibility": "published",
-      "compactNote": "9.10ap, 9.11is, 9.24拿到护照",
-      "detailNote": "9.10ap, 9.11is, 9.24拿到护照"
+      "visibility": "published"
     }
   ]
 }
