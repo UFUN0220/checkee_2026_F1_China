@@ -1,6 +1,6 @@
 import styles from './checkmate-experience.module.css'
 
-const STATISTICS_UPDATED_AT = '2026.09.20'
+const STATISTICS_UPDATED_AT = '2026.09.26'
 
 function formatUpdateDate(value: string) {
   return value.replaceAll('-', '.')
@@ -42,20 +42,27 @@ export function HallAnnouncementContent({
           </p>
           <p>因此“统计”面板指标为 中位数 与 上下四分位数。</p>
           <p>
-            笔者认为，虽然有未更新的案例导致整体时间偏长，但进入long refused状态且知晓checkee等网站，愿意分享长tl的朋友，本身就是整体等待天数时间偏长的一小部分，因此中位数或许还是较为准确的参考。实际受其他因素影响可能偏左或偏右，由个人判断。
+            笔者认为，虽然有未更新的案例导致整体时间偏长，但进入long
+            refused状态且知晓checkee等网站，愿意分享长tl的朋友，本身就是整体等待天数时间偏长的一小部分，因此中位数或许还是较为准确的参考。实际受其他因素影响可能偏左或偏右，由个人判断。
           </p>
         </section>
 
         <section className={styles.hallWelcomeSection}>
           <h2>隐私与说明</h2>
-          <p>本网站不披露个人信息，仅为统计使用。如有数据伦理问题请联系开发者，可修改或撤下数据。</p>
+          <p>
+            本网站不披露个人信息，仅为统计使用。如有数据伦理问题请联系开发者，可修改或撤下数据。
+          </p>
           <p>本项目长期维护，更新周期最长为2天。Github已开源：</p>
-          <p className={styles.hallWelcomeLink}>https://github.com/UFUN0220/checkee_2026_F1_China</p>
+          <p className={styles.hallWelcomeLink}>
+            https://github.com/UFUN0220/checkee_2026_F1_China
+          </p>
           <p>笔者联系方式：qq:1724793685，闲聊交友也都可加微信。</p>
         </section>
       </div>
 
-      <p className={styles.hallWelcomeUpdateNotice}>统计与名人堂采用独立的数据更新流程，更新时间可能存在差异。</p>
+      <p className={styles.hallWelcomeUpdateNotice}>
+        统计与名人堂采用独立的数据更新流程，更新时间可能存在差异。
+      </p>
 
       <div className={styles.hallWelcomeStats} aria-label="名人堂数据概览">
         <div>

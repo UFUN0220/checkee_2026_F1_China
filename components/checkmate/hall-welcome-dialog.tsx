@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { HallAnnouncementContent } from './hall-announcement-content'
 import styles from './checkmate-experience.module.css'
 
-const HALL_WELCOME_VERSION = '20260914-v1'
+const HALL_WELCOME_VERSION = '20260929-v1'
 const HALL_WELCOME_STORAGE_KEY = 'checkee:hall-welcome-version'
 
 export function HallWelcomeDialog({
@@ -43,7 +43,9 @@ export function HallWelcomeDialog({
         <DialogPanel className={`${styles.submitDialogPanel} ${styles.hallWelcomeDialogPanel}`}>
           <div className={styles.submitDialogHeader}>
             <div>
-              <DialogTitle className={styles.submitDialogTitle}>Checkee“名人堂”与统计看板</DialogTitle>
+              <DialogTitle className={styles.submitDialogTitle}>
+                Checkee“名人堂”与统计看板
+              </DialogTitle>
             </div>
             <button type="button" className={styles.submitDialogClose} onClick={handleClose}>
               关闭
