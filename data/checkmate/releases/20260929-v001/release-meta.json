@@ -1,0 +1,10 @@
+{
+  "version": "20260929-v001",
+  "generatedAt": "2026-09-29",
+  "schemaVersion": 1,
+  "legacyCount": 111,
+  "submissionCount": 111,
+  "totalCount": 222,
+  "source": ["legacy_excel", "submission_user"],
+  "inputSource": "public.hall_cases_master"
+}
