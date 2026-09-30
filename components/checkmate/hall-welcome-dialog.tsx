@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { HallAnnouncementContent } from './hall-announcement-content'
 import styles from './checkmate-experience.module.css'
 
-const HALL_WELCOME_VERSION = '20260929-v1'
+const HALL_WELCOME_VERSION = '20261001-v1'
 const HALL_WELCOME_STORAGE_KEY = 'checkee:hall-welcome-version'
 
 export function HallWelcomeDialog({
