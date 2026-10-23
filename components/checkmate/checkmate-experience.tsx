@@ -11,8 +11,10 @@ import {
   type CheckmateSnapshot,
   type WaitStats,
 } from '~/data/checkmate/types'
+import { CHECKMATE_DATA_NOTICES, type CheckmateDataNotice } from '~/data/checkmate/config'
 import { ContactCaseDialogButton } from './contact-case-dialog'
 import { HallWelcomeDialog } from './hall-welcome-dialog'
+import { DataDescription } from './data-description'
 import { SubmitCaseButton } from './submit-case-dialog'
 import styles from './checkmate-experience.module.css'
 
@@ -25,8 +27,6 @@ const LOCATION_NAMES: Record<CheckmateLocation, string> = {
   shenyang: '沈阳',
   wuhan: '武汉',
 }
-
-const PODIUM_NICKNAMES = [ 'momo','momo', 'Mo'] as const
 
 function formatDays(value: number | null) {
   if (value === null) return '—'
@@ -73,9 +73,12 @@ export function CheckmateExperience({
   return (
     <section className={styles.feature} aria-label="Checkmate F-1 公开样本">
       {view === 'cities' ? (
-        <WhiteHouseSelection snapshot={checkeeSnapshot} />
+        <WhiteHouseSelection
+          snapshot={checkeeSnapshot}
+          notice={CHECKMATE_DATA_NOTICES['white-house']}
+        />
       ) : (
-        <HallOfFame dataset={checkeeDataset} />
+        <HallOfFame dataset={checkeeDataset} notice={CHECKMATE_DATA_NOTICES['hall-of-fame']} />
       )}
     </section>
   )
@@ -92,7 +95,13 @@ function FeatureTitle({ children, trailing }: { children: ReactNode; trailing?: 
   )
 }
 
-function WhiteHouseSelection({ snapshot }: { snapshot: CheckmateSnapshot }) {
+function WhiteHouseSelection({
+  snapshot,
+  notice,
+}: {
+  snapshot: CheckmateSnapshot
+  notice: CheckmateDataNotice
+}) {
   const [page, setPage] = useState(1)
   const [selectedCity, setSelectedCity] = useState<CheckmateLocation | null>(null)
   const selectedCases = useMemo(
@@ -109,7 +118,9 @@ function WhiteHouseSelection({ snapshot }: { snapshot: CheckmateSnapshot }) {
   useEffect(() => setPage(1), [selectedCity])
   return (
     <div className={`${styles.view} ${styles.citiesView}`}>
-      <FeatureTitle>
+      <FeatureTitle
+        trailing={<DataDescription notice={notice} updatedAt={snapshot.manifest.snapshotDate} />}
+      >
         <span>
           <span className={styles.viewTitleMain}>2026 F-1 数据统计</span>
         </span>
@@ -399,7 +410,7 @@ function CityCaseRow({
   )
 }
 
-function HallOfFame({ dataset }: { dataset: CheckeeDataset }) {
+function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: CheckmateDataNotice }) {
   const [page, setPage] = useState(1)
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null)
   const cases = useMemo(
@@ -427,6 +438,7 @@ function HallOfFame({ dataset }: { dataset: CheckeeDataset }) {
               白宫严选中国硕博
             </h1>
           </div>
+          <DataDescription notice={notice} updatedAt={dataset.snapshotDate} />
         </header>
         <section className={styles.hallEmpty} aria-live="polite">
           <p>这里还没有新的记录</p>
@@ -455,6 +467,7 @@ function HallOfFame({ dataset }: { dataset: CheckeeDataset }) {
             白宫严选中国硕博
           </h1>
         </div>
+        <DataDescription notice={notice} updatedAt={dataset.snapshotDate} />
       </header>
 
       <section className={styles.podiumSection} aria-labelledby="hall-podium-title">
@@ -526,7 +539,7 @@ function HallOfFame({ dataset }: { dataset: CheckeeDataset }) {
   )
 }
 
-function HallFields({ item, rank }: { item: CheckeeRecord; rank: number }) {
+function HallFields({ item }: { item: CheckeeRecord }) {
   return (
     <>
       <span className={styles.podiumLocation}>{item.location || '\u00a0'}</span>
@@ -542,9 +555,7 @@ function HallFields({ item, rank }: { item: CheckeeRecord; rank: number }) {
           <span>{item.status}</span>
         </span>
       ) : null}
-      <span className={styles.podiumNickname}>
-        {PODIUM_NICKNAMES[rank - 1] ?? PODIUM_NICKNAMES[0]}
-      </span>
+      <span className={styles.podiumNickname}>{item.nickname?.trim() || '\u00a0'}</span>
     </>
   )
 }
@@ -636,7 +647,7 @@ function PodiumCard({
       }
     >
       <div className={styles.podiumContent}>
-        <HallFields item={item} rank={rank} />
+        <HallFields item={item} />
         <HallNote note={note} expanded={expanded} />
       </div>
       <HallWait item={item} className={styles.podiumDuration} showApBadge={false} />
