@@ -26,6 +26,10 @@ export type AdminVisibilityFilter = (typeof ADMIN_VISIBILITY_FILTERS)[number]
 
 export type AdminSubmission = {
   id: string | number
+  recordId?: string | number
+  origin?: 'case_submission' | 'master_submission'
+  reviewTarget?: 'case_submissions' | 'hall_cases_master'
+  source_record_id?: string | null
   name: string | null
   location: string | null
   degree: string | null
@@ -39,6 +43,9 @@ export type AdminSubmission = {
   detail_note: string | null
   created_at: string
   published_at: string | null
+  reviewed_at?: string | null
+  reviewed_by?: string | null
+  admin_note?: string | null
   source: string | null
   visibility: string
 }
@@ -54,37 +61,45 @@ export type AdminStats = {
 
 export async function getAdminStats() {
   const supabase = getSupabaseServerClient()
-  const entries = await Promise.all(
-    (['published', 'pending', 'rejected'] as const).map(async (visibility) => {
-      const result = await supabase
-        .from('case_submissions')
-        .select('id', { count: 'exact', head: true })
-        .eq('visibility', visibility)
-      return { visibility, count: result.count ?? 0, error: result.error }
-    })
-  )
+  const [
+    { submissions, error: submissionsError },
+    { count: pendingUpdateRequests, error: updateRequestsError },
+  ] = await Promise.all([
+    import('~/lib/admin/hall-submissions').then(({ getCombinedHallAdminSubmissions }) =>
+      getCombinedHallAdminSubmissions('all')
+    ),
+    supabase
+      .from('case_update_requests')
+      .select('id', { count: 'exact', head: true })
+      .in('status', ['pending', 'reviewing']),
+  ])
 
-  const { data: lastPublished, error: lastPublishedError } = await supabase
-    .from('case_submissions')
-    .select('published_at')
-    .eq('visibility', 'published')
-    .not('published_at', 'is', null)
-    .order('published_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
+  if (submissionsError || !submissions)
+    return { stats: null, error: submissionsError || '暂时无法读取审核统计。' }
 
-  const { count: pendingUpdateRequests, error: updateRequestsError } = await supabase
-    .from('case_update_requests')
-    .select('id', { count: 'exact', head: true })
-    .in('status', ['pending', 'reviewing'])
-
-  const error = entries.find((entry) => entry.error)?.error
-  if (error || lastPublishedError) return { stats: null, error: '暂时无法读取审核统计。' }
+  const counts = { published: 0, pending: 0, rejected: 0 }
+  let lastPublishedAt: string | null = null
+  for (const submission of submissions) {
+    if (
+      submission.visibility === 'published' ||
+      submission.visibility === 'pending' ||
+      submission.visibility === 'rejected'
+    ) {
+      counts[submission.visibility] += 1
+    }
+    if (
+      submission.visibility === 'published' &&
+      submission.published_at &&
+      (!lastPublishedAt || submission.published_at > lastPublishedAt)
+    ) {
+      lastPublishedAt = submission.published_at
+    }
+  }
 
   return {
     stats: {
-      ...Object.fromEntries(entries.map((entry) => [entry.visibility, entry.count])),
-      lastPublishedAt: lastPublished?.published_at ?? null,
+      ...counts,
+      lastPublishedAt,
       pendingUpdateRequests: updateRequestsError ? null : (pendingUpdateRequests ?? 0),
       updateRequestsError: updateRequestsError ? '暂时无法读取修改反馈待办。' : null,
     } as AdminStats,

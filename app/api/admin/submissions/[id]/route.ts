@@ -13,10 +13,15 @@ type SubmissionSyncResult = {
   source_order: number | null
 }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
+type MasterReviewResult = {
+  case_id: string
+  visibility: 'published' | 'rejected'
+  published_at: string | null
+  reviewed_at: string
+  reviewed_by: string
+}
+
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -40,6 +45,47 @@ export async function PATCH(
   }
 
   const { id } = await params
+  if (id.startsWith('master-')) {
+    const caseId = id.slice('master-'.length)
+    if (!/^submission-\d+$/.test(caseId)) {
+      return NextResponse.json({ error: 'Invalid Master submission id' }, { status: 400 })
+    }
+    const adminNote =
+      typeof body === 'object' && body !== null && !Array.isArray(body)
+        ? (body as { admin_note?: unknown }).admin_note
+        : undefined
+    if (
+      adminNote !== undefined &&
+      adminNote !== null &&
+      (typeof adminNote !== 'string' || adminNote.trim().length > 1000)
+    ) {
+      return NextResponse.json({ error: '审核备注无效。' }, { status: 400 })
+    }
+
+    const { data: rawReview, error: reviewError } = await getSupabaseServerClient()
+      .rpc('review_hall_master_submission', {
+        p_case_id: caseId,
+        p_decision: visibility,
+        p_admin_note: typeof adminNote === 'string' ? adminNote.trim() || null : null,
+        p_reviewed_by: 'admin',
+      })
+      .maybeSingle()
+    if (reviewError) {
+      return NextResponse.json({ error: '审核失败，请刷新列表后重试。' }, { status: 500 })
+    }
+    const review = rawReview as MasterReviewResult | null
+    if (!review) {
+      return NextResponse.json({ error: '投稿不存在，或已经被其他管理员处理。' }, { status: 409 })
+    }
+    return NextResponse.json({
+      submission: {
+        id: `master:${review.case_id}`,
+        visibility: review.visibility,
+        published_at: review.published_at,
+      },
+    })
+  }
+
   if (!/^\d+$/.test(id) || id.length > 19) {
     return NextResponse.json({ error: 'Invalid submission id' }, { status: 400 })
   }
@@ -60,7 +106,11 @@ export async function PATCH(
   if (error) {
     const conflict = error.code === '40001' || error.code === 'P0002'
     return NextResponse.json(
-      { error: conflict ? '投稿不存在，或已经被其他管理员处理。' : '发布投稿失败，Hall 主数据未更新。' },
+      {
+        error: conflict
+          ? '投稿不存在，或已经被其他管理员处理。'
+          : '发布投稿失败，Hall 主数据未更新。',
+      },
       { status: conflict ? 409 : 500 }
     )
   }

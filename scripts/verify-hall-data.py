@@ -33,6 +33,8 @@ REQUIRED_FIELDS = {
 }
 STATUSES = {"Check", "Approved", "Issued", "Refused"}
 SOURCES = {"legacy_excel", "submission_user", "admin_import"}
+SUBMISSION_ORIGINS = {"legacy_case_submission", "master_submission", "legacy_migration"}
+SNAPSHOT_ORIGINS = {"legacy_case_submission", "master_submission"}
 VISIBILITIES = {"draft", "pending", "published", "rejected"}
 LOCATIONS = {"北京", "上海", "广州", "沈阳", "武汉"}
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -108,6 +110,12 @@ def verify_dataset(dataset, verify_waiting_days=True, require_nickname=True, enf
         raise ValueError("records must be an array")
     if dataset.get("recordCount") != len(records):
         raise ValueError("recordCount does not match records length")
+    master_count = dataset.get("masterRecordCount", len(records))
+    published_count = dataset.get("publishedRecordCount", len(records))
+    if isinstance(master_count, bool) or not isinstance(master_count, int) or master_count < len(records):
+        raise ValueError("masterRecordCount must be an integer no smaller than published recordCount")
+    if published_count != len(records):
+        raise ValueError("publishedRecordCount must match the exported Hall record count")
 
     ids = set()
     anomalies = []
@@ -142,6 +150,9 @@ def verify_dataset(dataset, verify_waiting_days=True, require_nickname=True, enf
             raise ValueError(f"Record {index} has invalid status")
         if item["source"] not in SOURCES:
             raise ValueError(f"Record {index} has invalid source")
+        if "submissionOrigin" in item:
+            if item["source"] != "submission_user" or item["submissionOrigin"] not in SUBMISSION_ORIGINS:
+                raise ValueError(f"Record {index} has invalid submissionOrigin")
         if item["visibility"] not in VISIBILITIES:
             raise ValueError(f"Record {index} has invalid visibility")
         if item["visibility"] != "published":
@@ -171,6 +182,7 @@ def verify_published_snapshot(snapshot, require_nickname=True):
         if require_nickname and "nickname" not in item:
             missing = missing | {"nickname"}
         extra = item.keys() - (REQUIRED_FIELDS | {"nickname"})
+        extra -= {"submissionOrigin"}
         if missing or extra:
             details = []
             if missing:
@@ -185,6 +197,10 @@ def verify_published_snapshot(snapshot, require_nickname=True):
             raise ValueError(f"published-submissions.records[{index}].nickname must be a string or null")
         if item["visibility"] != "published":
             raise ValueError(f"published-submissions.records[{index}] must be published")
+        if "submissionOrigin" in item and item["submissionOrigin"] not in SNAPSHOT_ORIGINS:
+            raise ValueError(f"published-submissions.records[{index}] has invalid submissionOrigin")
+        if "submissionOrigin" in item and item["source"] != "submission_user":
+            raise ValueError(f"published-submissions.records[{index}] origin requires source=submission_user")
 
     return records
 
@@ -287,10 +303,12 @@ def verify_release_meta(meta, release_dir, snapshot_records, hall_records):
     expected_counts = {
         "legacyCount": legacy_count,
         "submissionCount": len(snapshot_records),
+        "migrationCount": sum(record.get("submissionOrigin") == "legacy_migration" for record in hall_records),
         "totalCount": len(hall_records),
     }
     for field, expected in expected_counts.items():
-        if meta.get(field) != expected:
+        actual = meta.get(field, 0 if field == "migrationCount" else None)
+        if actual != expected:
             raise ValueError(f"{release_dir.name} {field} does not match release contents")
     if meta.get("source") != expected_sources:
         raise ValueError(f"{release_dir.name} source does not match release contents")
@@ -382,8 +400,10 @@ def main():
         latest_version = verify_release_history(args.releases_dir, dataset, current_snapshot)
         sorted_records = sort_records(records)
         print(
-            f"Verified Master-driven Hall: published-snapshot-artifact={len(snapshot_records)}; "
-            f"hall={len(records)}; latest-release={latest_version}"
+            f"Verified Master-driven Hall: master-rows={dataset.get('masterRecordCount', len(records))}; "
+            f"published={dataset.get('publishedRecordCount', len(records))}; "
+            f"real-published-submissions={len(snapshot_records)}; hall={len(records)}; "
+            f"latest-release={latest_version}"
         )
         print("Top 3: " + ", ".join(f"{item['id']} ({item['waitingDays']})" for item in sorted_records[:3]))
         if anomalies:

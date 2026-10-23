@@ -61,7 +61,9 @@ function visibilityClass(visibility: string) {
 }
 
 function successMessage(visibility: SubmissionVisibility) {
-  return visibility === 'published' ? '投稿已发布到 Hall。' : '投稿已拒绝。'
+  return visibility === 'published'
+    ? '审核已通过，案例将在下一次 Hall Release 中展示。'
+    : '投稿已拒绝。'
 }
 
 export function SubmissionList({
@@ -111,14 +113,15 @@ export function SubmissionList({
     setError(null)
     setSuccess(null)
     try {
-      const response = await fetch(
-        `/api/admin/submissions/${encodeURIComponent(String(submission.id))}`,
-        {
-          method: 'PATCH',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ visibility: values.visibility }),
-        }
-      )
+      const targetId =
+        submission.reviewTarget === 'hall_cases_master'
+          ? `master-${String(submission.recordId)}`
+          : String(submission.recordId ?? submission.id)
+      const response = await fetch(`/api/admin/submissions/${encodeURIComponent(targetId)}`, {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ visibility: values.visibility }),
+      })
       const result = (await response.json()) as {
         error?: string
         submission?: { id: string | number; visibility: string; published_at: string | null }
@@ -151,7 +154,7 @@ export function SubmissionList({
                 </DialogTitle>
                 <DialogDescription>
                   {pendingAction.visibility === 'published'
-                    ? '发布后，该案例将进入 Hall 展示数据。'
+                    ? '审核通过后，该案例会进入下一次 Hall Release；当前首页数据不会立即变化。'
                     : '拒绝后，该投稿不会进入 Hall 展示数据。'}
                 </DialogDescription>
               </DialogHeader>
@@ -371,7 +374,7 @@ export function SubmissionList({
                       <div>
                         <dt className="text-muted dark:text-muted-dark text-xs">ID</dt>
                         <dd className="mt-1 font-mono text-xs break-all">
-                          {display(submission.id)}
+                          {display(submission.recordId ?? submission.id)}
                         </dd>
                       </div>
                       <div>

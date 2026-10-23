@@ -39,7 +39,10 @@ export async function submitCase(payload: SubmissionPayload) {
 
   const response = await fetch('/api/submissions', {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: {
+      'content-type': 'application/json',
+      'idempotency-key': crypto.randomUUID(),
+    },
     body: JSON.stringify(normalizedPayload),
   })
 

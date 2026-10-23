@@ -112,7 +112,7 @@ export function SubmitCaseButton() {
                 <span aria-hidden="true">✓</span>
                 <strong>提交成功</strong>
                 <p>感谢你的案例贡献。</p>
-                <p>提交后会经过人工整理和审核，符合展示标准的案例会进入名人堂。</p>
+                <p>案例已提交，正在等待审核。审核通过后才会进入名人堂。</p>
                 <div className={styles.submitSuccessActions}>
                   <button
                     type="button"

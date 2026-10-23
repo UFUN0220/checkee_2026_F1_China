@@ -60,6 +60,8 @@ SNAPSHOT_RECORD_FIELDS = {
     "source",
     "visibility",
 }
+SNAPSHOT_OPTIONAL_FIELDS = {"submissionOrigin"}
+SUBMISSION_ORIGINS = {"legacy_case_submission", "master_submission"}
 
 
 def load_converter():
@@ -146,7 +148,7 @@ def read_published_snapshot(path: Path):
         if not isinstance(record, dict):
             raise ValueError(f"Published snapshot record {index} must be an object")
         missing = SNAPSHOT_RECORD_FIELDS - record.keys()
-        extra = record.keys() - SNAPSHOT_RECORD_FIELDS
+        extra = record.keys() - SNAPSHOT_RECORD_FIELDS - SNAPSHOT_OPTIONAL_FIELDS
         if missing or extra:
             details = []
             if missing:
@@ -156,6 +158,10 @@ def read_published_snapshot(path: Path):
             raise ValueError(f"Published snapshot record {index} schema mismatch ({'; '.join(details)})")
         if record.get("visibility") != "published":
             raise ValueError(f"Published snapshot record {index} must be published")
+        if "submissionOrigin" in record and record["submissionOrigin"] not in SUBMISSION_ORIGINS:
+            raise ValueError(f"Published snapshot record {index} has an unsupported submissionOrigin")
+        if "submissionOrigin" in record and record.get("source") != "submission_user":
+            raise ValueError(f"Published snapshot record {index} origin requires source=submission_user")
         record_id = record.get("id")
         if not isinstance(record_id, str) or not record_id:
             raise ValueError(f"Published snapshot record {index} must have a string id")
@@ -201,13 +207,14 @@ def release_sources(records):
     return [source for source in source_order if source in actual_sources]
 
 
-def build_release_meta(version, generated_at, legacy_records, snapshot_records, hall_records):
+def build_release_meta(version, generated_at, legacy_records, snapshot_records, hall_records, migration_count=0):
     return {
         "version": version,
         "generatedAt": generated_at,
         "schemaVersion": RELEASE_META_SCHEMA_VERSION,
         "legacyCount": len(legacy_records),
         "submissionCount": len(snapshot_records),
+        "migrationCount": migration_count,
         "totalCount": len(hall_records),
         "source": release_sources(hall_records),
     }
@@ -223,17 +230,32 @@ def export_hall_master_from_supabase(
     load_supabase_env()
     supabase_exporter = load_supabase_exporter()
     rows = supabase_exporter.fetch_rows()
-    records = [supabase_exporter.map_record(row, snapshot_date) for row in rows]
+    published_rows, visibility_counts = supabase_exporter.published_rows(rows)
+    real_submission_ids = supabase_exporter.fetch_published_case_submission_ids()
+    records = [
+        supabase_exporter.map_record(row, snapshot_date, real_submission_ids)
+        for row in published_rows
+    ]
     source_priority = {"legacy_excel": 0, "submission_user": 1, "admin_import": 2}
     records.sort(key=lambda record: (source_priority[record["source"]], record["_sourceOrder"]))
     for record in records:
         record.pop("_sourceOrder")
+        record.pop("_sourceRecordId")
 
-    snapshot_records = [record for record in records if record["source"] == "submission_user"]
+    snapshot_records = supabase_exporter.real_submission_snapshot_records(records)
+    migration_count = supabase_exporter.migration_identity_count(records)
     converter = load_converter()
     converter.write_dataset(build_published_snapshot(snapshot_records, generated_at), published_snapshot)
-    print(f"Exported {len(records)} records from public.hall_cases_master")
-    print(f"Wrote {len(snapshot_records)} published submissions to {published_snapshot}")
+    print(
+        "Master visibility counts: "
+        f"total={len(rows)}; published={visibility_counts.get('published', 0)}; "
+        f"pending={visibility_counts.get('pending', 0)}; rejected={visibility_counts.get('rejected', 0)}"
+    )
+    print(f"Exported {len(records)} published records from public.hall_cases_master")
+    print(
+        f"Wrote {len(snapshot_records)} real published submissions and "
+        f"excluded {migration_count} migrated Legacy identities from {published_snapshot}"
+    )
 
     version = next_release_version(releases_dir, generated_at)
     dataset_without_version = converter.build_dataset(
@@ -245,6 +267,8 @@ def export_hall_master_from_supabase(
     dataset = {
         "schemaVersion": dataset_without_version["schemaVersion"],
         "dataVersion": version,
+        "masterRecordCount": len(rows),
+        "publishedRecordCount": len(records),
         **{key: value for key, value in dataset_without_version.items() if key != "schemaVersion"},
     }
     release_meta = build_release_meta(
@@ -253,6 +277,7 @@ def export_hall_master_from_supabase(
         [record for record in records if record["source"] == "legacy_excel"],
         snapshot_records,
         records,
+        migration_count,
     )
     release_meta["inputSource"] = "public.hall_cases_master"
     release_dir = releases_dir / version
@@ -327,7 +352,7 @@ def submission_record(row, index, snapshot_date, generated_at, converter):
         raise ValueError(f"Unsupported submission source: {source}")
     published_at = converter.date_value(value(row, "publishedAt", "published_at")) or generated_at
 
-    return {
+    record = {
         "id": record_id,
         "nickname": converter.normalize(value(row, "nickname", "name")),
         "location": location,
@@ -345,6 +370,9 @@ def submission_record(row, index, snapshot_date, generated_at, converter):
         "compactNote": converter.normalize(value(row, "compactNote", "compact_note")) or converter.compact_note(note),
         "detailNote": note,
     }
+    if source == "submission_user":
+        record["submissionOrigin"] = "legacy_case_submission"
+    return record
 
 
 def with_derived_waiting_days(record, snapshot_date, converter):
@@ -446,6 +474,7 @@ def export_hall_master(
         [record for record in records if record["source"] == "legacy_excel"],
         snapshot_records,
         records,
+        supabase_exporter.migration_identity_count(records),
     )
     release_dir = releases_dir / version
     write_release(

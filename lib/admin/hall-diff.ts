@@ -2,6 +2,11 @@ import 'server-only'
 
 import { readdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
+import { getSupabaseServerClient } from '~/lib/supabase/server'
+import {
+  diffHallReleaseRecords,
+  type HallIdentityMigrationPair,
+} from '~/lib/admin/hall-diff-identities'
 
 const RELEASES_ROOT = path.join(process.cwd(), 'data', 'checkmate', 'releases')
 const RELEASE_VERSION_PATTERN = /^\d{8}-v\d{3}$/
@@ -51,8 +56,27 @@ export type HallDiff = {
   releaseB: HallReleaseDocument
   added: HallDiffRecord[]
   removed: HallDiffRecord[]
-  changed: Array<{ id: string; before: HallDiffRecord; after: HallDiffRecord; changes: HallFieldChange[] }>
+  changed: Array<{
+    id: string
+    before: HallDiffRecord
+    after: HallDiffRecord
+    changes: HallFieldChange[]
+  }>
+  identityMigrations: Array<{
+    oldCaseId: string
+    newCaseId: string
+    recordA: HallDiffRecord
+    recordB: HallDiffRecord
+  }>
   unchanged: number
+}
+
+async function readIdentityMigrations(): Promise<HallIdentityMigrationPair[]> {
+  const { data, error } = await getSupabaseServerClient()
+    .from('hall_case_identity_migrations')
+    .select('old_case_id,new_case_id')
+  if (error) throw new Error('Unable to read Hall case identity migration map')
+  return (data ?? []) as HallIdentityMigrationPair[]
 }
 
 async function readJson<T>(filePath: string) {
@@ -89,43 +113,25 @@ async function readRelease(version: string): Promise<HallReleaseDocument> {
   }
 }
 
-function recordId(record: HallDiffRecord) {
-  return String(record.id)
-}
-
-function valuesEqual(before: unknown, after: unknown) {
-  return JSON.stringify(before) === JSON.stringify(after)
-}
-
-function getChanges(before: HallDiffRecord, after: HallDiffRecord) {
-  return HALL_DIFF_FIELDS.filter((field) => !valuesEqual(before[field], after[field])).map((field) => ({
-    field,
-    before: before[field],
-    after: after[field],
-  }))
-}
-
 export async function getHallDiff(versionA: string, versionB: string): Promise<HallDiff> {
-  const [releaseA, releaseB] = await Promise.all([readRelease(versionA), readRelease(versionB)])
-  const recordsA = new Map(releaseA.records.map((record) => [recordId(record), record]))
-  const recordsB = new Map(releaseB.records.map((record) => [recordId(record), record]))
-
-  const added = releaseB.records.filter((record) => !recordsA.has(recordId(record)))
-  const removed = releaseA.records.filter((record) => !recordsB.has(recordId(record)))
-  const changed: HallDiff['changed'] = []
-  let unchanged = 0
-
-  for (const record of releaseB.records) {
-    const before = recordsA.get(recordId(record))
-    if (!before) continue
-
-    const changes = getChanges(before, record)
-    if (changes.length) {
-      changed.push({ id: recordId(record), before, after: record, changes })
-    } else {
-      unchanged += 1
-    }
+  const [releaseA, releaseB, identityMigrations] = await Promise.all([
+    readRelease(versionA),
+    readRelease(versionB),
+    readIdentityMigrations(),
+  ])
+  const diff = diffHallReleaseRecords(
+    releaseA.records,
+    releaseB.records,
+    identityMigrations,
+    HALL_DIFF_FIELDS
+  )
+  return {
+    releaseA,
+    releaseB,
+    added: diff.added,
+    removed: diff.removed,
+    changed: diff.changed,
+    identityMigrations: diff.migrations,
+    unchanged: diff.unchanged,
   }
-
-  return { releaseA, releaseB, added, removed, changed, unchanged }
 }
