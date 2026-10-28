@@ -12,6 +12,6 @@ export const CHECKMATE_DATA_NOTICES: Record<CheckmatePageKey, CheckmateDataNotic
   },
   'hall-of-fame': {
     title: '名人堂 · 数据说明',
-    content: '统计与名人堂数据异步更新。当前统计数据截至 2026.10.24，名人堂数据截至 2026.10.24。',
+    content: '统计与名人堂数据异步更新。当前统计数据截至 2026.10.24，名人堂数据截至 2026.10.29。',
   },
 }
