@@ -11,10 +11,8 @@ import {
   type CheckmateSnapshot,
   type WaitStats,
 } from '~/data/checkmate/types'
-import { CHECKMATE_DATA_NOTICES, type CheckmateDataNotice } from '~/data/checkmate/config'
 import { ContactCaseDialogButton } from './contact-case-dialog'
 import { HallWelcomeDialog } from './hall-welcome-dialog'
-import { DataDescription } from './data-description'
 import { SubmitCaseButton } from './submit-case-dialog'
 import styles from './checkmate-experience.module.css'
 
@@ -73,35 +71,25 @@ export function CheckmateExperience({
   return (
     <section className={styles.feature} aria-label="Checkmate F-1 公开样本">
       {view === 'cities' ? (
-        <WhiteHouseSelection
-          snapshot={checkeeSnapshot}
-          notice={CHECKMATE_DATA_NOTICES['white-house']}
-        />
+        <WhiteHouseSelection snapshot={checkeeSnapshot} />
       ) : (
-        <HallOfFame dataset={checkeeDataset} notice={CHECKMATE_DATA_NOTICES['hall-of-fame']} />
+        <HallOfFame dataset={checkeeDataset} />
       )}
     </section>
   )
 }
 
-function FeatureTitle({ children, trailing }: { children: ReactNode; trailing?: ReactNode }) {
+function FeatureTitle({ children }: { children: ReactNode }) {
   return (
     <div className={styles.titleRow}>
       <header className={styles.titleBlock}>
         <h1>{children}</h1>
       </header>
-      {trailing}
     </div>
   )
 }
 
-function WhiteHouseSelection({
-  snapshot,
-  notice,
-}: {
-  snapshot: CheckmateSnapshot
-  notice: CheckmateDataNotice
-}) {
+function WhiteHouseSelection({ snapshot }: { snapshot: CheckmateSnapshot }) {
   const [page, setPage] = useState(1)
   const [selectedCity, setSelectedCity] = useState<CheckmateLocation | null>(null)
   const selectedCases = useMemo(
@@ -118,9 +106,7 @@ function WhiteHouseSelection({
   useEffect(() => setPage(1), [selectedCity])
   return (
     <div className={`${styles.view} ${styles.citiesView}`}>
-      <FeatureTitle
-        trailing={<DataDescription notice={notice} updatedAt={snapshot.manifest.snapshotDate} />}
-      >
+      <FeatureTitle>
         <span>
           <span className={styles.viewTitleMain}>2026 F-1 数据统计</span>
         </span>
@@ -410,7 +396,7 @@ function CityCaseRow({
   )
 }
 
-function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: CheckmateDataNotice }) {
+function HallOfFame({ dataset }: { dataset: CheckeeDataset }) {
   const [page, setPage] = useState(1)
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null)
   const cases = useMemo(
@@ -438,7 +424,6 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
               白宫严选中国硕博
             </h1>
           </div>
-          <DataDescription notice={notice} updatedAt={dataset.snapshotDate} />
         </header>
         <section className={styles.hallEmpty} aria-live="polite">
           <p>这里还没有新的记录</p>
@@ -467,7 +452,6 @@ function HallOfFame({ dataset, notice }: { dataset: CheckeeDataset; notice: Chec
             白宫严选中国硕博
           </h1>
         </div>
-        <DataDescription notice={notice} updatedAt={dataset.snapshotDate} />
       </header>
 
       <section className={styles.podiumSection} aria-labelledby="hall-podium-title">
